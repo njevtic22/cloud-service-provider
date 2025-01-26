@@ -1,5 +1,6 @@
 package com.demo.cloud.controller;
 
+import com.demo.cloud.filterParams.UserFilter;
 import com.demo.cloud.model.User;
 import com.demo.cloud.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<List<User>> getAll(UserFilter filter) {
+        List<User> users = service.getAll(filter.getParams());
+        return ResponseEntity.ok(users);
     }
 }

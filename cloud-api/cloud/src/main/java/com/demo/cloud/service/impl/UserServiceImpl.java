@@ -6,6 +6,9 @@ import com.demo.cloud.service.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+
+import static com.demo.cloud.repository.specification.UserSpecification.getSpec;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -16,7 +19,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAll() {
-        return repository.findAll();
+    public List<User> getAll(Map<String, String> filter) {
+        return repository.findAll(getSpec(filter));
     }
 }
