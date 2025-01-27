@@ -9,10 +9,10 @@ import java.util.Map;
 public class UserSpecification extends ClassSpecification {
     public static Specification<User> getSpec2(Map<String, String> filter) {
         return Specification.where(roleLike(filter.get("role")))
-                .or(attrLike("surname", filter.get("surname")))
-                .or(attrLike("email", filter.get("email")))
-                .or(attrLike("username", filter.get("username")))
-                .or(attrLike("name", filter.get("name")));
+                .and(attrLike("surname", filter.get("surname")))
+                .and(attrLike("email", filter.get("email")))
+                .and(attrLike("username", filter.get("username")))
+                .and(attrLike("name", filter.get("name")));
     }
 
     // Creates only those specifications which are not null (and do not return null) unlike getSpec2
@@ -37,7 +37,7 @@ public class UserSpecification extends ClassSpecification {
 
         return specs
                 .stream()
-                .reduce(Specification::or)
+                .reduce(Specification::and)
                 .orElse(null);
     }
 
