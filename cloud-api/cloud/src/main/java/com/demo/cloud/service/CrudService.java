@@ -1,8 +1,10 @@
 package com.demo.cloud.service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.Map;
 
 public interface CrudService<ID, T> {
-    List<T> getAll(Map<String, String> filter);
+    Page<T> getAll(Pageable pageable, Map<String, String> filter);
 }
