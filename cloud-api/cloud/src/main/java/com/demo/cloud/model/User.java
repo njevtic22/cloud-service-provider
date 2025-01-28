@@ -41,21 +41,25 @@ public class User {
     @ManyToOne
     private Role role;
 
+    @ManyToOne
+    private Organization organization;
+
     public User() { }
 
-    public User(String name, String surname, String email, String username, String password, Role role, boolean archived) {
-        this(null, name, surname, email, username, password, archived, role);
+    public User(String name, String surname, String email, String username, String password, Role role, boolean archived, Organization organization) {
+        this(null, name, surname, email, username, password, archived, role, organization);
     }
 
-    public User(Long id, String name, String surname, String email, String username, String password, boolean archived, Role role) {
+    public User(Long id, String name, String surname, String email, String username, String password, boolean archived, Role role, Organization organization) {
         this.id = id;
-        this.name = Strings.requireNonBlank(name, "Name name must not be blank.");
-        this.surname = Strings.requireNonBlank(surname, "Surname name must not be blank.");
-        this.email = Strings.requireNonBlank(email, "Email name must not be blank.");
-        this.username = Strings.requireNonBlank(username, "Username name must not be blank.");
+        this.name = Strings.requireNonBlank(name, "Name must not be blank.");
+        this.surname = Strings.requireNonBlank(surname, "Surname must not be blank.");
+        this.email = Strings.requireNonBlank(email, "Email must not be blank.");
+        this.username = Strings.requireNonBlank(username, "Username must not be blank.");
         this.password = Objects.requireNonNull(password, "Password must not be null.");       // could be blank
         this.archived = archived;
         this.role = role;
+        this.organization = Objects.requireNonNull(organization, "Organization must not be null.");
     }
 
     @Override
@@ -100,5 +104,9 @@ public class User {
 
     public Role getRole() {
         return role;
+    }
+
+    public Organization getOrganization() {
+        return organization;
     }
 }
