@@ -1,5 +1,6 @@
 package com.demo.cloud.mapper;
 
+import com.demo.cloud.dto.user.AddUserDto;
 import com.demo.cloud.dto.user.UserViewDto;
 import com.demo.cloud.model.User;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,19 @@ public class UserMapper {
                 user.getEmail(),
                 user.getUsername(),
                 user.getRole().getName()
+        );
+    }
+
+    public User toModel(AddUserDto dto) {
+        return new User(
+                dto.getName(),
+                dto.getSurname(),
+                dto.getEmail(),
+                dto.getUsername(),
+                dto.getPassword(),
+                null,
+                false,
+                null
         );
     }
 }

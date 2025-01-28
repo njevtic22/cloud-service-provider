@@ -20,6 +20,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User add(User newUser, String repeatedPassword, String role, Long organizationId) {
+        // TODO: Implement
+        return null;
+    }
+
+    @Override
     public Page<User> getAll(Pageable pageable, Map<String, String> filter) {
         return repository.findAll(getSpec(filter), pageable);
     }
