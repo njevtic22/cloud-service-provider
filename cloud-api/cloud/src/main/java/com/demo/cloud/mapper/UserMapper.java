@@ -1,6 +1,7 @@
 package com.demo.cloud.mapper;
 
 import com.demo.cloud.dto.user.AddUserDto;
+import com.demo.cloud.dto.user.UpdateUserDto;
 import com.demo.cloud.dto.user.UserViewDto;
 import com.demo.cloud.model.Organization;
 import com.demo.cloud.model.User;
@@ -28,8 +29,21 @@ public class UserMapper {
                 dto.getEmail(),
                 dto.getUsername(),
                 dto.getPassword(),
-                null,
                 false,
+                null,
+                null
+        );
+    }
+
+    public User toModel(UpdateUserDto dto) {
+        return new User(
+                dto.getName(),
+                dto.getSurname(),
+                dto.getEmail(),
+                dto.getUsername(),
+                "",
+                false,
+                null,
                 null
         );
     }

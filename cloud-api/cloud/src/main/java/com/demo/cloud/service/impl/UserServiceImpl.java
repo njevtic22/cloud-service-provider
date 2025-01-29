@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static com.demo.cloud.repository.specification.UserSpecification.getSpec;
 
@@ -39,8 +40,8 @@ public class UserServiceImpl implements UserService {
         validateEmail(newUser.getEmail());
         validateUsername(newUser.getUsername());
 
-        Role role = roleService.getByName(roleName);
-        Organization org = orgService.getById(organizationId);
+        Role foundRole = roleService.getByName(roleName);
+        Organization foundOrg = orgService.getById(organizationId);
 
         User toAdd = new User(
                 newUser.getName(),
@@ -48,9 +49,9 @@ public class UserServiceImpl implements UserService {
                 newUser.getEmail(),
                 newUser.getUsername(),
                 newUser.getPassword(),
-                role,
                 false,
-                org
+                foundRole,
+                foundOrg
         );
 
         return repository.save(toAdd);
@@ -65,6 +66,51 @@ public class UserServiceImpl implements UserService {
     public User getById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User", id));
+    }
+
+    @Override
+    public User update(Long id, User changes, String roleName, Long organizationId) {
+        Objects.requireNonNull(changes, "Admin changes must not be null.");
+
+        User existing = getById(id);
+        if (!existing.getEmail().equals(changes.getEmail())) {
+            validateEmail(changes.getEmail());
+        }
+        if (!existing.getUsername().equals(changes.getUsername())) {
+            validateUsername(changes.getUsername());
+        }
+
+        Role changedRole = roleService.getByName(roleName);
+        if (existing.isSuperAdmin()) {
+            if (organizationId != null) {
+                throw new IllegalArgumentException("Super admin can not belong to organization");
+            }
+            if (!changedRole.isSuperAdmin()) {
+                throw new IllegalArgumentException("Super admin can not change role");
+            }
+        } else {
+            if (organizationId == null) {
+                throw new IllegalArgumentException("Organization id must not be null");
+            }
+            if (changedRole.isSuperAdmin()) {
+                throw new IllegalArgumentException("Can not change role to super admin");
+            }
+        }
+
+        Organization changedOrg = existing.isSuperAdmin() ? null : orgService.getById(organizationId);
+
+        User updated = new User(
+                existing.getId(),
+                changes.getName(),
+                changes.getSurname(),
+                changes.getEmail(),
+                changes.getUsername(),
+                existing.getPassword(),
+                existing.isArchived(),
+                changedRole,
+                changedOrg
+        );
+        return repository.save(updated);
     }
 
     private void validateEmail(String email) {

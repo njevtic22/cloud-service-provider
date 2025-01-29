@@ -1,10 +1,9 @@
 package com.demo.cloud.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-public class RequestUserDto {
+public abstract class RequestUserDto {
     @NotBlank(message = "Name must not be blank.")
     private final String name;
 
@@ -17,7 +16,6 @@ public class RequestUserDto {
     @NotBlank(message = "Username must not be blank.")
     private final String username;
 
-    @NotNull(message = "Organization must not be null.")
     @Positive(message = "Organization must be positive long.")
     private final Long organization;
 

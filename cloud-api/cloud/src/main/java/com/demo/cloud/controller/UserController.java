@@ -2,6 +2,7 @@ package com.demo.cloud.controller;
 
 import com.demo.cloud.core.PaginatedResponse;
 import com.demo.cloud.dto.user.AddUserDto;
+import com.demo.cloud.dto.user.UpdateUserDto;
 import com.demo.cloud.dto.user.UserViewDto;
 import com.demo.cloud.filterParams.UserFilter;
 import com.demo.cloud.mapper.UserMapper;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -63,5 +65,13 @@ public class UserController {
         User found = service.getById(id);
         UserViewDto foundDto = mapper.toViewDto(found);
         return ResponseEntity.ok(foundDto);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<UserViewDto> update(@PathVariable Long id, @Valid @RequestBody UpdateUserDto changesDto) {
+        User changes = mapper.toModel(changesDto);
+        User updated = service.update(id, changes, changesDto.getRole(), changesDto.getOrganization());
+        UserViewDto updatedDto = mapper.toViewDto(updated);
+        return ResponseEntity.ok(updatedDto);
     }
 }

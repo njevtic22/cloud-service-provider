@@ -40,6 +40,18 @@ public class Role {
         return Objects.hash(id, name);
     }
 
+    public boolean isSuperAdmin() {
+        return name.equals("ROLE_SUPER_ADMIN");
+    }
+
+    public boolean isAdmin() {
+        return name.equals("ROLE_ADMIN");
+    }
+
+    public boolean isUser() {
+        return name.equals("ROLE_USER");
+    }
+
     public Long getId() {
         return id;
     }

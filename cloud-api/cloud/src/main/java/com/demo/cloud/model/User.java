@@ -46,7 +46,7 @@ public class User {
 
     public User() { }
 
-    public User(String name, String surname, String email, String username, String password, Role role, boolean archived, Organization organization) {
+    public User(String name, String surname, String email, String username, String password, boolean archived, Role role, Organization organization) {
         this(null, name, surname, email, username, password, archived, role, organization);
     }
 
@@ -72,6 +72,18 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(id, email, username);
+    }
+
+    public boolean isSuperAdmin() {
+        return role.getName().equals("ROLE_SUPER_ADMIN");
+    }
+
+    public boolean isAdmin() {
+        return role.getName().equals("ROLE_ADMIN");
+    }
+
+    public boolean isUser() {
+        return role.getName().equals("ROLE_USER");
     }
 
     public Long getId() {
