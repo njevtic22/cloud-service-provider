@@ -59,7 +59,7 @@ public class User {
         this.password = Objects.requireNonNull(password, "Password must not be null.");       // could be blank
         this.archived = archived;
         this.role = role;
-        this.organization = Objects.requireNonNull(organization, "Organization must not be null.");
+        this.organization = organization;
     }
 
     @Override

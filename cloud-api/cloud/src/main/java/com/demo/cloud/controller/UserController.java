@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +32,7 @@ public class UserController {
         this.mapper = mapper;
     }
 
+    @PostMapping
     public ResponseEntity<Void> addUser(@Valid @RequestBody AddUserDto newDto, UriComponentsBuilder uriBuilder) {
         User newUser = mapper.toModel(newDto);
         User added = service.add(newUser, newDto.getRepeatedPassword(), newDto.getRole(), newDto.getOrganization());
