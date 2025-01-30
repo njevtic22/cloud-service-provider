@@ -25,7 +25,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     public Organization getById(Long id) {
-        return repository.findById(id)
+        return repository.findByIdAndArchivedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Organization", id));
     }
 }

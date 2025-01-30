@@ -67,6 +67,6 @@ alter sequence user_id_seq restart with 36;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-insert into organizations(id, name, logo, description) values (1, 'Name 1', 'logo', 'Description');
+insert into organizations(id, name, logo, description, archived) values (1, 'Name 1', 'logo', 'Description', false);
 
 alter sequence organization_id_seq restart with 2;

@@ -12,7 +12,13 @@ public class UserSpecification extends ClassSpecification {
                 .and(attrLike("surname", filter.get("surname")))
                 .and(attrLike("email", filter.get("email")))
                 .and(attrLike("username", filter.get("username")))
-                .and(attrLike("name", filter.get("name")));
+                .and(attrLike("name", filter.get("name")))
+                .and(attrLike("archived", filter.get("archived")));
+    }
+
+    public static Specification<User> getSpec(Map<String, String> filter, boolean archived) {
+        filter.put("archived", String.valueOf(archived));
+        return getSpec(filter);
     }
 
     // Creates only those specifications which are not null (and do not return null) unlike getSpec2
@@ -26,6 +32,7 @@ public class UserSpecification extends ClassSpecification {
 
             Specification<User> spec = switch (key) {
                 case "name", "surname", "email", "username" -> attrLike(key, value);
+                case "archived" -> attrEqual(key, value);
                 case "role"   -> roleLike(value);
                 default -> throw new IllegalArgumentException("Invalid filter key");
             };

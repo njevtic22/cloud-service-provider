@@ -10,4 +10,14 @@ public class ClassSpecification {
 
         return (root, query, cb) -> cb.like(cb.upper(root.get(attr)), "%" + keyword.toUpperCase() + "%");
     }
+
+    public static <T> Specification<T> attrEqual(String attr, String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+
+        boolean archived = Boolean.parseBoolean(value);
+
+        return (root, query, cb) -> cb.equal(root.get(attr), archived);
+    }
 }

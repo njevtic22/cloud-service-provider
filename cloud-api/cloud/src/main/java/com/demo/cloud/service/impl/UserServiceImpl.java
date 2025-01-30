@@ -61,12 +61,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<User> getAll(Pageable pageable, Map<String, String> filter) {
-        return repository.findAll(getSpec(filter), pageable);
+        return repository.findAll(getSpec(filter, false), pageable);
     }
 
     @Override
     public User getById(Long id) {
-        return repository.findById(id)
+        return repository.findByIdAndArchivedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("User", id));
     }
 

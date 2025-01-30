@@ -28,17 +28,21 @@ public class Organization {
     @Column
     private String logo;
 
+    @Column(nullable = false)
+    private boolean archived;
+
     public Organization() { }
 
-    public Organization(String name, String logo, String description) {
-        this(null, name, description, logo);
+    public Organization(String name, String logo, String description, boolean archived) {
+        this(null, name, description, logo, archived);
     }
 
-    public Organization(Long id, String name, String description, String logo) {
+    public Organization(Long id, String name, String description, String logo, boolean archived) {
         this.id = id;
         this.name = Strings.requireNonBlank(name, "Name must not be blank.");
         this.description = Strings.requireNonBlank(description, "Description must not be blank.");
         this.logo = logo;
+        this.archived = archived;
     }
 
     @Override
@@ -67,5 +71,9 @@ public class Organization {
 
     public String getLogo() {
         return logo;
+    }
+
+    public boolean isArchived() {
+        return archived;
     }
 }
