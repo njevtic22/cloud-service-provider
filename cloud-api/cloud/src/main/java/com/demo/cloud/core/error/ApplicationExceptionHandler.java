@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @ControllerAdvice
-public class RestExceptionHandler extends ResponseEntityExceptionHandler {
+public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         ArrayList<FieldErrorMessage> details = new ArrayList<>();
