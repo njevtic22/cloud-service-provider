@@ -23,6 +23,9 @@ public class VirtualMachine {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private boolean archived;
+
     @ManyToOne
     private Organization organization;
 
@@ -31,13 +34,14 @@ public class VirtualMachine {
 
     public VirtualMachine() { }
 
-    public VirtualMachine(String name, Organization organization, Category category) {
-        this(null, name, organization, category);
+    public VirtualMachine(String name, Organization organization, Category category, boolean archived) {
+        this(null, name, archived, organization, category);
     }
 
-    public VirtualMachine(Long id, String name, Organization organization, Category category) {
+    public VirtualMachine(Long id, String name, boolean archived, Organization organization, Category category) {
         this.id = id;
         this.name = Strings.requireNonBlank(name, "Name must not be blank.");
+        this.archived = archived;
         this.organization = Objects.requireNonNull(organization, "Organization must not be null.");
         this.category = Objects.requireNonNull(category, "Category must not be null.");
     }
@@ -72,6 +76,10 @@ public class VirtualMachine {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isArchived() {
+        return archived;
     }
 
     public Organization getOrganization() {

@@ -31,13 +31,16 @@ public class Category {
     @Column(nullable = false)
     private int gpu;
 
+    @Column(nullable = false)
+    private boolean archived;
+
     public Category() { }
 
-    public Category(int cpu, int ram, int gpu, String name) {
-        this(null, name, cpu, ram, gpu);
+    public Category(int cpu, int ram, int gpu, String name, boolean archived) {
+        this(null, name, cpu, ram, gpu, archived);
     }
 
-    public Category(Long id, String name, int cpu, int ram, int gpu) {
+    public Category(Long id, String name, int cpu, int ram, int gpu, boolean archived) {
         if (cpu <= 0) {
             throw new IllegalArgumentException("Number of cpu cores must be positive integer");
         }
@@ -53,6 +56,7 @@ public class Category {
         this.cpu = cpu;
         this.ram = ram;
         this.gpu = gpu;
+        this.archived = archived;
     }
 
     @Override
@@ -85,5 +89,9 @@ public class Category {
 
     public int getGpu() {
         return gpu;
+    }
+
+    public boolean isArchived() {
+        return archived;
     }
 }

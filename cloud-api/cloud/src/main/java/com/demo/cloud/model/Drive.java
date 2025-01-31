@@ -32,6 +32,9 @@ public class Drive {
     @Enumerated(EnumType.STRING)
     private DriveType type;
 
+    @Column(nullable = false)
+    private boolean archived;
+
     @ManyToOne
     private Organization organization;
 
@@ -40,11 +43,11 @@ public class Drive {
 
     public Drive() { }
 
-    public Drive(String name, int capacity, DriveType type, Organization organization, VirtualMachine machine) {
-        this(null, name, capacity, type, organization, machine);
+    public Drive(String name, int capacity, DriveType type, Organization organization, VirtualMachine machine, boolean archived) {
+        this(null, name, capacity, type, archived, organization, machine);
     }
 
-    public Drive(Long id, String name, int capacity, DriveType type, Organization organization, VirtualMachine machine) {
+    public Drive(Long id, String name, int capacity, DriveType type, boolean archived, Organization organization, VirtualMachine machine) {
         if (capacity <= 0) {
             throw new IllegalArgumentException("Capacity of drive must be positive integer");
         }
@@ -53,6 +56,7 @@ public class Drive {
         this.name = Strings.requireNonBlank(name, "Name must not be blank.");
         this.capacity = capacity;
         this.type = Objects.requireNonNull(type, "Type must not be null.");
+        this.archived = archived;
         this.organization = Objects.requireNonNull(organization, "Organization must not be null.");
         this.machine = Objects.requireNonNull(machine, "Machine must not be null.");
     }
@@ -83,6 +87,10 @@ public class Drive {
 
     public DriveType getType() {
         return type;
+    }
+
+    public boolean isArchived() {
+        return archived;
     }
 
     public Organization getOrganization() {
