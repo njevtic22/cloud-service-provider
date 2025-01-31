@@ -2,6 +2,7 @@ package com.demo.cloud.controller;
 
 import com.demo.cloud.core.PaginatedResponse;
 import com.demo.cloud.dto.user.AddUserDto;
+import com.demo.cloud.dto.user.PasswordChangeDto;
 import com.demo.cloud.dto.user.UpdateUserDto;
 import com.demo.cloud.dto.user.UserViewDto;
 import com.demo.cloud.filterParams.UserFilter;
@@ -66,6 +67,17 @@ public class UserController {
         User found = service.getById(id);
         UserViewDto foundDto = mapper.toViewDto(found);
         return ResponseEntity.ok(foundDto);
+    }
+
+    @PutMapping("{id}/password")
+    public ResponseEntity<Void> changePassword(@PathVariable Long id, @Valid @RequestBody PasswordChangeDto passwordDto) {
+        service.changePassword(
+                id,
+                passwordDto.oldPassword(),
+                passwordDto.newPassword(),
+                passwordDto.repeatedPassword()
+        );
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("{id}")

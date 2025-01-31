@@ -14,6 +14,7 @@ import com.demo.cloud.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -26,11 +27,13 @@ public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     private final RoleService roleService;
     private final OrganizationService orgService;
+    private final PasswordEncoder encoder;
 
-    public UserServiceImpl(UserRepository repository, RoleService roleService, OrganizationService orgService) {
+    public UserServiceImpl(UserRepository repository, RoleService roleService, OrganizationService orgService, PasswordEncoder encoder) {
         this.repository = repository;
         this.roleService = roleService;
         this.orgService = orgService;
+        this.encoder = encoder;
     }
 
     @Override
@@ -50,7 +53,7 @@ public class UserServiceImpl implements UserService {
                 newUser.getSurname(),
                 newUser.getEmail(),
                 newUser.getUsername(),
-                newUser.getPassword(),
+                encoder.encode(newUser.getPassword()),
                 false,
                 foundRole,
                 foundOrg
@@ -117,6 +120,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    public void changePassword(Long userId, String oldPassword, String newPassword, String repeatedPassword) {
+        User existing = getById(userId);
+        validatePasswordMatch(existing.getPassword(), oldPassword, newPassword, repeatedPassword);
+
+        int rowsAffected = repository.updatePasswordById(existing.getId(), encoder.encode(newPassword));
+        if (rowsAffected != 1) {
+            throw new RuntimeException("Zero or more than one rows in users table is affected by updatePasswordById operation.");
+        }
+    }
+
+    @Override
+    @Transactional
     public void delete(Long id) {
         Objects.requireNonNull(id, "Id must not be null.");
 
@@ -139,6 +154,16 @@ public class UserServiceImpl implements UserService {
     private void validateUsername(String username) {
         if (repository.existsByUsername(username)) {
             throw new UniquePropertyException("Username '" + username + "' is already taken.");
+        }
+    }
+
+    private void validatePasswordMatch(String dbPassword, String oldPassword, String newPassword, String repeatedPassword) {
+        if (!encoder.matches(oldPassword, dbPassword)) {
+            throw new InvalidPasswordException("Incorrect password.");
+        }
+
+        if (!newPassword.equals(repeatedPassword)) {
+            throw new InvalidPasswordException("New password and repeated password do not match.");
         }
     }
 }

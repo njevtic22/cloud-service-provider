@@ -18,6 +18,10 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     boolean existsByIdAndArchivedFalse(Long id);
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("update User u set u.password = :newPassword where u.id = :id")
+    int updatePasswordById(Long id, String newPassword);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("update User u set u.archived = true where u.id = :id")
     int archiveById(Long id);
 }
