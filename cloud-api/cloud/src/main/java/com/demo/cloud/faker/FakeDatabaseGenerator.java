@@ -1,5 +1,6 @@
 package com.demo.cloud.faker;
 
+import com.demo.cloud.model.Organization;
 import com.demo.cloud.model.Role;
 import com.demo.cloud.model.User;
 import com.demo.cloud.util.LongGenerator;
@@ -9,32 +10,43 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.function.Function;
 
 import static com.demo.cloud.faker.FakerUtil.escapeApostrophe;
-import static com.demo.cloud.faker.FakerUtil.getRoleUsername;
-import static com.demo.cloud.faker.FakerUtil.getUsersPerRole;
+import static com.demo.cloud.faker.FakerUtil.generateLorem;
+import static com.demo.cloud.faker.FakerUtil.getOrgImagesPathIterator;
 import static com.demo.cloud.faker.SqlUtil.toSqlAlterSequenceRestart;
 
 public class FakeDatabaseGenerator {
     private final Faker faker = new Faker();
 
+    private final ResourceBundle bundle = ResourceBundle.getBundle("application");
+    private final String rootImages = bundle.getString("root.images");
+
     private final String LINE = "-";
     private final String LINES = LINE.repeat(200);
 
+    private final int LOREM_LENGTH = 1000;
+
+    private final int ORGANIZATIONS = 5;
+    private final int ADMINS_PER_ORGANIZATION = 5;
+    private final int USERS_PER_ORGANIZATION = 10;
+
     private final int ROLES = 3;
     private final int SUPER_ADMINS = 5;
-    private final int ADMINS = 10;
-    private final int USERS = 20;
+    private final int ADMINS = ORGANIZATIONS * ADMINS_PER_ORGANIZATION;
+    private final int USERS = ORGANIZATIONS * USERS_PER_ORGANIZATION;
 
     private final String encodedPassword = "$2a$10$JCYrt8QGHg4suBXWiRgjKu93h5DCq3yFDXMDsTY/Itkgeu3h3pCE6";
 
     private final PrintWriter out = new PrintWriter(new FileWriter("./src/main/resources/data.sql"));
+
+    private final Iterator<String> orgImages = getOrgImagesPathIterator(rootImages + "/organization");
 
     public FakeDatabaseGenerator() throws IOException {
     }
@@ -49,6 +61,9 @@ public class FakeDatabaseGenerator {
         out.println("--\t- " + SUPER_ADMINS + " super admins");
         out.println("--\t- " + ADMINS + " admins");
         out.println("--\t- " + USERS + " users");
+        out.println("--\t- " + ORGANIZATIONS + " organizations");
+        out.println("--\t\t- " + ADMINS_PER_ORGANIZATION + " admins per organization");
+        out.println("--\t\t- " + USERS_PER_ORGANIZATION + " users per organization");
         out.println("--");
 
         out.flush();
@@ -57,16 +72,25 @@ public class FakeDatabaseGenerator {
     public void generate() {
         generateHeader(out);
 
+        // generating organizations
+        LongGenerator orgId = new LongGenerator();
+        Map<Long, Organization> orgs = generateOrganizations(orgId);
+
         // generating roles
         LongGenerator roleId = new LongGenerator();
         Map<Long, Role> roles = generateRoles(roleId);
 
         // generating users
         LongGenerator userId = new LongGenerator();
-        Map<Long, User> users = generateUsers(new ArrayList<>(roles.values()), userId);
+        Map<Long, User> users = generateUsers(roles, orgs, userId);
 
 
         ////////////////////
+
+        // inserting organizations
+        printToSqlInsert(orgs.values(), "inserting organizations", out, SqlUtil::toSqlInsert);
+        // altering org_id_seq
+        printSequenceRestart(ORGANIZATIONS, orgId, "organization_id_seq", out);
 
         // inserting roles
         printToSqlInsert(roles.values(), "inserting roles", out, SqlUtil::toSqlInsert);
@@ -79,6 +103,23 @@ public class FakeDatabaseGenerator {
         printSequenceRestart(SUPER_ADMINS + ADMINS + USERS, userId, "user_id_seq", out);
 
         out.close();
+    }
+
+    private Map<Long, Organization> generateOrganizations(LongGenerator orgId) {
+        LinkedHashMap<Long, Organization> orgs = new LinkedHashMap<>(ORGANIZATIONS);
+
+        for (int i = 0; i < ORGANIZATIONS; i++) {
+            Organization org = new Organization(
+                    orgId.next(),
+                    faker.dragonBall().character(),
+                    generateLorem(faker, LOREM_LENGTH),
+                    orgImages.next(),
+                    false
+            );
+            orgs.put(org.getId(), org);
+        }
+
+        return orgs;
     }
 
     private Map<Long, Role> generateRoles(LongGenerator roleId) {
@@ -111,29 +152,72 @@ public class FakeDatabaseGenerator {
         return createdRole;
     }
 
-    private Map<Long, User> generateUsers(List<Role> roles, LongGenerator userId) {
+    private Map<Long, User> generateUsers(Map<Long, Role> roles, Map<Long, Organization> orgs, LongGenerator userId) {
         LinkedHashMap<Long, User> users = new LinkedHashMap<>(SUPER_ADMINS + ADMINS + USERS);
 
-        for (Role role : roles) {
-            int usersPerRole = getUsersPerRole(role, SUPER_ADMINS, ADMINS, USERS);
-            String roleUsername = getRoleUsername(role);
+        Map<Long, User> superAdmins = generateSuperAdmins(roles.get(1L), userId);
+        users.putAll(superAdmins);
 
-            for (int i = 0; i < usersPerRole; i++) {
-                User user = new User(
-                        userId.next(),
-                        faker.name().firstName(),
-                        escapeApostrophe(faker.name().lastName()),
-                        roleUsername + (i + 1) + "@gmail.com",
-                        roleUsername + (i + 1),
-                        encodedPassword,
-                        false,
-                        role
-                );
+        Map<Long, User> admins = generateAdmins(roles.get(2L), orgs, userId);
+        users.putAll(admins);
+
+        Map<Long, User> regulars = generateUsers(roles.get(3L), orgs, userId);
+        users.putAll(regulars);
+
+        return users;
+    }
+
+    private Map<Long, User> generateSuperAdmins(Role superRole, LongGenerator userId) {
+        LinkedHashMap<Long, User> superAdmins = new LinkedHashMap<>(SUPER_ADMINS);
+
+        for (int i = 0; i < SUPER_ADMINS; i++) {
+            User user = createUser(userId.next(), "superadmin" + (i + 1), superRole, null);
+            superAdmins.put(userId.current(), user);
+        }
+
+        return superAdmins;
+    }
+
+    private Map<Long, User> generateAdmins(Role adminRole, Map<Long, Organization> orgs, LongGenerator userId) {
+        LinkedHashMap<Long, User> admins = new LinkedHashMap<>(ADMINS);
+
+        for (int i = 0; i < ORGANIZATIONS; i++) {
+            Organization org = orgs.get(i + 1L);
+            for (int j = 0; j < ADMINS_PER_ORGANIZATION; j++) {
+                User user = createUser(userId.next(), "admin" + (i * ADMINS_PER_ORGANIZATION + j + 1), adminRole, org);
+                admins.put(userId.current(), user);
+            }
+        }
+
+        return admins;
+    }
+
+    private Map<Long, User> generateUsers(Role userRole, Map<Long, Organization> orgs, LongGenerator userId) {
+        LinkedHashMap<Long, User> users = new LinkedHashMap<>(USERS);
+
+        for (int i = 0; i < ORGANIZATIONS; i++) {
+            Organization org = orgs.get(i + 1L);
+            for (int j = 0; j < USERS_PER_ORGANIZATION; j++) {
+                User user = createUser(userId.next(), "user" + (i * USERS_PER_ORGANIZATION + j + 1), userRole, org);
                 users.put(userId.current(), user);
             }
         }
 
         return users;
+    }
+
+    private User createUser(Long id, String username, Role userRole, Organization org) {
+        return new User(
+                id,
+                faker.name().firstName(),
+                escapeApostrophe(faker.name().lastName()),
+                username + "@gmail.com",
+                username,
+                encodedPassword,
+                false,
+                userRole,
+                org
+        );
     }
 
     private <T> void printToSqlInsert(Collection<T> values, String linesDescription, PrintWriter out, Function<T, String> fun) {
