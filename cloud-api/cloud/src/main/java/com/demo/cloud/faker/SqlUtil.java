@@ -1,6 +1,7 @@
 package com.demo.cloud.faker;
 
 import com.demo.cloud.model.Category;
+import com.demo.cloud.model.Drive;
 import com.demo.cloud.model.Organization;
 import com.demo.cloud.model.Role;
 import com.demo.cloud.model.User;
@@ -51,6 +52,17 @@ public class SqlUtil {
                 machine.isArchived() + ", " +
                 machine.getOrganization().getId() + ", " +
                 machine.getCategory().getId() + ");";
+    }
+
+    public static String toSqlInsert(Drive drive) {
+        return "insert into drives(id, name, capacity, type, archived, organization_id, machine_id) values (" +
+                drive.getId() + ", '" +
+                drive.getName() + "', " +
+                drive.getCapacity() + ", '" +
+                drive.getType().toString() + "', " +
+                drive.isArchived() + ", " +
+                drive.getOrganization().getId() + ", " +
+                "null" + ");";
     }
 
     public static String toSqlAlterSequenceRestart(String sequenceName, long restartWith) {

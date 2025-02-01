@@ -1,5 +1,6 @@
 package com.demo.cloud.faker;
 
+import com.demo.cloud.model.DriveType;
 import com.github.javafaker.Faker;
 
 import java.io.BufferedReader;
@@ -39,6 +40,15 @@ public class FakerUtil {
         }
 
         return images.iterator();
+    }
+
+    private static Integer[] capacity = {256, 512, 1024, 2048, 5120};
+    public static int getCapacity(Faker faker) {
+        return faker.options().nextElement(capacity);
+    }
+
+    public static DriveType getType(Faker faker) {
+        return faker.options().option(DriveType.class);
     }
 
     public static String generateLorem(Faker faker, int length) {

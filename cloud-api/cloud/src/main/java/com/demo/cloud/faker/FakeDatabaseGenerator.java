@@ -1,6 +1,7 @@
 package com.demo.cloud.faker;
 
 import com.demo.cloud.model.Category;
+import com.demo.cloud.model.Drive;
 import com.demo.cloud.model.Organization;
 import com.demo.cloud.model.Role;
 import com.demo.cloud.model.User;
@@ -13,17 +14,22 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 
 import static com.demo.cloud.faker.FakerUtil.escapeApostrophe;
 import static com.demo.cloud.faker.FakerUtil.generateLorem;
+import static com.demo.cloud.faker.FakerUtil.getCapacity;
 import static com.demo.cloud.faker.FakerUtil.getCategoryDataIterator;
 import static com.demo.cloud.faker.FakerUtil.getOrgImagesPathIterator;
+import static com.demo.cloud.faker.FakerUtil.getType;
 import static com.demo.cloud.faker.SqlUtil.toSqlAlterSequenceRestart;
 
 public class FakeDatabaseGenerator {
@@ -50,6 +56,9 @@ public class FakeDatabaseGenerator {
     private final int MACHINES_PER_ORGANIZATION = 200;
     private final int MACHINES = ORGANIZATIONS * MACHINES_PER_ORGANIZATION;
 
+    private final int DRIVES_PER_ORGANIZATION = 500;
+    private final int DRIVES = ORGANIZATIONS * DRIVES_PER_ORGANIZATION;
+
     private final String encodedPassword = "$2a$10$JCYrt8QGHg4suBXWiRgjKu93h5DCq3yFDXMDsTY/Itkgeu3h3pCE6";
 
     private final PrintWriter out = new PrintWriter(new FileWriter("./src/main/resources/data.sql"));
@@ -74,6 +83,11 @@ public class FakeDatabaseGenerator {
         out.println("--\t- " + ORGANIZATIONS + " organizations");
         out.println("--\t\t- " + ADMINS_PER_ORGANIZATION + " admins per organization");
         out.println("--\t\t- " + USERS_PER_ORGANIZATION + " users per organization");
+        out.println("--\t\t- " + MACHINES_PER_ORGANIZATION + " machines per organization");
+        out.println("--\t\t- " + DRIVES_PER_ORGANIZATION + " machines per organization");
+        out.println("--\t- " + CATEGORIES + " categories");
+        out.println("--\t- " + MACHINES + " machines");
+        out.println("--\t- " + DRIVES + " drives");
         out.println("--");
 
         out.flush();
@@ -102,6 +116,11 @@ public class FakeDatabaseGenerator {
         LongGenerator machineId = new LongGenerator();
         Map<Long, VirtualMachine> machines = generateMachines(orgs, machineId);
 
+        // generating drives
+        LongGenerator driveId = new LongGenerator();
+        Map<Organization, List<Drive>> orgDrives = createOrgDriveMap(orgs);
+        Map<Long, Drive> drives = generateDrives(orgs, orgDrives, driveId);
+
         ////////////////////
 
         // inserting organizations
@@ -128,6 +147,11 @@ public class FakeDatabaseGenerator {
         printToSqlInsert(machines.values(), "inserting machines", out, SqlUtil::toSqlInsert);
         // altering machine_id_seq
         printSequenceRestart(MACHINES, machineId, "machine_id_seq", out);
+
+        // inserting drives
+        printToSqlInsert(drives.values(), "inserting drives", out, SqlUtil::toSqlInsert);
+        // altering drive_id_seq
+        printSequenceRestart(DRIVES, driveId, "drive_id_seq", out);
 
         out.close();
     }
@@ -254,7 +278,7 @@ public class FakeDatabaseGenerator {
             int[] data = categoryData.next();
             Category cat = new Category(
                     catId.next(),
-                    catId.current() + ": " + faker.lordOfTheRings().location(),
+                    catId.current() + ": " + escapeApostrophe(faker.lordOfTheRings().location()),
                     data[0],
                     data[1],
                     data[2],
@@ -286,6 +310,42 @@ public class FakeDatabaseGenerator {
         }
 
         return machines;
+    }
+
+    private Map<Organization, List<Drive>> createOrgDriveMap(Map<Long, Organization> orgs) {
+        HashMap<Organization, List<Drive>> orgDrives = new HashMap<>();
+
+        for (int i = 0; i < ORGANIZATIONS; i++) {
+            Organization org = orgs.get(i + 1L);
+            orgDrives.put(org, new ArrayList<>());
+        }
+
+        return orgDrives;
+    }
+
+    private Map<Long, Drive> generateDrives(Map<Long, Organization> orgs, Map<Organization, List<Drive>> orgDrives, LongGenerator driveId) {
+        LinkedHashMap<Long, Drive> drives = new LinkedHashMap<>(DRIVES);
+
+        for (int i = 0; i < ORGANIZATIONS; i++) {
+            Organization org = orgs.get(i + 1L);
+            for (int j = 0; j < DRIVES_PER_ORGANIZATION; j++) {
+                List<Drive> drivesPerOrg = orgDrives.get(org);
+                Drive drive = new Drive(
+                        driveId.next(),
+                        driveId.current() + ": " + faker.backToTheFuture().character(),
+                        getCapacity(faker),
+                        getType(faker),
+                        false,
+                        org,
+                        null
+                );
+
+                drivesPerOrg.add(drive);
+                drives.put(drive.getId(), drive);
+            }
+        }
+
+        return drives;
     }
 
     private <T> void printToSqlInsert(Collection<T> values, String linesDescription, PrintWriter out, Function<T, String> fun) {
