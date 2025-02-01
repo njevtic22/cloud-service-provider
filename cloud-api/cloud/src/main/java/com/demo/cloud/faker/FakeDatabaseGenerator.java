@@ -1,8 +1,11 @@
 package com.demo.cloud.faker;
 
+import com.demo.cloud.model.Category;
 import com.demo.cloud.model.Organization;
 import com.demo.cloud.model.Role;
 import com.demo.cloud.model.User;
+import com.demo.cloud.model.VirtualMachine;
+import com.demo.cloud.util.CycleIterator;
 import com.demo.cloud.util.LongGenerator;
 import com.github.javafaker.Faker;
 
@@ -19,6 +22,7 @@ import java.util.function.Function;
 
 import static com.demo.cloud.faker.FakerUtil.escapeApostrophe;
 import static com.demo.cloud.faker.FakerUtil.generateLorem;
+import static com.demo.cloud.faker.FakerUtil.getCategoryDataIterator;
 import static com.demo.cloud.faker.FakerUtil.getOrgImagesPathIterator;
 import static com.demo.cloud.faker.SqlUtil.toSqlAlterSequenceRestart;
 
@@ -42,10 +46,16 @@ public class FakeDatabaseGenerator {
     private final int ADMINS = ORGANIZATIONS * ADMINS_PER_ORGANIZATION;
     private final int USERS = ORGANIZATIONS * USERS_PER_ORGANIZATION;
 
+    private final int CATEGORIES = 25;
+    private final int MACHINES_PER_ORGANIZATION = 200;
+    private final int MACHINES = ORGANIZATIONS * MACHINES_PER_ORGANIZATION;
+
     private final String encodedPassword = "$2a$10$JCYrt8QGHg4suBXWiRgjKu93h5DCq3yFDXMDsTY/Itkgeu3h3pCE6";
 
     private final PrintWriter out = new PrintWriter(new FileWriter("./src/main/resources/data.sql"));
 
+    private CycleIterator<Category> categories;
+    private final Iterator<int[]> categoryData = getCategoryDataIterator("category-data.csv");
     private final Iterator<String> orgImages = getOrgImagesPathIterator(rootImages + "/organization");
 
     public FakeDatabaseGenerator() throws IOException {
@@ -84,6 +94,13 @@ public class FakeDatabaseGenerator {
         LongGenerator userId = new LongGenerator();
         Map<Long, User> users = generateUsers(roles, orgs, userId);
 
+        // generating categories
+        LongGenerator catId = new LongGenerator();
+        Map<Long, Category> cats = generateCategories(catId);
+
+        // generating virtual machines
+        LongGenerator machineId = new LongGenerator();
+        Map<Long, VirtualMachine> machines = generateMachines(orgs, machineId);
 
         ////////////////////
 
@@ -102,6 +119,16 @@ public class FakeDatabaseGenerator {
         // altering user_id_seq
         printSequenceRestart(SUPER_ADMINS + ADMINS + USERS, userId, "user_id_seq", out);
 
+        // inserting categories
+        printToSqlInsert(cats.values(), "inserting categories", out, SqlUtil::toSqlInsert);
+        // altering category_id_seq
+        printSequenceRestart(CATEGORIES, catId, "category_id_seq", out);
+
+        // inserting machines
+        printToSqlInsert(machines.values(), "inserting machines", out, SqlUtil::toSqlInsert);
+        // altering machine_id_seq
+        printSequenceRestart(MACHINES, machineId, "machine_id_seq", out);
+
         out.close();
     }
 
@@ -111,7 +138,7 @@ public class FakeDatabaseGenerator {
         for (int i = 0; i < ORGANIZATIONS; i++) {
             Organization org = new Organization(
                     orgId.next(),
-                    faker.dragonBall().character(),
+                    orgId.current() + ": " + faker.dragonBall().character(),
                     generateLorem(faker, LOREM_LENGTH),
                     orgImages.next(),
                     false
@@ -218,6 +245,47 @@ public class FakeDatabaseGenerator {
                 userRole,
                 org
         );
+    }
+
+    private Map<Long, Category> generateCategories(LongGenerator catId) {
+        LinkedHashMap<Long, Category> cats = new LinkedHashMap<>(CATEGORIES);
+
+        for (int i = 0; i < CATEGORIES; i++) {
+            int[] data = categoryData.next();
+            Category cat = new Category(
+                    catId.next(),
+                    catId.current() + ": " + faker.lordOfTheRings().location(),
+                    data[0],
+                    data[1],
+                    data[2],
+                    false
+            );
+            cats.put(cat.getId(), cat);
+        }
+
+        categories = new CycleIterator<>(cats.values().toArray(new Category[0]));
+
+        return cats;
+    }
+
+    private Map<Long, VirtualMachine> generateMachines(Map<Long, Organization> orgs, LongGenerator machineId) {
+        LinkedHashMap<Long, VirtualMachine> machines = new LinkedHashMap<>(MACHINES);
+
+        for (int i = 0; i < ORGANIZATIONS; i++) {
+            Organization org = orgs.get(i + 1L);
+            for (int j = 0; j < MACHINES_PER_ORGANIZATION; j++) {
+                VirtualMachine machine = new VirtualMachine(
+                        machineId.next(),
+                        machineId.current() + ": " + faker.lordOfTheRings().character(),
+                        false,
+                        org,
+                        categories.next()
+                );
+                machines.put(machine.getId(), machine);
+            }
+        }
+
+        return machines;
     }
 
     private <T> void printToSqlInsert(Collection<T> values, String linesDescription, PrintWriter out, Function<T, String> fun) {

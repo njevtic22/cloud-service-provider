@@ -1,8 +1,10 @@
 package com.demo.cloud.faker;
 
+import com.demo.cloud.model.Category;
 import com.demo.cloud.model.Organization;
 import com.demo.cloud.model.Role;
 import com.demo.cloud.model.User;
+import com.demo.cloud.model.VirtualMachine;
 
 public class SqlUtil {
     public static String toSqlInsert(Organization organization) {
@@ -30,6 +32,25 @@ public class SqlUtil {
                 user.isArchived() + ", " +
                 user.getRole().getId() + ", " +
                 orgId + ");";
+    }
+
+    public static String toSqlInsert(Category cat) {
+        return "insert into categories(id, name, cpu, ram, gpu, archived) values (" +
+                cat.getId() + ", '" +
+                cat.getName() + "', " +
+                cat.getCpu() + ", " +
+                cat.getRam() + ", " +
+                cat.getGpu() + ", " +
+                cat.isArchived() + ");";
+    }
+
+    public static String toSqlInsert(VirtualMachine machine) {
+        return "insert into virtual_machines(id, name, archived, organization_id, category_id) values (" +
+                machine.getId() + ", '" +
+                machine.getName() + "', " +
+                machine.isArchived() + ", " +
+                machine.getOrganization().getId() + ", " +
+                machine.getCategory().getId() + ");";
     }
 
     public static String toSqlAlterSequenceRestart(String sequenceName, long restartWith) {
