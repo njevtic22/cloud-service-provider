@@ -58,7 +58,7 @@ public class Drive {
         this.type = Objects.requireNonNull(type, "Type must not be null.");
         this.archived = archived;
         this.organization = Objects.requireNonNull(organization, "Organization must not be null.");
-        this.machine = Objects.requireNonNull(machine, "Machine must not be null.");
+        this.machine = machine;
     }
 
     @Override

@@ -27,19 +27,19 @@ public class Activity {
     private LocalDate turnedOff;
 
     @ManyToOne
-    private VirtualMachine machines;
+    private VirtualMachine machine;
 
     public Activity() { }
 
-    public Activity(LocalDate turnedOn, LocalDate turnedOff, VirtualMachine machines) {
-        this(null, turnedOn, turnedOff, machines);
+    public Activity(LocalDate turnedOn, LocalDate turnedOff, VirtualMachine machine) {
+        this(null, turnedOn, turnedOff, machine);
     }
 
-    public Activity(Long id, LocalDate turnedOn, LocalDate turnedOff, VirtualMachine machines) {
+    public Activity(Long id, LocalDate turnedOn, LocalDate turnedOff, VirtualMachine machine) {
         this.id = id;
         this.turnedOn = Objects.requireNonNull(turnedOn, "Turned on date must not be null.");
         this.turnedOff = turnedOff;
-        this.machines = Objects.requireNonNull(machines, "Virtual machine must not be null.");
+        this.machine = Objects.requireNonNull(machine, "Virtual machine must not be null.");
 
     }
 
@@ -67,7 +67,7 @@ public class Activity {
         return turnedOff;
     }
 
-    public VirtualMachine getMachines() {
-        return machines;
+    public VirtualMachine getMachine() {
+        return machine;
     }
 }
