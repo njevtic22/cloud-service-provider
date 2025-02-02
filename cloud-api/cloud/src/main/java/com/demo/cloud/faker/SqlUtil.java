@@ -1,5 +1,6 @@
 package com.demo.cloud.faker;
 
+import com.demo.cloud.model.Activity;
 import com.demo.cloud.model.Category;
 import com.demo.cloud.model.Drive;
 import com.demo.cloud.model.Organization;
@@ -64,6 +65,15 @@ public class SqlUtil {
                 drive.isArchived() + ", " +
                 drive.getOrganization().getId() + ", " +
                 machineId + ");";
+    }
+
+    public static String toSqlInsert(Activity activity) {
+        String turnedOff = activity.getTurnedOff() == null ? null : "'" + activity.getTurnedOff() + "'";
+        return "insert into activities(id, turned_on, turned_off, machine_id) values (" +
+                activity.getId() + ", '" +
+                activity.getTurnedOn() + "', " +
+                turnedOff + ", " +
+                activity.getMachine().getId() + ");";
     }
 
     public static String toSqlAlterSequenceRestart(String sequenceName, long restartWith) {

@@ -1,5 +1,6 @@
 package com.demo.cloud.faker;
 
+import com.demo.cloud.model.Activity;
 import com.demo.cloud.model.Category;
 import com.demo.cloud.model.Drive;
 import com.demo.cloud.model.Organization;
@@ -14,6 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,6 +28,8 @@ import java.util.function.Function;
 
 import static com.demo.cloud.faker.FakerUtil.escapeApostrophe;
 import static com.demo.cloud.faker.FakerUtil.generateLorem;
+import static com.demo.cloud.faker.FakerUtil.generateTurnedOn;
+import static com.demo.cloud.faker.FakerUtil.generateTurnedOnAndOff;
 import static com.demo.cloud.faker.FakerUtil.getCapacity;
 import static com.demo.cloud.faker.FakerUtil.getCategoryDataIterator;
 import static com.demo.cloud.faker.FakerUtil.getOrgImagesPathIterator;
@@ -60,6 +64,12 @@ public class FakeDatabaseGenerator {
     private final int DRIVES = ORGANIZATIONS * DRIVES_PER_ORGANIZATION;
     private final int DRIVES_PER_MACHINE = 2; // always check number of machines and drives per organization
 
+    private final int FINISHED_ACTIVITIES_PER_MACHINE = 20;
+    private final int FINISHED_ACTIVITIES = MACHINES * FINISHED_ACTIVITIES_PER_MACHINE;
+    private final int ACTIVE_MACHINES_PER_ORGANIZATION = 100;
+    private final int UNFINISHED_ACTIVITIES = ORGANIZATIONS * ACTIVE_MACHINES_PER_ORGANIZATION;
+    private final int ACTIVITIES = FINISHED_ACTIVITIES + UNFINISHED_ACTIVITIES;
+
     private final String encodedPassword = "$2a$10$JCYrt8QGHg4suBXWiRgjKu93h5DCq3yFDXMDsTY/Itkgeu3h3pCE6";
 
     private final PrintWriter mOut = new PrintWriter(new FileWriter("./src/main/resources/organizations_roles_users_categories_machines.sql"));
@@ -90,6 +100,9 @@ public class FakeDatabaseGenerator {
         out.println("--\t- " + CATEGORIES + " categories");
         out.println("--\t- " + MACHINES + " machines");
         out.println("--\t- " + DRIVES + " drives");
+        out.println("--\t- " + ACTIVITIES + " activities");
+        out.println("--\t\t- " + FINISHED_ACTIVITIES + " finished activities");
+        out.println("--\t\t- " + UNFINISHED_ACTIVITIES + " unfinished activities");
         out.println("--");
 
         out.flush();
@@ -128,6 +141,10 @@ public class FakeDatabaseGenerator {
         // connecting drives and machines
         connectDrivesMachines(orgMachines, orgDrives);
 
+        // generating activities
+        LongGenerator activityId = new LongGenerator();
+        Map<Long, Activity> activities = generateActivities(orgMachines, activityId);
+
         ////////////////////
 
         // inserting organizations
@@ -159,6 +176,11 @@ public class FakeDatabaseGenerator {
         printToSqlInsert(drives.values(), "inserting drives", dOut, SqlUtil::toSqlInsert);
         // altering drive_id_seq
         printSequenceRestart(DRIVES, driveId, "drive_id_seq", dOut);
+
+        // inserting activities
+        printToSqlInsert(activities.values(), "inserting activities", dOut, SqlUtil::toSqlInsert);
+        // altering activity_id_seq
+        printSequenceRestart(ACTIVITIES, activityId, "activity_id_seq", dOut);
 
         mOut.close();
         dOut.close();
@@ -377,12 +399,12 @@ public class FakeDatabaseGenerator {
         for (Map.Entry<Organization, List<VirtualMachine>> entry : orgMachines.entrySet()) {
             Organization org = entry.getKey();
             List<VirtualMachine> machines = entry.getValue();
-            List<Drive> drives = new ArrayList<>(orgDrives.get(org));
+            Iterator<Drive> drive = orgDrives.get(org).iterator();
 
             for (VirtualMachine toConnect : machines) {
                 for (int i = 0; i < DRIVES_PER_MACHINE; i++) {
-                    Drive removed = drives.remove(0);
-                    connect(removed, toConnect);
+                    Drive driveConnect = drive.next();
+                    connect(driveConnect, toConnect);
                 }
             }
         }
@@ -398,6 +420,39 @@ public class FakeDatabaseGenerator {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Map<Long, Activity> generateActivities(Map<Organization, List<VirtualMachine>> orgMachines, LongGenerator activityId) {
+        LinkedHashMap<Long, Activity> activities = new LinkedHashMap<>(ACTIVITIES);
+
+        for (List<VirtualMachine> machines : orgMachines.values()) {
+            for (VirtualMachine machine : machines) {
+                LocalDate[][] datePairs = generateTurnedOnAndOff(machine, FINISHED_ACTIVITIES_PER_MACHINE);
+                for (int i = 0; i < FINISHED_ACTIVITIES_PER_MACHINE; i++) {
+                    LocalDate[] pair = datePairs[i];
+                    Activity activity = new Activity(
+                            activityId.next(),
+                            pair[0],
+                            pair[1],
+                            machine
+                    );
+                    activities.put(activity.getId(), activity);
+                }
+            }
+
+            for (int i = 0; i < ACTIVE_MACHINES_PER_ORGANIZATION; i++) {
+                VirtualMachine machine = machines.get(i);
+                Activity activity = new Activity(
+                        activityId.next(),
+                        generateTurnedOn(faker),
+                        null,
+                        machine
+                );
+                activities.put(activity.getId(), activity);
+            }
+        }
+
+        return activities;
     }
 
     private <T> void printToSqlInsert(Collection<T> values, String linesDescription, PrintWriter out, Function<T, String> fun) {
