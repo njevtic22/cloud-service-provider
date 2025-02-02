@@ -4,6 +4,8 @@ import com.demo.cloud.core.error.exceptions.BlankStringException;
 import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
 import com.demo.cloud.core.error.exceptions.InvalidPasswordException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -21,8 +23,12 @@ import java.util.List;
 
 @ControllerAdvice
 public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        logger.info(ex.getMessage(), ex);
+
         ArrayList<FieldErrorMessage> details = new ArrayList<>();
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
             String messages = fieldError.getDefaultMessage() == null ? "Message is: null" : fieldError.getDefaultMessage();
@@ -41,18 +47,24 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
             BlankStringException.class
     })
     public ResponseEntity<ApiError> handleBadRequest(RuntimeException ex) {
+        logger.info(ex.getMessage(), ex);
+
         ApiError errorBody = new ApiError(ex.getMessage());
         return ResponseEntity.badRequest().body(errorBody);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiError> handleNotFound(RuntimeException ex) {
+        logger.info(ex.getMessage(), ex);
+
         ApiError errorBody = new ApiError(ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorBody);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleInternalServer(Exception ex) {
+        logger.error(ex.getMessage(), ex);
+
         ApiError errorBody = new ApiError(ex.getMessage());
         return ResponseEntity.internalServerError().body(errorBody);
     }
