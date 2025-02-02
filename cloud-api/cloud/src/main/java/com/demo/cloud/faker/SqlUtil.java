@@ -55,6 +55,7 @@ public class SqlUtil {
     }
 
     public static String toSqlInsert(Drive drive) {
+        Long machineId = drive.getMachine() == null ? null : drive.getMachine().getId();
         return "insert into drives(id, name, capacity, type, archived, organization_id, machine_id) values (" +
                 drive.getId() + ", '" +
                 drive.getName() + "', " +
@@ -62,7 +63,7 @@ public class SqlUtil {
                 drive.getType().toString() + "', " +
                 drive.isArchived() + ", " +
                 drive.getOrganization().getId() + ", " +
-                "null" + ");";
+                machineId + ");";
     }
 
     public static String toSqlAlterSequenceRestart(String sequenceName, long restartWith) {

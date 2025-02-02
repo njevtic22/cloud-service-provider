@@ -58,10 +58,12 @@ public class FakeDatabaseGenerator {
 
     private final int DRIVES_PER_ORGANIZATION = 500;
     private final int DRIVES = ORGANIZATIONS * DRIVES_PER_ORGANIZATION;
+    private final int DRIVES_PER_MACHINE = 2; // always check number of machines and drives per organization
 
     private final String encodedPassword = "$2a$10$JCYrt8QGHg4suBXWiRgjKu93h5DCq3yFDXMDsTY/Itkgeu3h3pCE6";
 
-    private final PrintWriter out = new PrintWriter(new FileWriter("./src/main/resources/data.sql"));
+    private final PrintWriter mOut = new PrintWriter(new FileWriter("./src/main/resources/organizations_roles_users_categories_machines.sql"));
+    private final PrintWriter dOut = new PrintWriter(new FileWriter("./src/main/resources/drives_activities.sql"));
 
     private CycleIterator<Category> categories;
     private final Iterator<int[]> categoryData = getCategoryDataIterator("category-data.csv");
@@ -84,7 +86,7 @@ public class FakeDatabaseGenerator {
         out.println("--\t\t- " + ADMINS_PER_ORGANIZATION + " admins per organization");
         out.println("--\t\t- " + USERS_PER_ORGANIZATION + " users per organization");
         out.println("--\t\t- " + MACHINES_PER_ORGANIZATION + " machines per organization");
-        out.println("--\t\t- " + DRIVES_PER_ORGANIZATION + " machines per organization");
+        out.println("--\t\t- " + DRIVES_PER_ORGANIZATION + " drives per organization");
         out.println("--\t- " + CATEGORIES + " categories");
         out.println("--\t- " + MACHINES + " machines");
         out.println("--\t- " + DRIVES + " drives");
@@ -94,7 +96,8 @@ public class FakeDatabaseGenerator {
     }
 
     public void generate() {
-        generateHeader(out);
+        generateHeader(mOut);
+        generateHeader(dOut);
 
         // generating organizations
         LongGenerator orgId = new LongGenerator();
@@ -114,46 +117,51 @@ public class FakeDatabaseGenerator {
 
         // generating virtual machines
         LongGenerator machineId = new LongGenerator();
-        Map<Long, VirtualMachine> machines = generateMachines(orgs, machineId);
+        Map<Organization, List<VirtualMachine>> orgMachines = createOrgMachineMap(orgs);
+        Map<Long, VirtualMachine> machines = generateMachines(orgs, orgMachines, machineId);
 
         // generating drives
         LongGenerator driveId = new LongGenerator();
         Map<Organization, List<Drive>> orgDrives = createOrgDriveMap(orgs);
         Map<Long, Drive> drives = generateDrives(orgs, orgDrives, driveId);
 
+        // connecting drives and machines
+        connectDrivesMachines(orgMachines, orgDrives);
+
         ////////////////////
 
         // inserting organizations
-        printToSqlInsert(orgs.values(), "inserting organizations", out, SqlUtil::toSqlInsert);
+        printToSqlInsert(orgs.values(), "inserting organizations", mOut, SqlUtil::toSqlInsert);
         // altering org_id_seq
-        printSequenceRestart(ORGANIZATIONS, orgId, "organization_id_seq", out);
+        printSequenceRestart(ORGANIZATIONS, orgId, "organization_id_seq", mOut);
 
         // inserting roles
-        printToSqlInsert(roles.values(), "inserting roles", out, SqlUtil::toSqlInsert);
+        printToSqlInsert(roles.values(), "inserting roles", mOut, SqlUtil::toSqlInsert);
         // altering role_id_seq
-        printSequenceRestart(ROLES, roleId, "role_id_seq", out);
+        printSequenceRestart(ROLES, roleId, "role_id_seq", mOut);
 
         // inserting users
-        printToSqlInsert(users.values(), "inserting users", out, SqlUtil::toSqlInsert);
+        printToSqlInsert(users.values(), "inserting users", mOut, SqlUtil::toSqlInsert);
         // altering user_id_seq
-        printSequenceRestart(SUPER_ADMINS + ADMINS + USERS, userId, "user_id_seq", out);
+        printSequenceRestart(SUPER_ADMINS + ADMINS + USERS, userId, "user_id_seq", mOut);
 
         // inserting categories
-        printToSqlInsert(cats.values(), "inserting categories", out, SqlUtil::toSqlInsert);
+        printToSqlInsert(cats.values(), "inserting categories", mOut, SqlUtil::toSqlInsert);
         // altering category_id_seq
-        printSequenceRestart(CATEGORIES, catId, "category_id_seq", out);
+        printSequenceRestart(CATEGORIES, catId, "category_id_seq", mOut);
 
         // inserting machines
-        printToSqlInsert(machines.values(), "inserting machines", out, SqlUtil::toSqlInsert);
+        printToSqlInsert(machines.values(), "inserting machines", mOut, SqlUtil::toSqlInsert);
         // altering machine_id_seq
-        printSequenceRestart(MACHINES, machineId, "machine_id_seq", out);
+        printSequenceRestart(MACHINES, machineId, "machine_id_seq", mOut);
 
         // inserting drives
-        printToSqlInsert(drives.values(), "inserting drives", out, SqlUtil::toSqlInsert);
+        printToSqlInsert(drives.values(), "inserting drives", dOut, SqlUtil::toSqlInsert);
         // altering drive_id_seq
-        printSequenceRestart(DRIVES, driveId, "drive_id_seq", out);
+        printSequenceRestart(DRIVES, driveId, "drive_id_seq", dOut);
 
-        out.close();
+        mOut.close();
+        dOut.close();
     }
 
     private Map<Long, Organization> generateOrganizations(LongGenerator orgId) {
@@ -292,12 +300,13 @@ public class FakeDatabaseGenerator {
         return cats;
     }
 
-    private Map<Long, VirtualMachine> generateMachines(Map<Long, Organization> orgs, LongGenerator machineId) {
+    private Map<Long, VirtualMachine> generateMachines(Map<Long, Organization> orgs, Map<Organization, List<VirtualMachine>> orgMachines, LongGenerator machineId) {
         LinkedHashMap<Long, VirtualMachine> machines = new LinkedHashMap<>(MACHINES);
 
         for (int i = 0; i < ORGANIZATIONS; i++) {
             Organization org = orgs.get(i + 1L);
             for (int j = 0; j < MACHINES_PER_ORGANIZATION; j++) {
+                List<VirtualMachine> machinesPerOrg = orgMachines.get(org);
                 VirtualMachine machine = new VirtualMachine(
                         machineId.next(),
                         machineId.current() + ": " + faker.lordOfTheRings().character(),
@@ -305,6 +314,8 @@ public class FakeDatabaseGenerator {
                         org,
                         categories.next()
                 );
+
+                machinesPerOrg.add(machine);
                 machines.put(machine.getId(), machine);
             }
         }
@@ -312,11 +323,25 @@ public class FakeDatabaseGenerator {
         return machines;
     }
 
+    private Map<Organization, List<VirtualMachine>> createOrgMachineMap(Map<Long, Organization> orgs) {
+        HashMap<Organization, List<VirtualMachine>> orgMachines = new HashMap<>();
+
+        for (Organization org : orgs.values()) {
+            orgMachines.put(org, new ArrayList<>());
+        }
+
+        return orgMachines;
+    }
+
     private Map<Organization, List<Drive>> createOrgDriveMap(Map<Long, Organization> orgs) {
         HashMap<Organization, List<Drive>> orgDrives = new HashMap<>();
 
-        for (int i = 0; i < ORGANIZATIONS; i++) {
-            Organization org = orgs.get(i + 1L);
+//        for (int i = 0; i < ORGANIZATIONS; i++) {
+//            Organization org = orgs.get(i + 1L);
+//            orgDrives.put(org, new ArrayList<>());
+//        }
+
+        for (Organization org : orgs.values()) {
             orgDrives.put(org, new ArrayList<>());
         }
 
@@ -346,6 +371,33 @@ public class FakeDatabaseGenerator {
         }
 
         return drives;
+    }
+
+    private void connectDrivesMachines(Map<Organization, List<VirtualMachine>> orgMachines, Map<Organization, List<Drive>> orgDrives) {
+        for (Map.Entry<Organization, List<VirtualMachine>> entry : orgMachines.entrySet()) {
+            Organization org = entry.getKey();
+            List<VirtualMachine> machines = entry.getValue();
+            List<Drive> drives = new ArrayList<>(orgDrives.get(org));
+
+            for (VirtualMachine toConnect : machines) {
+                for (int i = 0; i < DRIVES_PER_MACHINE; i++) {
+                    Drive removed = drives.remove(0);
+                    connect(removed, toConnect);
+                }
+            }
+        }
+    }
+
+    private void connect(Drive drive, VirtualMachine machine) {
+        try {
+            Field machineField = Drive.class.getDeclaredField("machine");
+            machineField.setAccessible(true);
+
+            machineField.set(drive, machine);
+
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private <T> void printToSqlInsert(Collection<T> values, String linesDescription, PrintWriter out, Function<T, String> fun) {
