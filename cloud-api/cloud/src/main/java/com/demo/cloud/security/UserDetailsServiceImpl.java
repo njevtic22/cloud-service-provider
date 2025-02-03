@@ -1,8 +1,7 @@
 package com.demo.cloud.security;
 
-import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
 import com.demo.cloud.model.User;
-import com.demo.cloud.service.UserService;
+import com.demo.cloud.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,28 +12,24 @@ import java.util.List;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private final UserService service;
+//    Service is not used in order to break dependency cycle
+//    private final UserService service;
 
-    public UserDetailsServiceImpl(UserService service) {
-        this.service = service;
+    private final UserRepository repository;
+
+    public UserDetailsServiceImpl(UserRepository repository) {
+        this.repository = repository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User found = getByUsername(username);
+        User found = repository.findByUsernameAndArchivedFalse(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Invalid username"));
 
         return new org.springframework.security.core.userdetails.User(
                 found.getUsername(),
                 found.getPassword(),
                 List.of(new SimpleGrantedAuthority(found.getRole().getName()))
         );
-    }
-
-    private User getByUsername(String username) {
-        try {
-            return service.getByUsername(username);
-        } catch (EntityNotFoundException ex) {
-            throw new UsernameNotFoundException("Invalid username", ex);
-        }
     }
 }

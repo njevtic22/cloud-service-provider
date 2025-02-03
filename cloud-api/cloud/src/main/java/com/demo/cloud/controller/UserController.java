@@ -73,10 +73,9 @@ public class UserController {
         return ResponseEntity.ok(foundDto);
     }
 
-    @PutMapping("{id}/password")
-    public ResponseEntity<Void> changePassword(@PathVariable Long id, @Valid @RequestBody PasswordChangeDto passwordDto) {
+    @PutMapping("password")
+    public ResponseEntity<Void> changePassword(@Valid @RequestBody PasswordChangeDto passwordDto) {
         service.changePassword(
-                id,
                 passwordDto.oldPassword(),
                 passwordDto.newPassword(),
                 passwordDto.repeatedPassword()

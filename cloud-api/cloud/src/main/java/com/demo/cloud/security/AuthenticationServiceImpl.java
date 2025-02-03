@@ -1,7 +1,8 @@
 package com.demo.cloud.security;
 
+import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
 import com.demo.cloud.model.User;
-import com.demo.cloud.service.UserService;
+import com.demo.cloud.repository.UserRepository;
 import com.demo.cloud.util.Pair;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,12 +14,15 @@ import java.util.ArrayList;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
-    private final UserService service;
+//    Service is not used in order to break circular dependency
+//    private final UserService service;
+
+    private final UserRepository repository;
     private final TokenUtil tokenUtil;
     private final AuthenticationManager authManager;
 
-    public AuthenticationServiceImpl(UserService service, TokenUtil tokenUtil, AuthenticationManager authManager) {
-        this.service = service;
+    public AuthenticationServiceImpl(UserRepository repository, TokenUtil tokenUtil, AuthenticationManager authManager) {
+        this.repository = repository;
         this.tokenUtil = tokenUtil;
         this.authManager = authManager;
     }
@@ -48,6 +52,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private User getUser(Authentication auth) {
         org.springframework.security.core.userdetails.User principal = getPrincipal(auth);
-        return service.getByUsername(principal.getUsername());
+        return repository.findByUsernameAndArchivedFalse(principal.getUsername())
+                .orElseThrow(() -> new EntityNotFoundException("User", "username", principal.getUsername()));
     }
 }

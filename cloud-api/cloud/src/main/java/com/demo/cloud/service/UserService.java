@@ -7,5 +7,5 @@ public interface UserService extends UserAdder, EntityGetter<Long, User>, Entity
 
     User update(Long id, User changes, String roleName, Long organizationId);
 
-    void changePassword(Long userId, String oldPassword, String newPassword, String repeatedPassword);
+    void changePassword(String oldPassword, String newPassword, String repeatedPassword);
 }

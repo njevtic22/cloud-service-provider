@@ -8,6 +8,7 @@ import com.demo.cloud.model.Organization;
 import com.demo.cloud.model.Role;
 import com.demo.cloud.model.User;
 import com.demo.cloud.repository.UserRepository;
+import com.demo.cloud.security.AuthenticationService;
 import com.demo.cloud.service.OrganizationService;
 import com.demo.cloud.service.RoleService;
 import com.demo.cloud.service.UserService;
@@ -27,12 +28,20 @@ public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     private final RoleService roleService;
     private final OrganizationService orgService;
+    private final AuthenticationService authService;
     private final PasswordEncoder encoder;
 
-    public UserServiceImpl(UserRepository repository, RoleService roleService, OrganizationService orgService, PasswordEncoder encoder) {
+    public UserServiceImpl(
+            UserRepository repository,
+            RoleService roleService,
+            OrganizationService orgService,
+            AuthenticationService authService,
+            PasswordEncoder encoder
+    ) {
         this.repository = repository;
         this.roleService = roleService;
         this.orgService = orgService;
+        this.authService = authService;
         this.encoder = encoder;
     }
 
@@ -126,8 +135,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void changePassword(Long userId, String oldPassword, String newPassword, String repeatedPassword) {
-        User existing = getById(userId);
+    public void changePassword(String oldPassword, String newPassword, String repeatedPassword) {
+        User existing = authService.getAuthenticated();
         validatePasswordMatch(existing.getPassword(), oldPassword, newPassword, repeatedPassword);
 
         int rowsAffected = repository.updatePasswordById(existing.getId(), encoder.encode(newPassword));
