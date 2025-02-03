@@ -14,10 +14,12 @@ import java.util.ArrayList;
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserService service;
+    private final TokenUtil tokenUtil;
     private final AuthenticationManager authManager;
 
-    public AuthenticationServiceImpl(UserService service, AuthenticationManager authManager) {
+    public AuthenticationServiceImpl(UserService service, TokenUtil tokenUtil, AuthenticationManager authManager) {
         this.service = service;
+        this.tokenUtil = tokenUtil;
         this.authManager = authManager;
     }
 
@@ -29,9 +31,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         org.springframework.security.core.userdetails.User principal = getPrincipal(auth);
 
         String role = new ArrayList<>(principal.getAuthorities()).get(0).getAuthority();
+        String token = tokenUtil.generateToken(username);
 
-        // TODO: implement jwt
-        return new Pair<>("token", role);
+        return new Pair<>(token, role);
     }
 
     @Override
