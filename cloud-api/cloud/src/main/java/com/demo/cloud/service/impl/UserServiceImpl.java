@@ -74,6 +74,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getByUsername(String username) {
+        return repository.findByUsernameAndArchivedFalse(username)
+                .orElseThrow(() -> new EntityNotFoundException("User", "username", username));
+    }
+
+    @Override
     public User update(Long id, User changes, String roleName, Long organizationId) {
         Objects.requireNonNull(changes, "Admin changes must not be null.");
 
