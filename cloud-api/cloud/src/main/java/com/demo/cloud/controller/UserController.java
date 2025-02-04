@@ -4,10 +4,13 @@ import com.demo.cloud.core.PaginatedResponse;
 import com.demo.cloud.dto.user.AddUserDto;
 import com.demo.cloud.dto.user.PasswordChangeDto;
 import com.demo.cloud.dto.user.UpdateUserDto;
+import com.demo.cloud.dto.user.UpdatedUserDto;
 import com.demo.cloud.dto.user.UserViewDto;
 import com.demo.cloud.filterParams.UserFilter;
 import com.demo.cloud.mapper.UserMapper;
 import com.demo.cloud.model.User;
+import com.demo.cloud.security.AuthenticationService;
+import com.demo.cloud.security.TokenUtil;
 import com.demo.cloud.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -31,10 +34,14 @@ import java.util.List;
 @RequestMapping("api/users")
 public class UserController {
     private final UserService service;
+    private final AuthenticationService authService;
+    private final TokenUtil tokenUtil;
     private final UserMapper mapper;
 
-    public UserController(UserService service, UserMapper mapper) {
+    public UserController(UserService service, AuthenticationService authService, TokenUtil tokenUtil, UserMapper mapper) {
         this.service = service;
+        this.authService = authService;
+        this.tokenUtil = tokenUtil;
         this.mapper = mapper;
     }
 
@@ -84,11 +91,21 @@ public class UserController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<UserViewDto> update(@PathVariable Long id, @Valid @RequestBody UpdateUserDto changesDto) {
+    public ResponseEntity<UpdatedUserDto<UserViewDto>> update(@PathVariable Long id, @Valid @RequestBody UpdateUserDto changesDto) {
+        User authenticated = authService.getAuthenticated();
+        Long authId = authenticated.getId();
+        String authUsername = authenticated.getUsername();
+
         User changes = mapper.toModel(changesDto);
         User updated = service.update(id, changes, changesDto.getRole(), changesDto.getOrganization());
+
+        String jwt = "";
+        if (updated.getId().equals(authId) && !updated.getUsername().equals(authUsername)) {
+            jwt = tokenUtil.generateToken(updated.getUsername());
+        }
+
         UserViewDto updatedDto = mapper.toViewDto(updated);
-        return ResponseEntity.ok(updatedDto);
+        return ResponseEntity.ok(new UpdatedUserDto<>(updatedDto, jwt));
     }
 
     @DeleteMapping("{id}")
