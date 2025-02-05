@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface OrganizationRepository extends JpaRepository<Organization, Long>, JpaSpecificationExecutor<Organization> {
     Optional<Organization> findByIdAndArchivedFalse(Long id);
+
+    boolean existsByName(String name);
 }

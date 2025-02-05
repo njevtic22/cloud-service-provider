@@ -19,7 +19,7 @@ public class Organization {
     @SequenceGenerator(name = "organization_generator", sequenceName = "organization_id_seq", allocationSize = 1)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Column(nullable = false, length = 1000)
@@ -33,7 +33,7 @@ public class Organization {
 
     public Organization() { }
 
-    public Organization(String name, String logo, String description, boolean archived) {
+    public Organization(String name, String description, String logo, boolean archived) {
         this(null, name, description, logo, archived);
     }
 
