@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+import static com.demo.cloud.repository.specification.OrganizationSpecification.getSpec;
+
 @Service
 public class OrganizationServiceImpl implements OrganizationService {
     private final OrganizationRepository repository;
@@ -20,7 +22,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     public Page<Organization> getAll(Pageable pageable, Map<String, String> filter) {
-        return null;
+        return repository.findAll(getSpec(filter, false), pageable);
     }
 
     @Override

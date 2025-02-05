@@ -2,7 +2,14 @@ package com.demo.cloud.repository.specification;
 
 import org.springframework.data.jpa.domain.Specification;
 
-public class ClassSpecification {
+import java.util.Map;
+
+public class EntitySpecification {
+    public static Map<String, String> withArchived(Map<String, String> filter, boolean archived) {
+        filter.put("archived", String.valueOf(archived));
+        return filter;
+    }
+
     public static <T> Specification<T> attrLike(String attr, String keyword) {
         if (keyword == null || keyword.isBlank()) {
             return null;

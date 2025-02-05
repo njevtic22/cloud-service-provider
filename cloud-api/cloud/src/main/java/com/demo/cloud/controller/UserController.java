@@ -60,13 +60,13 @@ public class UserController {
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public ResponseEntity<PaginatedResponse<UserViewDto>> getAll(Pageable pageable, UserFilter filter) {
         Page<User> users = service.getAll(pageable, filter.getParams());
-        List<UserViewDto> userDto = users.getContent()
+        List<UserViewDto> usersDto = users.getContent()
                 .stream()
                 .map(mapper::toViewDto)
                 .toList();
 
         return ResponseEntity.ok(new PaginatedResponse<>(
-                userDto,
+                usersDto,
                 users.getTotalElements(),
                 users.getTotalPages()
         ));

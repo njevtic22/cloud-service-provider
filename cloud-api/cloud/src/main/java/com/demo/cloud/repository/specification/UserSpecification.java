@@ -6,7 +6,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class UserSpecification extends ClassSpecification {
+public class UserSpecification extends EntitySpecification {
     public static Specification<User> getSpec2(Map<String, String> filter) {
         return Specification.where(roleLike(filter.get("role")))
                 .and(attrLike("surname", filter.get("surname")))
@@ -17,8 +17,7 @@ public class UserSpecification extends ClassSpecification {
     }
 
     public static Specification<User> getSpec(Map<String, String> filter, boolean archived) {
-        filter.put("archived", String.valueOf(archived));
-        return getSpec(filter);
+        return getSpec(withArchived(filter, archived));
     }
 
     // Creates only those specifications which are not null (and do not return null) unlike getSpec2
@@ -34,7 +33,7 @@ public class UserSpecification extends ClassSpecification {
                 case "name", "surname", "email", "username" -> attrLike(key, value);
                 case "archived" -> attrEqual(key, value);
                 case "role"   -> roleLike(value);
-                default -> throw new IllegalArgumentException("Invalid filter key");
+                default -> throw new IllegalArgumentException("Invalid filter key " + key);
             };
 
             if (spec != null) {
