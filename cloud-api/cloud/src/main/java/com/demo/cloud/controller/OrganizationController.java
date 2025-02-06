@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
@@ -50,6 +52,32 @@ public class OrganizationController {
         uriBuilder.path("api/organizations/{id}");
         URI uri = uriBuilder.buildAndExpand(added.getId()).toUri();
         return ResponseEntity.created(uri).build();
+    }
+
+    @PostMapping("{id}/image")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<OrganizationViewDto> uploadImage(@PathVariable Long id, @RequestParam("image") MultipartFile image) throws IOException {
+        Organization found = service.getById(id);
+        String logo = found.getLogo();
+
+        byte[] content = image.getBytes();
+        String type = image.getContentType();
+
+        String uploadedType = type.split("/")[1];
+        String uploaded = imgService.upload(content, "organization " + found.getId(), uploadedType);
+
+        service.updateLogo(found.getId(), uploaded);
+
+        // TODO: what if logo is null
+        String[] logoSplit = logo.split("\\.");
+        String logoType = logoSplit[logoSplit.length - 1];
+        if (!logoType.equals(uploadedType)) {
+            imgService.delete(logo);
+        }
+
+        Pair<byte[], String> read = imgService.read(uploaded);
+        OrganizationViewDto foundDto = mapper.toViewDto(found, new ImageViewDto(read.first(), read.second()));
+        return ResponseEntity.ok(foundDto);
     }
 
     @GetMapping

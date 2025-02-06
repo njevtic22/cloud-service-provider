@@ -5,6 +5,7 @@ import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Organization;
 import com.demo.cloud.repository.OrganizationRepository;
 import com.demo.cloud.service.OrganizationService;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,15 @@ public class OrganizationServiceImpl implements OrganizationService {
     public Organization getById(Long id) {
         return repository.findByIdAndArchivedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Organization", id));
+    }
+
+    @Override
+    @Transactional
+    public void updateLogo(Long id, String logo) {
+        int rowsAffected = repository.updateLogo(id, logo);
+        if (rowsAffected != 1) {
+            throw new RuntimeException("Zero or more than one rows in organizations table is affected by updateLogo operation.");
+        }
     }
 
     private void validateName(String name) {
