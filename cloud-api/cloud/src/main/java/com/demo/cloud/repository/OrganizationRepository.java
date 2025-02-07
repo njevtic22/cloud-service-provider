@@ -13,7 +13,13 @@ public interface OrganizationRepository extends JpaRepository<Organization, Long
 
     boolean existsByName(String name);
 
+    boolean existsByIdAndArchivedFalse(Long id);
+
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("update Organization o set o.logo = :logo where o.id = :id and o.archived = false")
     int updateLogo(Long id, String logo);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("update Organization o set o.archived = true where o.id = :id")
+    int archiveById(Long id);
 }

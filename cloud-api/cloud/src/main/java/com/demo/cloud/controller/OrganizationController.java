@@ -16,13 +16,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -58,7 +59,7 @@ public class OrganizationController {
 
     @PostMapping("{id}/image")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
-    public ResponseEntity<OrganizationViewDto> uploadImage(@PathVariable Long id, @RequestParam("image") MultipartFile image) throws IOException {
+    public ResponseEntity<OrganizationViewDto> uploadImage(@PathVariable Long id, @RequestPart("image") MultipartFile image) throws IOException {
         Organization found = service.getById(id);
         String logo = found.getLogo();
 
@@ -117,5 +118,12 @@ public class OrganizationController {
         Pair<byte[], String> read = imgService.read(updated.getLogo());
         OrganizationViewDto updatedDto = mapper.toViewDto(updated, new ImageViewDto(read.first(), read.second()));
         return ResponseEntity.ok(updatedDto);
+    }
+
+    @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

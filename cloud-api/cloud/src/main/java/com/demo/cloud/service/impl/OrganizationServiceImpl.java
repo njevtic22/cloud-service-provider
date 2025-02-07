@@ -1,6 +1,7 @@
 package com.demo.cloud.service.impl;
 
 import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
+import com.demo.cloud.core.error.exceptions.MultipleDeletedRowsException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Organization;
 import com.demo.cloud.repository.OrganizationRepository;
@@ -75,6 +76,23 @@ public class OrganizationServiceImpl implements OrganizationService {
                 existing.isArchived()
         );
         return repository.save(updated);
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        Objects.requireNonNull(id, "Id must not be null.");
+
+        if (!repository.existsByIdAndArchivedFalse(id)) {
+            throw new EntityNotFoundException("Organization", id);
+        }
+
+        // TODO: do not delete if there are active machines
+
+        int rowsAffected = repository.archiveById(id);
+        if (rowsAffected != 1) {
+            throw new MultipleDeletedRowsException("Users");
+        }
     }
 
     private void validateName(String name) {
