@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static com.demo.cloud.repository.specification.OrganizationSpecification.getSpec;
 
@@ -54,6 +55,26 @@ public class OrganizationServiceImpl implements OrganizationService {
         if (rowsAffected != 1) {
             throw new RuntimeException("Zero or more than one rows in organizations table is affected by updateLogo operation.");
         }
+    }
+
+    @Override
+    public Organization update(Long id, Organization changes) {
+        Objects.requireNonNull(changes, "Organization changes must not be null.");
+
+        Organization existing = getById(id);
+        if (!existing.getName().equals(changes.getName())) {
+            validateName(changes.getName());
+        }
+        validateDescription(changes.getDescription());
+
+        Organization updated = new Organization(
+                existing.getId(),
+                changes.getName(),
+                changes.getDescription(),
+                existing.getLogo(),
+                existing.isArchived()
+        );
+        return repository.save(updated);
     }
 
     private void validateName(String name) {

@@ -31,6 +31,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Pair<byte[], String> read(String path) throws IOException {
+        // TODO: what if path is null
         String[] split = path.split("\\.");
         // TODO: check if prefix image/ is needed
         String type = split[split.length - 1];

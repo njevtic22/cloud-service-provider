@@ -4,6 +4,7 @@ import com.demo.cloud.core.PaginatedResponse;
 import com.demo.cloud.dto.image.ImageViewDto;
 import com.demo.cloud.dto.organization.AddOrganizationDto;
 import com.demo.cloud.dto.organization.OrganizationViewDto;
+import com.demo.cloud.dto.organization.UpdateOrganizationDto;
 import com.demo.cloud.filterParams.OrganizationFilter;
 import com.demo.cloud.mapper.OrganizationMapper;
 import com.demo.cloud.model.Organization;
@@ -18,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,7 +57,7 @@ public class OrganizationController {
     }
 
     @PostMapping("{id}/image")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public ResponseEntity<OrganizationViewDto> uploadImage(@PathVariable Long id, @RequestParam("image") MultipartFile image) throws IOException {
         Organization found = service.getById(id);
         String logo = found.getLogo();
@@ -105,5 +107,15 @@ public class OrganizationController {
         Pair<byte[], String> image = imgService.read(found.getLogo());
         OrganizationViewDto foundDto = mapper.toViewDto(found, new ImageViewDto(image.first(), image.second()));
         return ResponseEntity.ok(foundDto);
+    }
+
+    @PutMapping("{id}")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
+    public ResponseEntity<OrganizationViewDto> update(@PathVariable Long id, @Valid @RequestBody UpdateOrganizationDto changesDto) throws IOException {
+        Organization changes = mapper.toModel(changesDto);
+        Organization updated = service.update(id, changes);
+        Pair<byte[], String> read = imgService.read(updated.getLogo());
+        OrganizationViewDto updatedDto = mapper.toViewDto(updated, new ImageViewDto(read.first(), read.second()));
+        return ResponseEntity.ok(updatedDto);
     }
 }
