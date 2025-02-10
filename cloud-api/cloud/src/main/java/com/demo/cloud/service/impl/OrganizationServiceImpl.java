@@ -1,7 +1,7 @@
 package com.demo.cloud.service.impl;
 
 import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
-import com.demo.cloud.core.error.exceptions.MultipleDeletedRowsException;
+import com.demo.cloud.core.error.exceptions.MultipleAffectedRowsException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Organization;
 import com.demo.cloud.repository.OrganizationRepository;
@@ -54,7 +54,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     public void updateLogo(Long id, String logo) {
         int rowsAffected = repository.updateLogo(id, logo);
         if (rowsAffected != 1) {
-            throw new RuntimeException("Zero or more than one rows in organizations table is affected by updateLogo operation.");
+            throw new MultipleAffectedRowsException("Organizations", "update logo");
         }
     }
 
@@ -91,7 +91,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
         int rowsAffected = repository.archiveById(id);
         if (rowsAffected != 1) {
-            throw new MultipleDeletedRowsException("Users");
+            throw new MultipleAffectedRowsException("Users", "delete (by id)");
         }
     }
 

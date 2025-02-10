@@ -2,7 +2,7 @@ package com.demo.cloud.service.impl;
 
 import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
 import com.demo.cloud.core.error.exceptions.InvalidPasswordException;
-import com.demo.cloud.core.error.exceptions.MultipleDeletedRowsException;
+import com.demo.cloud.core.error.exceptions.MultipleAffectedRowsException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Organization;
 import com.demo.cloud.model.Role;
@@ -141,7 +141,7 @@ public class UserServiceImpl implements UserService {
 
         int rowsAffected = repository.updatePasswordById(existing.getId(), encoder.encode(newPassword));
         if (rowsAffected != 1) {
-            throw new RuntimeException("Zero or more than one rows in users table is affected by updatePasswordById operation.");
+            throw new MultipleAffectedRowsException("Users", "update password (by id)");
         }
     }
 
@@ -156,7 +156,7 @@ public class UserServiceImpl implements UserService {
 
         int rowsAffected = repository.archiveById(id);
         if (rowsAffected != 1) {
-            throw new MultipleDeletedRowsException("Users");
+            throw new MultipleAffectedRowsException("Users", "delete (by id)");
         }
     }
 
