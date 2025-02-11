@@ -8,12 +8,12 @@ import java.util.Map;
 
 public class UserSpecification extends EntitySpecification {
     public static Specification<User> getSpec2(Map<String, String> filter) {
-        return Specification.where(roleLike(filter.get("role")))
+        return Specification.<User>where(attrLike(new String[]{"role", "name"}, filter.get("role")))
                 .and(attrLike("surname", filter.get("surname")))
                 .and(attrLike("email", filter.get("email")))
                 .and(attrLike("username", filter.get("username")))
                 .and(attrLike("name", filter.get("name")))
-                .and(attrLike("archived", filter.get("archived")));
+                .and(attrEqual("archived", Boolean.valueOf(filter.get("archived"))));
     }
 
     public static Specification<User> getSpec(Map<String, String> filter, boolean archived) {
@@ -31,8 +31,8 @@ public class UserSpecification extends EntitySpecification {
 
             Specification<User> spec = switch (key) {
                 case "name", "surname", "email", "username" -> attrLike(key, value);
-                case "archived" -> attrEqual(key, value);
-                case "role"   -> roleLike(value);
+                case "archived" -> attrEqual(key, Boolean.valueOf(value));
+                case "role"   -> attrLike(new String[]{"role", "name"}, value);
                 default -> throw new IllegalArgumentException("Invalid filter key " + key);
             };
 
@@ -45,13 +45,5 @@ public class UserSpecification extends EntitySpecification {
                 .stream()
                 .reduce(Specification::and)
                 .orElse(null);
-    }
-
-    public static Specification<User> roleLike(String keyword) {
-        if (keyword == null || keyword.isBlank()) {
-            return null;
-        }
-
-        return (root, query, cb) -> cb.like(cb.upper(root.get("role").get("name")), "%" + keyword.toUpperCase() + "%");
     }
 }
