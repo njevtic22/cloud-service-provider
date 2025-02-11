@@ -10,8 +10,7 @@ public class VirtualMachineMapper {
         return new MachineViewDto(
                 machine.getId(),
                 machine.getName(),
-                machine.getOrganization().getId(),
-                machine.getCategory().getId(),
+                machine.getOrganization().getName(),
                 machine.getCategory().getName(),
                 machine.getCategory().getCpu(),
                 machine.getCategory().getRam(),

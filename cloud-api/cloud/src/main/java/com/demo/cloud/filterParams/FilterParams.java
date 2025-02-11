@@ -11,6 +11,12 @@ public abstract class FilterParams {
         }
     }
 
+    protected void putIfNotNull(String key, Object value) {
+        if (value != null) {
+            params.put(key, value.toString());
+        }
+    }
+
     public HashMap<String, String> getParams() {
         return params;
     }

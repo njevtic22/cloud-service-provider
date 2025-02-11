@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+import static com.demo.cloud.repository.specification.MachineSpecification.getSpec;
+
 @Service
 public class VirtualMachineServiceImpl implements VirtualMachineService {
     private final VirtualMachineRepository repository;
@@ -24,7 +26,11 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
 
     @Override
     public Page<VirtualMachine> getAll(Pageable pageable, Map<String, String> filter) {
-        return null;
+        User authenticated = authService.getAuthenticated();
+        String orgId = authenticated.getOrganization() == null ? null : authenticated.getOrganization().getId().toString();
+        filter.put("organizationId", orgId);
+
+        return repository.findAll(getSpec(filter, false), pageable);
     }
 
     @Override
