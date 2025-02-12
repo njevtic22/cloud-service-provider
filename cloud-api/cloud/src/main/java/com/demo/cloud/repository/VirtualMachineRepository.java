@@ -10,4 +10,6 @@ public interface VirtualMachineRepository extends JpaRepository<VirtualMachine, 
     Optional<VirtualMachine> findByIdAndArchivedFalse(Long id);
 
     Optional<VirtualMachine> findByIdAndOrganizationIdAndArchivedFalse(Long id, Long orgId);
+
+    boolean existsByName(String name);
 }

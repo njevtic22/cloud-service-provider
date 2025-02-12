@@ -1,10 +1,14 @@
 package com.demo.cloud.service.impl;
 
 import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
+import com.demo.cloud.core.error.exceptions.UniquePropertyException;
+import com.demo.cloud.model.Category;
+import com.demo.cloud.model.Organization;
 import com.demo.cloud.model.User;
 import com.demo.cloud.model.VirtualMachine;
 import com.demo.cloud.repository.VirtualMachineRepository;
 import com.demo.cloud.security.AuthenticationService;
+import com.demo.cloud.service.OrganizationService;
 import com.demo.cloud.service.VirtualMachineService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +22,46 @@ import static com.demo.cloud.repository.specification.MachineSpecification.getSp
 public class VirtualMachineServiceImpl implements VirtualMachineService {
     private final VirtualMachineRepository repository;
     private final AuthenticationService authService;
+    private final OrganizationService orgService;
 
-    public VirtualMachineServiceImpl(VirtualMachineRepository repository, AuthenticationService authService) {
+    public VirtualMachineServiceImpl(VirtualMachineRepository repository, AuthenticationService authService, OrganizationService orgService) {
         this.repository = repository;
         this.authService = authService;
+        this.orgService = orgService;
+    }
+
+    @Override
+    public VirtualMachine add(String name, Long organizationId, Long categoryId) {
+        validateName(name);
+
+        User authenticated = authService.getAuthenticated();
+        if (authenticated.isAdmin()) {
+            organizationId = authenticated.getOrganization().getId();
+        }
+
+        if (organizationId == null) {
+            throw new IllegalArgumentException("Organization id must not be null.");
+        }
+
+        Organization org = orgService.getById(organizationId);
+
+        // TODO: Update to use categoryId
+        Category cat = new Category(
+                1L,
+                "1: Gap of Rohan",
+                1,
+                2,
+                0,
+                false
+        );
+
+        VirtualMachine toAdd = new VirtualMachine(
+                name,
+                org,
+                cat,
+                false
+        );
+        return repository.save(toAdd);
     }
 
     @Override
@@ -48,5 +88,11 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
         }
 
         return machine;
+    }
+
+    private void validateName(String name) {
+        if (repository.existsByName(name)) {
+            throw new UniquePropertyException("Name '" + name + "' is already taken");
+        }
     }
 }

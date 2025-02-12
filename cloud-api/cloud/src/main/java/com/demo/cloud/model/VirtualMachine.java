@@ -20,7 +20,7 @@ public class VirtualMachine {
     @SequenceGenerator(name = "machine_generator", sequenceName = "machine_id_seq", allocationSize = 1)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Column(nullable = false)
