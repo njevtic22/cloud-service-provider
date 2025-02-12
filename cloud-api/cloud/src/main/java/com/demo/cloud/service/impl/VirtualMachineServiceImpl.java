@@ -1,6 +1,7 @@
 package com.demo.cloud.service.impl;
 
 import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
+import com.demo.cloud.core.error.exceptions.MultipleAffectedRowsException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Category;
 import com.demo.cloud.model.Organization;
@@ -10,11 +11,13 @@ import com.demo.cloud.repository.VirtualMachineRepository;
 import com.demo.cloud.security.AuthenticationService;
 import com.demo.cloud.service.OrganizationService;
 import com.demo.cloud.service.VirtualMachineService;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static com.demo.cloud.repository.specification.MachineSpecification.getSpec;
 
@@ -120,6 +123,23 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     private void validateName(String name) {
         if (repository.existsByName(name)) {
             throw new UniquePropertyException("Name '" + name + "' is already taken");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        Objects.requireNonNull(id, "Id must not be null.");
+
+        if (!repository.existsByIdAndArchivedFalse(id)) {
+            throw new EntityNotFoundException("Virtual machine", id);
+        }
+
+        // TODO: do not delete if machine is active
+
+        int rowsAffected = repository.archiveById(id);
+        if (rowsAffected != 1) {
+            throw new MultipleAffectedRowsException("Virtual machines", "delete (by id)");
         }
     }
 }
