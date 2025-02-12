@@ -90,6 +90,33 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
         return machine;
     }
 
+    @Override
+    public VirtualMachine update(Long id, String name, Long categoryId) {
+        VirtualMachine existing = getById(id);
+        if (!existing.getName().equals(name)) {
+            validateName(name);
+        }
+
+        // TODO: Update to use categoryId
+        Category cat = new Category(
+                1L,
+                "1: Gap of Rohan",
+                1,
+                2,
+                0,
+                false
+        );
+
+        VirtualMachine updated = new VirtualMachine(
+                existing.getId(),
+                name,
+                false,
+                existing.getOrganization(),
+                cat
+        );
+        return repository.save(updated);
+    }
+
     private void validateName(String name) {
         if (repository.existsByName(name)) {
             throw new UniquePropertyException("Name '" + name + "' is already taken");
