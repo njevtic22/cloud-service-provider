@@ -4,9 +4,31 @@ import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 public class EntitySpecification {
+    public static <T> Specification<T> getSpec(Map<String, String> filter, BiFunction<String, String, Specification<T>> specParser) {
+        ArrayList<Specification<T>> specs = new ArrayList<>(filter.size());
+
+        for (Map.Entry<String, String> entry : filter.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            Specification<T> spec = specParser.apply(key, value);
+
+            if (spec != null) {
+                specs.add(spec);
+            }
+        }
+
+        return specs
+                .stream()
+                .reduce(Specification::and)
+                .orElse(null);
+    }
+
     public static Map<String, String> withArchived(Map<String, String> filter, boolean archived) {
         filter.put("archived", String.valueOf(archived));
         return filter;

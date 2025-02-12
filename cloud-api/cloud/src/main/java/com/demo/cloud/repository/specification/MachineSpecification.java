@@ -3,8 +3,8 @@ package com.demo.cloud.repository.specification;
 import com.demo.cloud.model.VirtualMachine;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.util.ArrayList;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 public class MachineSpecification extends EntitySpecification {
     public static Specification<VirtualMachine> getSpec(Map<String, String> filter, boolean archived) {
@@ -12,17 +12,12 @@ public class MachineSpecification extends EntitySpecification {
     }
 
     public static Specification<VirtualMachine> getSpec(Map<String, String> filter) {
-        ArrayList<Specification<VirtualMachine>> specs = new ArrayList<>(filter.size());
-
         final String[] cpuKeys = getKeys("cpu");
         final String[] ramKeys = getKeys("ram");
         final String[] gpuKeys = getKeys("gpu");
 
-        for (Map.Entry<String, String> entry : filter.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-
-            Specification<VirtualMachine> spec = switch (key) {
+        BiFunction<String, String, Specification<VirtualMachine>> specParser = (key, value) -> {
+            return switch (key) {
                 case "name", "organization", "category", "username" -> attrLike(key, value);
 
                 case "minCpu" -> attrMin(cpuKeys, value);
@@ -37,16 +32,9 @@ public class MachineSpecification extends EntitySpecification {
                 case "archived" -> attrEqual(key, Boolean.valueOf(value));
                 default -> throw new IllegalArgumentException("Invalid filter key " + key);
             };
+        };
 
-            if (spec != null) {
-                specs.add(spec);
-            }
-        }
-
-        return specs
-                .stream()
-                .reduce(Specification::and)
-                .orElse(null);
+        return getSpec(filter, specParser);
     }
 
     private static String[] getKeys(String finalKey) {
