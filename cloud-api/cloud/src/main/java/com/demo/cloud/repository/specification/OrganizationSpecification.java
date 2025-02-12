@@ -25,7 +25,7 @@ public class OrganizationSpecification extends EntitySpecification {
 
             Specification<Organization> spec = switch (key) {
                 case "name", "description" -> attrLike(key, value);
-                case "archived" -> attrEqual(key, value);
+                case "archived" -> attrEqual(key, Boolean.valueOf(value));
                 default -> throw new IllegalArgumentException("Invalid filter key " + key);
             };
 
