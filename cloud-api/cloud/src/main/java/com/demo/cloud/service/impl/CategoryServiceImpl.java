@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+import static com.demo.cloud.repository.specification.CategorySpecification.getSpec;
+
 @Service
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository repository;
@@ -20,7 +22,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Page<Category> getAll(Pageable pageable, Map<String, String> filter) {
-        return repository.findAll(pageable);
+        return repository.findAll(getSpec(filter, false), pageable);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.demo.cloud.controller;
 
 import com.demo.cloud.core.PaginatedResponse;
 import com.demo.cloud.dto.category.CategoryViewDto;
+import com.demo.cloud.filterParams.CategoryFilter;
 import com.demo.cloud.mapper.CategoryMapper;
 import com.demo.cloud.model.Category;
 import com.demo.cloud.service.CategoryService;
@@ -29,8 +30,8 @@ public class CategoryController {
 
     @GetMapping
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<PaginatedResponse<CategoryViewDto>> getAll(Pageable pageable) {
-        Page<Category> cats = service.getAll(pageable, null);
+    public ResponseEntity<PaginatedResponse<CategoryViewDto>> getAll(Pageable pageable, CategoryFilter filter) {
+        Page<Category> cats = service.getAll(pageable, filter.getParams());
         List<CategoryViewDto> catsDto = cats.getContent()
                 .stream()
                 .map(mapper::toViewDto)
