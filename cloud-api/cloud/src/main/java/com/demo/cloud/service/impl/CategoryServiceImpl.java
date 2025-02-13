@@ -20,7 +20,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Page<Category> getAll(Pageable pageable, Map<String, String> filter) {
-        return null;
+        return repository.findAll(pageable);
     }
 
     @Override
