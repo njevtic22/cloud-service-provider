@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category, Long>, JpaSpecificationExecutor<Category> {
     Optional<Category> findByIdAndArchivedFalse(Long id);
+
+    boolean existsByName(String name);
 }
