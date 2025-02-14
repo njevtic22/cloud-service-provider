@@ -13,12 +13,7 @@ public class CategoryFilter extends FilterParams {
             Integer minGpu,
             Integer maxGpu
     ) {
-        putIfNotNull("name", name);
-        putIfNotNull("minCpu", minCpu);
-        putIfNotNull("maxCpu", maxCpu);
-        putIfNotNull("minRam", minRam);
-        putIfNotNull("maxRam", maxRam);
-        putIfNotNull("minGpu", minGpu);
-        putIfNotNull("maxGpu", maxGpu);
+        Object[] values = {name, minCpu, maxCpu, minRam, maxRam, minGpu, maxGpu};
+        putIfNotNull(values);
     }
 }
