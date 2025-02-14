@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static com.demo.cloud.repository.specification.CategorySpecification.getSpec;
 
@@ -38,6 +39,26 @@ public class CategoryServiceImpl implements CategoryService {
     public Category getById(Long id) {
         return repository.findByIdAndArchivedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Category", id));
+    }
+
+    @Override
+    public Category update(Long id, Category changes) {
+        Objects.requireNonNull(changes, "Category changes must not be null.");
+
+        Category existing = getById(id);
+        if (!existing.getName().equals(changes.getName())) {
+            validateName(changes.getName());
+        }
+
+        Category updated = new Category(
+                existing.getId(),
+                changes.getName(),
+                changes.getCpu(),
+                changes.getRam(),
+                changes.getGpu(),
+                existing.isArchived()
+        );
+        return repository.save(updated);
     }
 
     private void validateName(String name) {

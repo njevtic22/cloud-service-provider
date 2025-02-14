@@ -3,6 +3,7 @@ package com.demo.cloud.controller;
 import com.demo.cloud.core.PaginatedResponse;
 import com.demo.cloud.dto.category.AddCategoryDto;
 import com.demo.cloud.dto.category.CategoryViewDto;
+import com.demo.cloud.dto.category.UpdateCategoryDto;
 import com.demo.cloud.filterParams.CategoryFilter;
 import com.demo.cloud.mapper.CategoryMapper;
 import com.demo.cloud.model.Category;
@@ -15,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -67,5 +69,14 @@ public class CategoryController {
         Category found = service.getById(id);
         CategoryViewDto foundDto = mapper.toViewDto(found);
         return ResponseEntity.ok(foundDto);
+    }
+
+    @PutMapping("{id}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<CategoryViewDto> update(@PathVariable Long id, @Valid @RequestBody UpdateCategoryDto changesDto) {
+        Category changes = mapper.toModel(changesDto);
+        Category updated = service.update(id, changes);
+        CategoryViewDto updatedDto = mapper.toViewDto(updated);
+        return ResponseEntity.ok(updatedDto);
     }
 }
