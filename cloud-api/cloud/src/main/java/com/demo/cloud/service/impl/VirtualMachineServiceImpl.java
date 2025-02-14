@@ -99,16 +99,7 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
             validateName(name);
         }
 
-        // TODO: Update to use categoryId
-        Category cat = new Category(
-                1L,
-                "1: Gap of Rohan",
-                1,
-                2,
-                0,
-                false
-        );
-
+        Category cat = catService.getById(categoryId);
         VirtualMachine updated = new VirtualMachine(
                 existing.getId(),
                 name,
@@ -117,12 +108,6 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
                 cat
         );
         return repository.save(updated);
-    }
-
-    private void validateName(String name) {
-        if (repository.existsByName(name)) {
-            throw new UniquePropertyException("Name '" + name + "' is already taken");
-        }
     }
 
     @Override
@@ -139,6 +124,12 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
         int rowsAffected = repository.archiveById(id);
         if (rowsAffected != 1) {
             throw new MultipleAffectedRowsException("Virtual machines", "delete (by id)");
+        }
+    }
+
+    private void validateName(String name) {
+        if (repository.existsByName(name)) {
+            throw new UniquePropertyException("Name '" + name + "' is already taken");
         }
     }
 }
