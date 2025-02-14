@@ -9,6 +9,7 @@ import com.demo.cloud.model.User;
 import com.demo.cloud.model.VirtualMachine;
 import com.demo.cloud.repository.VirtualMachineRepository;
 import com.demo.cloud.security.AuthenticationService;
+import com.demo.cloud.service.CategoryService;
 import com.demo.cloud.service.OrganizationService;
 import com.demo.cloud.service.VirtualMachineService;
 import jakarta.transaction.Transactional;
@@ -26,11 +27,18 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     private final VirtualMachineRepository repository;
     private final AuthenticationService authService;
     private final OrganizationService orgService;
+    private final CategoryService catService;
 
-    public VirtualMachineServiceImpl(VirtualMachineRepository repository, AuthenticationService authService, OrganizationService orgService) {
+    public VirtualMachineServiceImpl(
+            VirtualMachineRepository repository,
+            AuthenticationService authService,
+            OrganizationService orgService,
+            CategoryService catService
+    ) {
         this.repository = repository;
         this.authService = authService;
         this.orgService = orgService;
+        this.catService = catService;
     }
 
     @Override
@@ -47,16 +55,7 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
         }
 
         Organization org = orgService.getById(organizationId);
-
-        // TODO: Update to use categoryId
-        Category cat = new Category(
-                1L,
-                "1: Gap of Rohan",
-                1,
-                2,
-                0,
-                false
-        );
+        Category cat = catService.getById(categoryId);
 
         VirtualMachine toAdd = new VirtualMachine(
                 name,
