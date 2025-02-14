@@ -1,10 +1,12 @@
 package com.demo.cloud.service.impl;
 
 import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
+import com.demo.cloud.core.error.exceptions.MultipleAffectedRowsException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Category;
 import com.demo.cloud.repository.CategoryRepository;
 import com.demo.cloud.service.CategoryService;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -59,6 +61,21 @@ public class CategoryServiceImpl implements CategoryService {
                 existing.isArchived()
         );
         return repository.save(updated);
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        Objects.requireNonNull(id, "Id must not be null.");
+
+        if (!repository.existsByIdAndArchivedFalse(id)) {
+            throw new EntityNotFoundException("Category", id);
+        }
+
+        int rowsAffected = repository.archiveById(id);
+        if (rowsAffected != 1) {
+            throw new MultipleAffectedRowsException("Categories", "delete (by id)");
+        }
     }
 
     private void validateName(String name) {
