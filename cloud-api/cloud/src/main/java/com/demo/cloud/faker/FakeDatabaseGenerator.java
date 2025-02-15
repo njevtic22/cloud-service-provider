@@ -434,6 +434,7 @@ public class FakeDatabaseGenerator {
                             activityId.next(),
                             pair[0],
                             pair[1],
+                            faker.number().numberBetween(20, 50) * 1000.0f,
                             machine
                     );
                     activities.put(activity.getId(), activity);
@@ -446,6 +447,7 @@ public class FakeDatabaseGenerator {
                         activityId.next(),
                         generateTurnedOn(faker),
                         null,
+                        0,
                         machine
                 );
                 activities.put(activity.getId(), activity);

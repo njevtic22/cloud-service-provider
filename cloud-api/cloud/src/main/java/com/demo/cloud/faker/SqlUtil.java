@@ -69,10 +69,11 @@ public class SqlUtil {
 
     public static String toSqlInsert(Activity activity) {
         String turnedOff = activity.getTurnedOff() == null ? null : "'" + activity.getTurnedOff() + "'";
-        return "insert into activities(id, turned_on, turned_off, machine_id) values (" +
+        return "insert into activities(id, turned_on, turned_off, profit, machine_id) values (" +
                 activity.getId() + ", '" +
                 activity.getTurnedOn() + "', " +
                 turnedOff + ", " +
+                activity.getProfit() + ", " +
                 activity.getMachine().getId() + ");";
     }
 
