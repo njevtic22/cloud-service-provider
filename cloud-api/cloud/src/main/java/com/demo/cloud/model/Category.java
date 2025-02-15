@@ -19,7 +19,7 @@ public class Category {
     @SequenceGenerator(name = "category_generator", sequenceName = "category_id_seq", allocationSize = 1)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Column(nullable = false)
@@ -36,7 +36,7 @@ public class Category {
 
     public Category() { }
 
-    public Category(int cpu, int ram, int gpu, String name, boolean archived) {
+    public Category(String name, int cpu, int ram, int gpu, boolean archived) {
         this(null, name, cpu, ram, gpu, archived);
     }
 

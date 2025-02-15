@@ -2,12 +2,13 @@ package com.demo.cloud.service.impl;
 
 import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
 import com.demo.cloud.core.error.exceptions.InvalidPasswordException;
-import com.demo.cloud.core.error.exceptions.MultipleDeletedRowsException;
+import com.demo.cloud.core.error.exceptions.MultipleAffectedRowsException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Organization;
 import com.demo.cloud.model.Role;
 import com.demo.cloud.model.User;
 import com.demo.cloud.repository.UserRepository;
+import com.demo.cloud.security.AuthenticationService;
 import com.demo.cloud.service.OrganizationService;
 import com.demo.cloud.service.RoleService;
 import com.demo.cloud.service.UserService;
@@ -27,12 +28,20 @@ public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     private final RoleService roleService;
     private final OrganizationService orgService;
+    private final AuthenticationService authService;
     private final PasswordEncoder encoder;
 
-    public UserServiceImpl(UserRepository repository, RoleService roleService, OrganizationService orgService, PasswordEncoder encoder) {
+    public UserServiceImpl(
+            UserRepository repository,
+            RoleService roleService,
+            OrganizationService orgService,
+            AuthenticationService authService,
+            PasswordEncoder encoder
+    ) {
         this.repository = repository;
         this.roleService = roleService;
         this.orgService = orgService;
+        this.authService = authService;
         this.encoder = encoder;
     }
 
@@ -71,6 +80,12 @@ public class UserServiceImpl implements UserService {
     public User getById(Long id) {
         return repository.findByIdAndArchivedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("User", id));
+    }
+
+    @Override
+    public User getByUsername(String username) {
+        return repository.findByUsernameAndArchivedFalse(username)
+                .orElseThrow(() -> new EntityNotFoundException("User", "username", username));
     }
 
     @Override
@@ -120,13 +135,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void changePassword(Long userId, String oldPassword, String newPassword, String repeatedPassword) {
-        User existing = getById(userId);
+    public void changePassword(String oldPassword, String newPassword, String repeatedPassword) {
+        User existing = authService.getAuthenticated();
         validatePasswordMatch(existing.getPassword(), oldPassword, newPassword, repeatedPassword);
 
         int rowsAffected = repository.updatePasswordById(existing.getId(), encoder.encode(newPassword));
         if (rowsAffected != 1) {
-            throw new RuntimeException("Zero or more than one rows in users table is affected by updatePasswordById operation.");
+            throw new MultipleAffectedRowsException("Users", "update password (by id)");
         }
     }
 
@@ -141,7 +156,7 @@ public class UserServiceImpl implements UserService {
 
         int rowsAffected = repository.archiveById(id);
         if (rowsAffected != 1) {
-            throw new MultipleDeletedRowsException("Users");
+            throw new MultipleAffectedRowsException("Users", "delete (by id)");
         }
     }
 

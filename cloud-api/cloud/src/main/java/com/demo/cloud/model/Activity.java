@@ -26,19 +26,27 @@ public class Activity {
     @Column
     private LocalDate turnedOff;
 
+    @Column(nullable = false)
+    private float profit;
+
     @ManyToOne
     private VirtualMachine machine;
 
     public Activity() { }
 
-    public Activity(LocalDate turnedOn, LocalDate turnedOff, VirtualMachine machine) {
-        this(null, turnedOn, turnedOff, machine);
+    public Activity(LocalDate turnedOn, LocalDate turnedOff, VirtualMachine machine, float profit) {
+        this(null, turnedOn, turnedOff, profit, machine);
     }
 
-    public Activity(Long id, LocalDate turnedOn, LocalDate turnedOff, VirtualMachine machine) {
+    public Activity(Long id, LocalDate turnedOn, LocalDate turnedOff, float profit, VirtualMachine machine) {
+        if (profit < 0) {
+            throw new IllegalArgumentException("Profit must be positive number or zero.");
+        }
+
         this.id = id;
         this.turnedOn = Objects.requireNonNull(turnedOn, "Turned on date must not be null.");
         this.turnedOff = turnedOff;
+        this.profit = profit;
         this.machine = Objects.requireNonNull(machine, "Virtual machine must not be null.");
 
     }
@@ -65,6 +73,10 @@ public class Activity {
 
     public LocalDate getTurnedOff() {
         return turnedOff;
+    }
+
+    public float getProfit() {
+        return profit;
     }
 
     public VirtualMachine getMachine() {
