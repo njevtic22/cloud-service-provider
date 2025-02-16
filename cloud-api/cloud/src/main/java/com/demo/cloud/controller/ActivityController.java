@@ -2,6 +2,7 @@ package com.demo.cloud.controller;
 
 import com.demo.cloud.core.PaginatedResponse;
 import com.demo.cloud.dto.activity.ActivityViewDto;
+import com.demo.cloud.filterParams.ActivityFilter;
 import com.demo.cloud.mapper.ActivityMapper;
 import com.demo.cloud.model.Activity;
 import com.demo.cloud.service.ActivityService;
@@ -24,8 +25,8 @@ public class ActivityController {
     }
 
     @GetMapping
-    public ResponseEntity<PaginatedResponse<ActivityViewDto>> getAll(Pageable pageable) {
-        Page<Activity> activities = service.getAll(pageable, null);
+    public ResponseEntity<PaginatedResponse<ActivityViewDto>> getAll(Pageable pageable, ActivityFilter filter) {
+        Page<Activity> activities = service.getAll(pageable, filter.getParams());
         return ResponseEntity.ok(mapper.toDto(activities));
     }
 }

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+import static com.demo.cloud.repository.specification.ActivitySpecification.getSpec;
+
 @Service
 public class ActivityServiceImpl implements ActivityService {
     private final ActivityRepository repository;
@@ -20,7 +22,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public Page<Activity> getAll(Pageable pageable, Map<String, String> filter) {
-        return repository.findAll(pageable);
+        return repository.findAll(getSpec(filter), pageable);
     }
 
     @Override
