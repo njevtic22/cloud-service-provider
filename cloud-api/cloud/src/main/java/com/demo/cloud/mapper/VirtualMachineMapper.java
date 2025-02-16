@@ -5,8 +5,9 @@ import com.demo.cloud.model.VirtualMachine;
 import org.springframework.stereotype.Component;
 
 @Component
-public class VirtualMachineMapper {
-    public MachineViewDto toViewDto(VirtualMachine machine) {
+public class VirtualMachineMapper extends PageMapper<VirtualMachine, MachineViewDto> {
+    @Override
+    public MachineViewDto toDto(VirtualMachine machine) {
         return new MachineViewDto(
                 machine.getId(),
                 machine.getName(),

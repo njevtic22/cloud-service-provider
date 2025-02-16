@@ -7,7 +7,7 @@ import java.util.List;
 
 public abstract class PageMapper<T, DTO> {
     public PaginatedResponse<DTO> toDto(Page<T> model) {
-        List<DTO> dto =model.getContent()
+        List<DTO> dto = model.getContent()
                 .stream()
                 .map(this::toDto)
                 .toList();

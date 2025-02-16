@@ -6,8 +6,9 @@ import com.demo.cloud.model.Category;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CategoryMapper {
-    public CategoryViewDto toViewDto(Category cat) {
+public class CategoryMapper extends PageMapper<Category, CategoryViewDto> {
+    @Override
+    public CategoryViewDto toDto(Category cat) {
         return new CategoryViewDto(
                 cat.getId(),
                 cat.getName(),
