@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("api/activities")
 public class ActivityController {
@@ -28,15 +26,6 @@ public class ActivityController {
     @GetMapping
     public ResponseEntity<PaginatedResponse<ActivityViewDto>> getAll(Pageable pageable) {
         Page<Activity> activities = service.getAll(pageable, null);
-        List<ActivityViewDto> activitiesDto = activities.getContent()
-                .stream()
-                .map(mapper::toViewDto)
-                .toList();
-
-        return ResponseEntity.ok(new PaginatedResponse<>(
-                activitiesDto,
-                activities.getTotalElements(),
-                activities.getTotalPages()
-        ));
+        return ResponseEntity.ok(mapper.toDto(activities));
     }
 }

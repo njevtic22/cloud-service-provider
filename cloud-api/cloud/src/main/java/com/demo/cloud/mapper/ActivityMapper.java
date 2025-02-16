@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 import java.time.ZoneId;
 
 @Component
-public class ActivityMapper {
-    public ActivityViewDto toViewDto(Activity activity) {
+public class ActivityMapper extends PageMapper<Activity, ActivityViewDto> {
+    public ActivityViewDto toDto(Activity activity) {
         long turnedOff = activity.getTurnedOff() == null ? -1 : activity.getTurnedOff().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
         return new ActivityViewDto(
                 activity.getId(),
