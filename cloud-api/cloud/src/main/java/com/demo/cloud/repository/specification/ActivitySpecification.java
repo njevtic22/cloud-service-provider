@@ -5,6 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -16,11 +17,11 @@ public class ActivitySpecification extends EntitySpecification {
 
         BiFunction<String, String, Specification<Activity>> specParser = (key, value) -> {
             return switch (key) {
-                case "minTurnedOn" -> dateMin("turnedOn", parse(value));
-                case "maxTurnedOn" -> dateMax("turnedOn", parse(value));
+                case "minTurnedOn" -> attrMin("turnedOn", parseDateTime(value));
+                case "maxTurnedOn" -> attrMax("turnedOn", parseDateTime(value));
 
-                case "minTurnedOff" -> dateMin("turnedOff", parse(value));
-                case "maxTurnedOff" -> dateMax("turnedOff", parse(value));
+                case "minTurnedOff" -> attrMin("turnedOff", parseDateTime(value));
+                case "maxTurnedOff" -> attrMax("turnedOff", parseDateTime(value));
 
                 case "minProfit" -> attrMin("profit", value);
                 case "maxProfit" -> attrMax("profit", value);
@@ -34,7 +35,11 @@ public class ActivitySpecification extends EntitySpecification {
         return getSpec(filter, specParser);
     }
 
-    private static LocalDate parse(String value) {
+    private static LocalDate parseDate(String value) {
         return Instant.ofEpochMilli(Long.parseLong(value)).atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    private static LocalDateTime parseDateTime(String value) {
+        return Instant.ofEpochMilli(Long.parseLong(value)).atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 }

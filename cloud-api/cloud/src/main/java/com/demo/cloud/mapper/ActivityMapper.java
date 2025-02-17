@@ -10,10 +10,10 @@ import java.time.ZoneId;
 public class ActivityMapper extends PageMapper<Activity, ActivityViewDto> {
     @Override
     public ActivityViewDto toDto(Activity activity) {
-        long turnedOff = activity.getTurnedOff() == null ? -1 : activity.getTurnedOff().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        long turnedOff = activity.getTurnedOff() == null ? -1 : activity.getTurnedOff().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         return new ActivityViewDto(
                 activity.getId(),
-                activity.getTurnedOn().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                activity.getTurnedOn().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
                 turnedOff,
                 activity.getProfit()
         );
