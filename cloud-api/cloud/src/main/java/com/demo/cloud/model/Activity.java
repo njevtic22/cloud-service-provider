@@ -9,7 +9,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -21,10 +21,10 @@ public class Activity {
     private Long id;
 
     @Column(nullable = false)
-    private LocalDate turnedOn;
+    private LocalDateTime turnedOn;
 
     @Column
-    private LocalDate turnedOff;
+    private LocalDateTime turnedOff;
 
     @Column(nullable = false)
     private float profit;
@@ -34,11 +34,11 @@ public class Activity {
 
     public Activity() { }
 
-    public Activity(LocalDate turnedOn, LocalDate turnedOff, VirtualMachine machine, float profit) {
+    public Activity(LocalDateTime turnedOn, LocalDateTime turnedOff, VirtualMachine machine, float profit) {
         this(null, turnedOn, turnedOff, profit, machine);
     }
 
-    public Activity(Long id, LocalDate turnedOn, LocalDate turnedOff, float profit, VirtualMachine machine) {
+    public Activity(Long id, LocalDateTime turnedOn, LocalDateTime turnedOff, float profit, VirtualMachine machine) {
         if (profit < 0) {
             throw new IllegalArgumentException("Profit must be positive number or zero.");
         }
@@ -67,11 +67,11 @@ public class Activity {
         return id;
     }
 
-    public LocalDate getTurnedOn() {
+    public LocalDateTime getTurnedOn() {
         return turnedOn;
     }
 
-    public LocalDate getTurnedOff() {
+    public LocalDateTime getTurnedOff() {
         return turnedOff;
     }
 

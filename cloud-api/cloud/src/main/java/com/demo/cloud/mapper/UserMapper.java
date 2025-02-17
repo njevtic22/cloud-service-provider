@@ -8,8 +8,9 @@ import com.demo.cloud.model.User;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserMapper {
-    public UserViewDto toViewDto(User user) {
+public class UserMapper extends PageMapper<User, UserViewDto> {
+    @Override
+    public UserViewDto toDto(User user) {
         Organization org = user.getOrganization();
         return new UserViewDto(
                 user.getId(),

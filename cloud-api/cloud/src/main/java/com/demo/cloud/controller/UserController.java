@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/users")
@@ -60,23 +59,14 @@ public class UserController {
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public ResponseEntity<PaginatedResponse<UserViewDto>> getAll(Pageable pageable, UserFilter filter) {
         Page<User> users = service.getAll(pageable, filter.getParams());
-        List<UserViewDto> usersDto = users.getContent()
-                .stream()
-                .map(mapper::toViewDto)
-                .toList();
-
-        return ResponseEntity.ok(new PaginatedResponse<>(
-                usersDto,
-                users.getTotalElements(),
-                users.getTotalPages()
-        ));
+        return ResponseEntity.ok(mapper.toDto(users));
     }
 
     @GetMapping("{id}")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public ResponseEntity<UserViewDto> getById(@PathVariable Long id) {
         User found = service.getById(id);
-        UserViewDto foundDto = mapper.toViewDto(found);
+        UserViewDto foundDto = mapper.toDto(found);
         return ResponseEntity.ok(foundDto);
     }
 
@@ -104,7 +94,7 @@ public class UserController {
             jwt = tokenUtil.generateToken(updated.getUsername());
         }
 
-        UserViewDto updatedDto = mapper.toViewDto(updated);
+        UserViewDto updatedDto = mapper.toDto(updated);
         return ResponseEntity.ok(new UpdatedUserDto<>(updatedDto, jwt));
     }
 

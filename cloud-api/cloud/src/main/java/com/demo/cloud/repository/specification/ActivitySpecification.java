@@ -1,0 +1,45 @@
+package com.demo.cloud.repository.specification;
+
+import com.demo.cloud.model.Activity;
+import org.springframework.data.jpa.domain.Specification;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Map;
+import java.util.function.BiFunction;
+
+public class ActivitySpecification extends EntitySpecification {
+    public static Specification<Activity> getSpec(Map<String, String> filter) {
+        final String[] machineKeys = {"machine", "id"};
+        final String[] orgKeys = {"machine", "organization", "id"};
+
+        BiFunction<String, String, Specification<Activity>> specParser = (key, value) -> {
+            return switch (key) {
+                case "minTurnedOn" -> attrMin("turnedOn", parseDateTime(value));
+                case "maxTurnedOn" -> attrMax("turnedOn", parseDateTime(value));
+
+                case "minTurnedOff" -> attrMin("turnedOff", parseDateTime(value));
+                case "maxTurnedOff" -> attrMax("turnedOff", parseDateTime(value));
+
+                case "minProfit" -> attrMin("profit", value);
+                case "maxProfit" -> attrMax("profit", value);
+
+                case "machineId" -> attrEqual(machineKeys, value);
+                case "organizationId" -> attrEqual(orgKeys, value);
+                default -> throw new IllegalArgumentException("Invalid filter key " + key);
+            };
+        };
+
+        return getSpec(filter, specParser);
+    }
+
+    private static LocalDate parseDate(String value) {
+        return Instant.ofEpochMilli(Long.parseLong(value)).atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    private static LocalDateTime parseDateTime(String value) {
+        return Instant.ofEpochMilli(Long.parseLong(value)).atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
+}

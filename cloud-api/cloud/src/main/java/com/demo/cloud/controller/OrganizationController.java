@@ -79,7 +79,7 @@ public class OrganizationController {
         }
 
         Pair<byte[], String> read = imgService.read(uploaded);
-        OrganizationViewDto foundDto = mapper.toViewDto(found, new ImageViewDto(read.first(), read.second()));
+        OrganizationViewDto foundDto = mapper.toDto(found, new ImageViewDto(read.first(), read.second()));
         return ResponseEntity.ok(foundDto);
     }
 
@@ -91,7 +91,7 @@ public class OrganizationController {
         List<OrganizationViewDto> orgsDto = new ArrayList<>(orgs.getNumberOfElements());
         for (Organization org : orgs.getContent()) {
             Pair<byte[], String> image = imgService.read(org.getLogo());
-            orgsDto.add(mapper.toViewDto(org, new ImageViewDto(image.first(), image.second())));
+            orgsDto.add(mapper.toDto(org, new ImageViewDto(image.first(), image.second())));
         }
 
         return ResponseEntity.ok(new PaginatedResponse<>(
@@ -106,7 +106,7 @@ public class OrganizationController {
     public ResponseEntity<OrganizationViewDto> getById(@PathVariable Long id) throws IOException {
         Organization found = service.getById(id);
         Pair<byte[], String> image = imgService.read(found.getLogo());
-        OrganizationViewDto foundDto = mapper.toViewDto(found, new ImageViewDto(image.first(), image.second()));
+        OrganizationViewDto foundDto = mapper.toDto(found, new ImageViewDto(image.first(), image.second()));
         return ResponseEntity.ok(foundDto);
     }
 
@@ -116,7 +116,7 @@ public class OrganizationController {
         Organization changes = mapper.toModel(changesDto);
         Organization updated = service.update(id, changes);
         Pair<byte[], String> read = imgService.read(updated.getLogo());
-        OrganizationViewDto updatedDto = mapper.toViewDto(updated, new ImageViewDto(read.first(), read.second()));
+        OrganizationViewDto updatedDto = mapper.toDto(updated, new ImageViewDto(read.first(), read.second()));
         return ResponseEntity.ok(updatedDto);
     }
 

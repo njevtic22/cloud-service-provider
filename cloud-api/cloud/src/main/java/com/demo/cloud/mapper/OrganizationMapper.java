@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OrganizationMapper {
-    public OrganizationViewDto toViewDto(Organization org, ImageViewDto logo) {
+    public OrganizationViewDto toDto(Organization org, ImageViewDto logo) {
         return new OrganizationViewDto(
                 org.getId(),
                 org.getName(),

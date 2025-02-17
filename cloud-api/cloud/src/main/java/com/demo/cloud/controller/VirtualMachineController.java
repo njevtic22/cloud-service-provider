@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/virtual-machines")
@@ -51,22 +50,13 @@ public class VirtualMachineController {
     @GetMapping
     public ResponseEntity<PaginatedResponse<MachineViewDto>> getAll(Pageable pageable, MachineFilter filter) {
         Page<VirtualMachine> machines = service.getAll(pageable, filter.getParams());
-        List<MachineViewDto> machinesDto = machines.getContent()
-                .stream()
-                .map(mapper::toViewDto)
-                .toList();
-
-        return ResponseEntity.ok(new PaginatedResponse<>(
-                machinesDto,
-                machines.getTotalElements(),
-                machines.getTotalPages()
-        ));
+        return ResponseEntity.ok(mapper.toDto(machines));
     }
 
     @GetMapping("{id}")
     public ResponseEntity<MachineViewDto> getById(@PathVariable Long id) {
         VirtualMachine found = service.getById(id);
-        MachineViewDto foundDto = mapper.toViewDto(found);
+        MachineViewDto foundDto = mapper.toDto(found);
         return ResponseEntity.ok(foundDto);
     }
 
@@ -74,7 +64,7 @@ public class VirtualMachineController {
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public ResponseEntity<MachineViewDto> update(@PathVariable Long id, @Valid @RequestBody UpdateMachineDto changesDto) {
         VirtualMachine updated = service.update(id, changesDto.getName(), changesDto.getCategoryId());
-        MachineViewDto updatedDto = mapper.toViewDto(updated);
+        MachineViewDto updatedDto = mapper.toDto(updated);
         return ResponseEntity.ok(updatedDto);
     }
 

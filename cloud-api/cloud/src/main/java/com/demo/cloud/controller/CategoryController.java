@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/categories")
@@ -52,23 +51,14 @@ public class CategoryController {
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<PaginatedResponse<CategoryViewDto>> getAll(Pageable pageable, CategoryFilter filter) {
         Page<Category> cats = service.getAll(pageable, filter.getParams());
-        List<CategoryViewDto> catsDto = cats.getContent()
-                .stream()
-                .map(mapper::toViewDto)
-                .toList();
-
-        return ResponseEntity.ok(new PaginatedResponse<>(
-                catsDto,
-                cats.getTotalElements(),
-                cats.getTotalPages()
-        ));
+        return ResponseEntity.ok(mapper.toDto(cats));
     }
 
     @GetMapping("{id}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<CategoryViewDto> getById(@PathVariable Long id) {
         Category found = service.getById(id);
-        CategoryViewDto foundDto = mapper.toViewDto(found);
+        CategoryViewDto foundDto = mapper.toDto(found);
         return ResponseEntity.ok(foundDto);
     }
 
@@ -77,7 +67,7 @@ public class CategoryController {
     public ResponseEntity<CategoryViewDto> update(@PathVariable Long id, @Valid @RequestBody UpdateCategoryDto changesDto) {
         Category changes = mapper.toModel(changesDto);
         Category updated = service.update(id, changes);
-        CategoryViewDto updatedDto = mapper.toViewDto(updated);
+        CategoryViewDto updatedDto = mapper.toDto(updated);
         return ResponseEntity.ok(updatedDto);
     }
 

@@ -4,6 +4,7 @@ import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -80,6 +81,30 @@ public class EntitySpecification {
         }
 
         return (root, query, cb) -> cb.greaterThanOrEqualTo(getPath(root, keys), value);
+    }
+
+    public static <T> Specification<T> attrMin(String key, LocalDateTime date) {
+        return attrMin(new String[]{key}, date);
+    }
+
+    public static <T> Specification<T> attrMin(String[] keys, LocalDateTime date) {
+        if (date == null) {
+            return null;
+        }
+
+        return (root, query, cb) -> cb.greaterThanOrEqualTo(getPath(root, keys), date);
+    }
+
+    public static <T> Specification<T> attrMax(String key, LocalDateTime date) {
+        return attrMax(new String[]{key}, date);
+    }
+
+    public static <T> Specification<T> attrMax(String[] keys, LocalDateTime date) {
+        if (date == null) {
+            return null;
+        }
+
+        return (root, query, cb) -> cb.lessThanOrEqualTo(getPath(root, keys), date);
     }
 
     protected static <T, R> Path<R> getPath(Root<T> root, String... keys) {
