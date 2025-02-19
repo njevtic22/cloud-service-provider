@@ -333,6 +333,7 @@ public class FakeDatabaseGenerator {
                         machineId.next(),
                         machineId.current() + ": " + faker.lordOfTheRings().character(),
                         false,
+                        false,
                         org,
                         categories.next()
                 );
@@ -450,11 +451,26 @@ public class FakeDatabaseGenerator {
                         0,
                         machine
                 );
+                setActive(machine, true);
                 activities.put(activity.getId(), activity);
             }
         }
 
         return activities;
+    }
+
+    private void setActive(VirtualMachine machine, boolean active) {
+        try {
+            Class<VirtualMachine> machineClass = VirtualMachine.class;
+            Field activeField = machineClass.getDeclaredField("active");
+            activeField.setAccessible(true);
+
+            activeField.set(machine, active);
+
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private <T> void printToSqlInsert(Collection<T> values, String linesDescription, PrintWriter out, Function<T, String> fun) {

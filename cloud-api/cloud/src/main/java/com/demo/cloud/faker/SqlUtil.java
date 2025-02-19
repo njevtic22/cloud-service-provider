@@ -47,9 +47,10 @@ public class SqlUtil {
     }
 
     public static String toSqlInsert(VirtualMachine machine) {
-        return "insert into virtual_machines(id, name, archived, organization_id, category_id) values (" +
+        return "insert into virtual_machines(id, name, active, archived, organization_id, category_id) values (" +
                 machine.getId() + ", '" +
                 machine.getName() + "', " +
+                machine.isActive() + ", " +
                 machine.isArchived() + ", " +
                 machine.getOrganization().getId() + ", " +
                 machine.getCategory().getId() + ");";
