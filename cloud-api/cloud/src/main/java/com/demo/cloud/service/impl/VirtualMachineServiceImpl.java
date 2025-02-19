@@ -59,9 +59,10 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
 
         VirtualMachine toAdd = new VirtualMachine(
                 name,
+                false,
+                false,
                 org,
-                cat,
-                false
+                cat
         );
         return repository.save(toAdd);
     }
@@ -95,6 +96,9 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     @Override
     public VirtualMachine update(Long id, String name, Long categoryId) {
         VirtualMachine existing = getById(id);
+
+        // TODO: Prevent update if machine is active
+
         if (!existing.getName().equals(name)) {
             validateName(name);
         }
@@ -103,6 +107,7 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
         VirtualMachine updated = new VirtualMachine(
                 existing.getId(),
                 name,
+                existing.isActive(),
                 false,
                 existing.getOrganization(),
                 cat

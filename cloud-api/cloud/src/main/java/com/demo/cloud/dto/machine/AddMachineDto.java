@@ -1,4 +1,4 @@
-package com.demo.cloud.dto.machines;
+package com.demo.cloud.dto.machine;
 
 import jakarta.validation.constraints.Positive;
 

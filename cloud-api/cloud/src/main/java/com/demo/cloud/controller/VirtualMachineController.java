@@ -2,9 +2,9 @@ package com.demo.cloud.controller;
 
 
 import com.demo.cloud.core.PaginatedResponse;
-import com.demo.cloud.dto.machines.AddMachineDto;
-import com.demo.cloud.dto.machines.MachineViewDto;
-import com.demo.cloud.dto.organization.UpdateMachineDto;
+import com.demo.cloud.dto.machine.AddMachineDto;
+import com.demo.cloud.dto.machine.MachineViewDto;
+import com.demo.cloud.dto.machine.UpdateMachineDto;
 import com.demo.cloud.filterParams.MachineFilter;
 import com.demo.cloud.mapper.VirtualMachineMapper;
 import com.demo.cloud.model.VirtualMachine;

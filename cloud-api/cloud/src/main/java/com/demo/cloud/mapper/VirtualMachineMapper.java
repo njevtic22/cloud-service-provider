@@ -1,6 +1,6 @@
 package com.demo.cloud.mapper;
 
-import com.demo.cloud.dto.machines.MachineViewDto;
+import com.demo.cloud.dto.machine.MachineViewDto;
 import com.demo.cloud.model.VirtualMachine;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +11,7 @@ public class VirtualMachineMapper extends PageMapper<VirtualMachine, MachineView
         return new MachineViewDto(
                 machine.getId(),
                 machine.getName(),
+                machine.isActive(),
                 machine.getOrganization().getName(),
                 machine.getCategory().getName(),
                 machine.getCategory().getCpu(),
