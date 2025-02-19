@@ -1,8 +1,9 @@
-package com.demo.cloud.dto.machines;
+package com.demo.cloud.dto.machine;
 
 public record MachineViewDto(
         Long id,
         String name,
+        boolean active,
 //        Long organizationId,
         String organization,
 //        Long categoryId,

@@ -24,6 +24,9 @@ public class VirtualMachine {
     private String name;
 
     @Column(nullable = false)
+    private boolean active;
+
+    @Column(nullable = false)
     private boolean archived;
 
     @ManyToOne
@@ -34,13 +37,14 @@ public class VirtualMachine {
 
     public VirtualMachine() { }
 
-    public VirtualMachine(String name, Organization organization, Category category, boolean archived) {
-        this(null, name, archived, organization, category);
+    public VirtualMachine(String name, boolean active, boolean archived, Organization organization, Category category) {
+        this(null, name, active, archived, organization, category);
     }
 
-    public VirtualMachine(Long id, String name, boolean archived, Organization organization, Category category) {
+    public VirtualMachine(Long id, String name, boolean active, boolean archived, Organization organization, Category category) {
         this.id = id;
         this.name = Strings.requireNonBlank(name, "Name must not be blank.");
+        this.active = active;
         this.archived = archived;
         this.organization = Objects.requireNonNull(organization, "Organization must not be null.");
         this.category = Objects.requireNonNull(category, "Category must not be null.");
@@ -58,24 +62,16 @@ public class VirtualMachine {
         return Objects.hash(id, name);
     }
 
-    public int getCpu() {
-        return category.getCpu();
-    }
-
-    public int getRam() {
-        return category.getRam();
-    }
-
-    public int getGpu() {
-        return category.getGpu();
-    }
-
     public Long getId() {
         return id;
     }
 
     public String getName() {
         return name;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
     public boolean isArchived() {
@@ -88,5 +84,17 @@ public class VirtualMachine {
 
     public Category getCategory() {
         return category;
+    }
+
+    public int getCpu() {
+        return category.getCpu();
+    }
+
+    public int getRam() {
+        return category.getRam();
+    }
+
+    public int getGpu() {
+        return category.getGpu();
     }
 }

@@ -1,6 +1,4 @@
-package com.demo.cloud.dto.organization;
-
-import com.demo.cloud.dto.machines.RequestMachineDto;
+package com.demo.cloud.dto.machine;
 
 public class UpdateMachineDto extends RequestMachineDto {
     public UpdateMachineDto(String name, Long categoryId) {
