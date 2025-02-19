@@ -15,7 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -427,9 +427,9 @@ public class FakeDatabaseGenerator {
 
         for (List<VirtualMachine> machines : orgMachines.values()) {
             for (VirtualMachine machine : machines) {
-                LocalDate[][] datePairs = generateTurnedOnAndOff(machine, FINISHED_ACTIVITIES_PER_MACHINE);
+                LocalDateTime[][] datePairs = generateTurnedOnAndOff(machine, FINISHED_ACTIVITIES_PER_MACHINE);
                 for (int i = 0; i < FINISHED_ACTIVITIES_PER_MACHINE; i++) {
-                    LocalDate[] pair = datePairs[i];
+                    LocalDateTime[] pair = datePairs[i];
                     Activity activity = new Activity(
                             activityId.next(),
                             pair[0],
