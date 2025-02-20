@@ -1,6 +1,10 @@
 package com.demo.cloud.core.error.exceptions;
 
 public class EntityNotFoundException extends RuntimeException {
+    public EntityNotFoundException(String message) {
+        super(message);
+    }
+
     public EntityNotFoundException(String entityName, Long entityId) {
         super(entityName + " with id: '" + entityId + "' not found.");
     }

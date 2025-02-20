@@ -42,7 +42,7 @@ public class ActivityServiceImpl implements ActivityService {
                 0
         );
         Activity saved = repository.save(toAdd);
-        found.setActive(true);
+        found.turnOn();
         return saved;
     }
 
@@ -55,5 +55,30 @@ public class ActivityServiceImpl implements ActivityService {
     public Activity getById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Activity", id));
+    }
+
+    @Override
+    @Transactional
+    public Activity end(Long machineId) {
+        VirtualMachine found = service.getById(machineId);
+
+        if (!found.isActive()) {
+            throw new IllegalArgumentException("Chosen machine is not active");
+        }
+
+        Activity ongoing = repository.findByMachineIdAndTurnedOffNull(found.getId())
+                .orElseThrow(() -> new EntityNotFoundException("No activity found for machine with id '" + found.getId() + "' and no turned off date"));
+
+        // TODO: calculate profit
+        Activity toEnd = new Activity(
+                ongoing.getId(),
+                ongoing.getTurnedOn(),
+                LocalDateTime.now(),
+                11111,
+                found
+        );
+        Activity ended = repository.save(toEnd);
+        found.turnOff();
+        return ended;
     }
 }

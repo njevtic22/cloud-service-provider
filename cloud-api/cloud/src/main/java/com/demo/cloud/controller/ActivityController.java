@@ -3,6 +3,7 @@ package com.demo.cloud.controller;
 import com.demo.cloud.core.PaginatedResponse;
 import com.demo.cloud.dto.activity.ActivityViewDto;
 import com.demo.cloud.dto.activity.AddActivityDto;
+import com.demo.cloud.dto.activity.UpdateActivityDto;
 import com.demo.cloud.filterParams.ActivityFilter;
 import com.demo.cloud.mapper.ActivityMapper;
 import com.demo.cloud.model.Activity;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,5 +48,12 @@ public class ActivityController {
     public ResponseEntity<PaginatedResponse<ActivityViewDto>> getAll(Pageable pageable, ActivityFilter filter) {
         Page<Activity> activities = service.getAll(pageable, filter.getParams());
         return ResponseEntity.ok(mapper.toDto(activities));
+    }
+
+    @PutMapping
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
+    public ResponseEntity<ActivityViewDto> end(@Valid @RequestBody UpdateActivityDto updateDto) {
+        Activity ended = service.end(updateDto.getMachineId());
+        return ResponseEntity.ok(mapper.toDto(ended));
     }
 }
