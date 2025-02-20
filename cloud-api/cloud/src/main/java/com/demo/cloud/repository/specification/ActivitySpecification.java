@@ -26,6 +26,7 @@ public class ActivitySpecification extends EntitySpecification {
                 case "minProfit" -> attrMin("profit", value);
                 case "maxProfit" -> attrMax("profit", value);
 
+                case "ongoing" -> isOngoing("turnedOff", value);
                 case "machineId" -> attrEqual(machineKeys, value);
                 case "organizationId" -> attrEqual(orgKeys, value);
                 default -> throw new IllegalArgumentException("Invalid filter key " + key);
@@ -33,6 +34,15 @@ public class ActivitySpecification extends EntitySpecification {
         };
 
         return getSpec(filter, specParser);
+    }
+
+    private static Specification<Activity> isOngoing(String key, String ongoingStr) {
+        if (ongoingStr == null || ongoingStr.isBlank()) {
+            return null;
+        }
+
+        boolean ongoing = Boolean.parseBoolean(ongoingStr);
+        return ongoing ? attrNull(key) : attrNotNull(key);
     }
 
     private static LocalDate parseDate(String value) {

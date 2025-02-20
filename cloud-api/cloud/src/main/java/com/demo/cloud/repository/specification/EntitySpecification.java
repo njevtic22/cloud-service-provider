@@ -107,6 +107,22 @@ public class EntitySpecification {
         return (root, query, cb) -> cb.lessThanOrEqualTo(getPath(root, keys), date);
     }
 
+    public static <T> Specification<T> attrNull(String key) {
+        return attrNull(new String[]{key});
+    }
+
+    public static <T> Specification<T> attrNull(String[] keys) {
+        return (root, query, cb) -> cb.isNull(getPath(root, keys));
+    }
+
+    public static <T> Specification<T> attrNotNull(String key) {
+        return attrNotNull(new String[]{key});
+    }
+
+    public static <T> Specification<T> attrNotNull(String[] keys) {
+        return (root, query, cb) -> cb.isNotNull(getPath(root, keys));
+    }
+
     protected static <T, R> Path<R> getPath(Root<T> root, String... keys) {
         Path<R> path = root.get(keys[0]);
         for (int i = 1; i < keys.length; i++) {
