@@ -74,6 +74,10 @@ public class VirtualMachine {
         return active;
     }
 
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     public boolean isArchived() {
         return archived;
     }
