@@ -20,7 +20,7 @@ public class DriveServiceImpl implements DriveService {
 
     @Override
     public Page<Drive> getAll(Pageable pageable, Map<String, String> filter) {
-        return null;
+        return repository.findAll(pageable);
     }
 
     @Override

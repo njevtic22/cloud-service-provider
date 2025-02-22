@@ -1,9 +1,12 @@
 package com.demo.cloud.controller;
 
+import com.demo.cloud.core.PaginatedResponse;
 import com.demo.cloud.dto.drive.DriveViewDto;
 import com.demo.cloud.mapper.DriveMapper;
 import com.demo.cloud.model.Drive;
 import com.demo.cloud.service.DriveService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +22,12 @@ public class DriveController {
     public DriveController(DriveService service, DriveMapper mapper) {
         this.service = service;
         this.mapper = mapper;
+    }
+
+    @GetMapping
+    public ResponseEntity<PaginatedResponse<DriveViewDto>> getAll(Pageable pageable) {
+        Page<Drive> drives = service.getAll(pageable, null);
+        return ResponseEntity.ok(mapper.toDto(drives));
     }
 
     @GetMapping("{id}")
