@@ -2,6 +2,7 @@ package com.demo.cloud.controller;
 
 import com.demo.cloud.core.PaginatedResponse;
 import com.demo.cloud.dto.drive.DriveViewDto;
+import com.demo.cloud.filterParams.DriveFilter;
 import com.demo.cloud.mapper.DriveMapper;
 import com.demo.cloud.model.Drive;
 import com.demo.cloud.service.DriveService;
@@ -25,8 +26,8 @@ public class DriveController {
     }
 
     @GetMapping
-    public ResponseEntity<PaginatedResponse<DriveViewDto>> getAll(Pageable pageable) {
-        Page<Drive> drives = service.getAll(pageable, null);
+    public ResponseEntity<PaginatedResponse<DriveViewDto>> getAll(Pageable pageable, DriveFilter filter) {
+        Page<Drive> drives = service.getAll(pageable, filter.getParams());
         return ResponseEntity.ok(mapper.toDto(drives));
     }
 

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+import static com.demo.cloud.repository.specification.DriveSpecification.getSpec;
+
 @Service
 public class DriveServiceImpl implements DriveService {
     private final DriveRepository repository;
@@ -20,7 +22,7 @@ public class DriveServiceImpl implements DriveService {
 
     @Override
     public Page<Drive> getAll(Pageable pageable, Map<String, String> filter) {
-        return repository.findAll(pageable);
+        return repository.findAll(getSpec(filter, false), pageable);
     }
 
     @Override
