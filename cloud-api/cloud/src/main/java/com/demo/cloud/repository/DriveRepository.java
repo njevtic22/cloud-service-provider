@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface DriveRepository extends JpaRepository<Drive, Long>, JpaSpecificationExecutor<Drive> {
     Optional<Drive> findByIdAndArchivedFalse(Long id);
+
+    boolean existsByName(String name);
 }

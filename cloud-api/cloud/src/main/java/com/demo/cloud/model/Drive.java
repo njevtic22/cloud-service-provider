@@ -22,7 +22,7 @@ public class Drive {
     @SequenceGenerator(name = "drive_generator", sequenceName = "drive_id_seq", allocationSize = 1)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Column(nullable = false)
@@ -57,7 +57,7 @@ public class Drive {
         this.capacity = capacity;
         this.type = Objects.requireNonNull(type, "Type must not be null.");
         this.archived = archived;
-        this.organization = Objects.requireNonNull(organization, "Organization must not be null.");
+        this.organization = organization;
         this.machine = machine;
     }
 
