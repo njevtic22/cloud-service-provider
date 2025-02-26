@@ -61,6 +61,35 @@ public class DriveServiceImpl implements DriveService {
                 .orElseThrow(() -> new EntityNotFoundException("Drive", id));
     }
 
+    @Override
+    public Drive update(Long id, Drive changes) {
+        Drive existing = getById(id);
+
+        // TODO: prevent update if machine is active
+
+        User authenticated = authService.getAuthenticated();
+        if (authenticated.isAdmin()) {
+            if (!authenticated.getOrganization().equals(existing.getOrganization())) {
+                throw new IllegalArgumentException("Admin can only update drive which belong to his organization");
+            }
+        }
+
+        if (!existing.getName().equals(changes.getName())) {
+            validateName(changes.getName());
+        }
+
+        Drive toUpdate = new Drive(
+                existing.getId(),
+                changes.getName(),
+                changes.getCapacity(),
+                changes.getType(),
+                existing.isArchived(),
+                existing.getOrganization(),
+                existing.getMachine()
+        );
+        return repository.save(toUpdate);
+    }
+
     private void validateName(String name) {
         if (repository.existsByName(name)) {
             throw new UniquePropertyException("Name '" + name + "' is already taken");

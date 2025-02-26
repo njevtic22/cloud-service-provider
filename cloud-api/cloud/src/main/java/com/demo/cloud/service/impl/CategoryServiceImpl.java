@@ -47,6 +47,8 @@ public class CategoryServiceImpl implements CategoryService {
     public Category update(Long id, Category changes) {
         Objects.requireNonNull(changes, "Category changes must not be null.");
 
+        // TODO: prevent update if machine is active
+
         Category existing = getById(id);
         if (!existing.getName().equals(changes.getName())) {
             validateName(changes.getName());
