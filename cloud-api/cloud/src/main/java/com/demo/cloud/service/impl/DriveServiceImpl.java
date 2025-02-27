@@ -1,6 +1,7 @@
 package com.demo.cloud.service.impl;
 
 import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
+import com.demo.cloud.core.error.exceptions.MultipleAffectedRowsException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Drive;
 import com.demo.cloud.model.Organization;
@@ -9,11 +10,13 @@ import com.demo.cloud.repository.DriveRepository;
 import com.demo.cloud.security.AuthenticationService;
 import com.demo.cloud.service.DriveService;
 import com.demo.cloud.service.OrganizationService;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static com.demo.cloud.repository.specification.DriveSpecification.getSpec;
 
@@ -90,9 +93,39 @@ public class DriveServiceImpl implements DriveService {
         return repository.save(toUpdate);
     }
 
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        Objects.requireNonNull(id, "Id must not be null.");
+
+        // TODO: do not delete if drive is connected to active machine
+
+        validateExists(id);
+
+        int rowsAffected = repository.archiveById(id);
+        if (rowsAffected != 1) {
+            throw new MultipleAffectedRowsException("Drives", "delete (by id)");
+        }
+    }
+
     private void validateName(String name) {
         if (repository.existsByName(name)) {
             throw new UniquePropertyException("Name '" + name + "' is already taken");
+        }
+    }
+
+    private void validateExists(Long id) {
+        User authenticated = authService.getAuthenticated();
+        boolean exists = false;
+        if (authenticated.isAdmin()) {
+            Long orgId = authenticated.getOrganization().getId();
+            exists = repository.existsByIdAndOrganizationIdAndArchivedFalse(id, orgId);
+        } else {
+            exists = repository.existsByIdAndArchivedFalse(id);
+        }
+
+        if (!exists) {
+            throw new EntityNotFoundException("Drive", id);
         }
     }
 }

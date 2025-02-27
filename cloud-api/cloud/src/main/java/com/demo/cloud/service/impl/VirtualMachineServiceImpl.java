@@ -120,6 +120,8 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     public void delete(Long id) {
         Objects.requireNonNull(id, "Id must not be null.");
 
+        // TODO: Validate if admin is deleting machine which belongs to his organization
+
         if (!repository.existsByIdAndArchivedFalse(id)) {
             throw new EntityNotFoundException("Virtual machine", id);
         }
