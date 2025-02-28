@@ -3,12 +3,13 @@ package com.demo.cloud.repository.specification;
 import com.demo.cloud.model.Activity;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Map;
 import java.util.function.BiFunction;
+
+import static com.demo.cloud.util.DateTimeUtil.toDate;
+import static com.demo.cloud.util.DateTimeUtil.toDateTime;
 
 public class ActivitySpecification extends EntitySpecification {
     public static Specification<Activity> getSpec(Map<String, String> filter) {
@@ -46,10 +47,10 @@ public class ActivitySpecification extends EntitySpecification {
     }
 
     private static LocalDate parseDate(String value) {
-        return Instant.ofEpochMilli(Long.parseLong(value)).atZone(ZoneId.systemDefault()).toLocalDate();
+        return toDate(value);
     }
 
     private static LocalDateTime parseDateTime(String value) {
-        return Instant.ofEpochMilli(Long.parseLong(value)).atZone(ZoneId.systemDefault()).toLocalDateTime();
+        return toDateTime(value);
     }
 }
