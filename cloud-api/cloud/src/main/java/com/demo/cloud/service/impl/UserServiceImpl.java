@@ -8,6 +8,7 @@ import com.demo.cloud.model.Organization;
 import com.demo.cloud.model.Role;
 import com.demo.cloud.model.User;
 import com.demo.cloud.repository.UserRepository;
+import com.demo.cloud.repository.specification.UserSpecification;
 import com.demo.cloud.security.AuthenticationService;
 import com.demo.cloud.service.OrganizationService;
 import com.demo.cloud.service.RoleService;
@@ -21,8 +22,6 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.demo.cloud.repository.specification.UserSpecification.getSpec;
-
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
@@ -30,19 +29,22 @@ public class UserServiceImpl implements UserService {
     private final OrganizationService orgService;
     private final AuthenticationService authService;
     private final PasswordEncoder encoder;
+    private final UserSpecification spec;
 
     public UserServiceImpl(
             UserRepository repository,
             RoleService roleService,
             OrganizationService orgService,
             AuthenticationService authService,
-            PasswordEncoder encoder
+            PasswordEncoder encoder,
+            UserSpecification spec
     ) {
         this.repository = repository;
         this.roleService = roleService;
         this.orgService = orgService;
         this.authService = authService;
         this.encoder = encoder;
+        this.spec = spec;
     }
 
     @Override
@@ -73,7 +75,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<User> getAll(Pageable pageable, Map<String, String> filter) {
-        return repository.findAll(getSpec(filter, false), pageable);
+        return repository.findAll(spec.get(filter, false), pageable);
     }
 
     @Override
