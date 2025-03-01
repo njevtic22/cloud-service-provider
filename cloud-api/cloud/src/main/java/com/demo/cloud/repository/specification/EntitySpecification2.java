@@ -9,6 +9,8 @@ import java.util.Map;
 
 public abstract class EntitySpecification2<T> {
     public Specification<T> get(Map<String, String> filter) {
+        filter.putIfAbsent("archived", "false");
+
         ArrayList<Specification<T>> specs = new ArrayList<>(filter.size());
 
         for (Map.Entry<String, String> entry : filter.entrySet()) {
