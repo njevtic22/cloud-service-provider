@@ -4,6 +4,7 @@ import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -59,6 +60,70 @@ public abstract class EntitySpecification2<T> {
         }
 
         return (root, query, cb) -> cb.equal(getPath(root, keys), value);
+    }
+
+    public Specification<T> attrMin(String key, String value) {
+        return attrMin(new String[]{key}, value);
+    }
+
+    public Specification<T> attrMin(String[] keys, String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+
+        return (root, query, cb) -> cb.greaterThanOrEqualTo(getPath(root, keys), value);
+    }
+
+    public Specification<T> attrMin(String key, LocalDateTime date) {
+        return attrMin(new String[]{key}, date);
+    }
+
+    public Specification<T> attrMin(String[] keys, LocalDateTime date) {
+        if (date == null) {
+            return null;
+        }
+
+        return (root, query, cb) -> cb.greaterThanOrEqualTo(getPath(root, keys), date);
+    }
+
+    public Specification<T> attrMax(String key, String value) {
+        return attrMax(new String[]{key}, value);
+    }
+
+    public Specification<T> attrMax(String[] keys, String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+
+        return (root, query, cb) -> cb.lessThanOrEqualTo(getPath(root, keys), value);
+    }
+
+    public Specification<T> attrMax(String key, LocalDateTime date) {
+        return attrMax(new String[]{key}, date);
+    }
+
+    public Specification<T> attrMax(String[] keys, LocalDateTime date) {
+        if (date == null) {
+            return null;
+        }
+
+        return (root, query, cb) -> cb.lessThanOrEqualTo(getPath(root, keys), date);
+    }
+
+    public Specification<T> attrNull(String key) {
+        return attrNull(new String[]{key});
+    }
+
+    public Specification<T> attrNull(String[] keys) {
+        return (root, query, cb) -> cb.isNull(getPath(root, keys));
+    }
+
+    public Specification<T> attrNotNull(String key) {
+        return attrNotNull(new String[]{key});
+    }
+
+    public Specification<T> attrNotNull(String[] keys) {
+        return (root, query, cb) -> cb.isNotNull(getPath(root, keys));
     }
 
     protected <R> Path<R> getPath(Root<T> root, String... keys) {

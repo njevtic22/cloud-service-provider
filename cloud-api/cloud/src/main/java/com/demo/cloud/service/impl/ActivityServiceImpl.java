@@ -4,6 +4,7 @@ import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
 import com.demo.cloud.model.Activity;
 import com.demo.cloud.model.VirtualMachine;
 import com.demo.cloud.repository.ActivityRepository;
+import com.demo.cloud.repository.specification.EntitySpecification2;
 import com.demo.cloud.service.ActivityService;
 import com.demo.cloud.service.VirtualMachineService;
 import jakarta.transaction.Transactional;
@@ -14,16 +15,17 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-import static com.demo.cloud.repository.specification.ActivitySpecification.getSpec;
 
 @Service
 public class ActivityServiceImpl implements ActivityService {
     private final ActivityRepository repository;
     private final VirtualMachineService service;
+    private final EntitySpecification2<Activity> spec;
 
-    public ActivityServiceImpl(ActivityRepository repository, VirtualMachineService service) {
+    public ActivityServiceImpl(ActivityRepository repository, VirtualMachineService service, EntitySpecification2<Activity> spec) {
         this.repository = repository;
         this.service = service;
+        this.spec = spec;
     }
 
     @Override
@@ -48,7 +50,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public Page<Activity> getAll(Pageable pageable, Map<String, String> filter) {
-        return repository.findAll(getSpec(filter), pageable);
+        return repository.findAll(spec.get(filter), pageable);
     }
 
     @Override
