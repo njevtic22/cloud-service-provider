@@ -5,6 +5,7 @@ import com.demo.cloud.core.error.exceptions.MultipleAffectedRowsException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Category;
 import com.demo.cloud.repository.CategoryRepository;
+import com.demo.cloud.repository.specification.EntitySpecification2;
 import com.demo.cloud.service.CategoryService;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -14,14 +15,14 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.demo.cloud.repository.specification.CategorySpecification.getSpec;
-
 @Service
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository repository;
+    private final EntitySpecification2<Category> spec;
 
-    public CategoryServiceImpl(CategoryRepository repository) {
+    public CategoryServiceImpl(CategoryRepository repository, EntitySpecification2<Category> spec) {
         this.repository = repository;
+        this.spec = spec;
     }
 
     @Override
@@ -34,7 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Page<Category> getAll(Pageable pageable, Map<String, String> filter) {
-        return repository.findAll(getSpec(filter, false), pageable);
+        return repository.findAll(spec.get(filter), pageable);
     }
 
     @Override
