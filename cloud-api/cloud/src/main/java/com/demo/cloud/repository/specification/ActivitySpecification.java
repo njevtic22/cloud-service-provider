@@ -9,7 +9,7 @@ import static com.demo.cloud.util.DateTimeUtil.toDateTime;
 @Component
 public class ActivitySpecification extends EntitySpecification2<Activity> {
     @Override
-    public Specification<Activity> get(String key, String value) throws IllegalArgumentException {
+    public Specification<Activity> get(String key, String value) {
         final String[] machineKeys = {"machine", "id"};
         final String[] orgKeys = {"machine", "organization", "id"};
 

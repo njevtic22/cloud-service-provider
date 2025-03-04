@@ -20,7 +20,7 @@ public class UserSpecification extends EntitySpecification2<User> {
     // Creates only those specifications which are not null (and do not return null) unlike getSpec2
     // Is it faster though?
     @Override
-    public Specification<User> get(String key, String value) throws IllegalArgumentException {
+    public Specification<User> get(String key, String value) {
         return switch (key) {
             case "name", "surname", "email", "username" -> attrLike(key, value);
             case "role" -> attrLike(new String[]{"role", "name"}, value);

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CategorySpecification extends EntitySpecification2<Category> {
     @Override
-    public Specification<Category> get(String key, String value) throws IllegalArgumentException {
+    public Specification<Category> get(String key, String value) {
         return switch (key) {
             case "name" -> attrLike(key, value);
 

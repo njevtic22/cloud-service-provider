@@ -7,6 +7,7 @@ import com.demo.cloud.model.Drive;
 import com.demo.cloud.model.Organization;
 import com.demo.cloud.model.User;
 import com.demo.cloud.repository.DriveRepository;
+import com.demo.cloud.repository.specification.EntitySpecification2;
 import com.demo.cloud.security.AuthenticationService;
 import com.demo.cloud.service.DriveService;
 import com.demo.cloud.service.OrganizationService;
@@ -18,18 +19,18 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.demo.cloud.repository.specification.DriveSpecification.getSpec;
-
 @Service
 public class DriveServiceImpl implements DriveService {
     private final DriveRepository repository;
     private final OrganizationService orgService;
     private final AuthenticationService authService;
+    private final EntitySpecification2<Drive> spec;
 
-    public DriveServiceImpl(DriveRepository repository, OrganizationService orgService, AuthenticationService authService) {
+    public DriveServiceImpl(DriveRepository repository, OrganizationService orgService, AuthenticationService authService, EntitySpecification2<Drive> spec) {
         this.repository = repository;
         this.orgService = orgService;
         this.authService = authService;
+        this.spec = spec;
     }
 
     @Override
@@ -55,7 +56,7 @@ public class DriveServiceImpl implements DriveService {
 
     @Override
     public Page<Drive> getAll(Pageable pageable, Map<String, String> filter) {
-        return repository.findAll(getSpec(filter, false), pageable);
+        return repository.findAll(spec.get(filter), pageable);
     }
 
     @Override

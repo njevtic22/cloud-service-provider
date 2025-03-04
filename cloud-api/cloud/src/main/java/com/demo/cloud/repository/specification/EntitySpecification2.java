@@ -36,7 +36,7 @@ public abstract class EntitySpecification2<T> {
         return get(filter);
     }
 
-    public abstract Specification<T> get(String key, String value) throws IllegalArgumentException;
+    public abstract Specification<T> get(String key, String value);
 
     public Specification<T> attrLike(String key, String value) {
         return attrLike(new String[]{key}, value);
