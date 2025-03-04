@@ -8,6 +8,7 @@ import com.demo.cloud.model.Organization;
 import com.demo.cloud.model.User;
 import com.demo.cloud.model.VirtualMachine;
 import com.demo.cloud.repository.VirtualMachineRepository;
+import com.demo.cloud.repository.specification.EntitySpecification2;
 import com.demo.cloud.security.AuthenticationService;
 import com.demo.cloud.service.CategoryService;
 import com.demo.cloud.service.OrganizationService;
@@ -20,25 +21,26 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.demo.cloud.repository.specification.MachineSpecification.getSpec;
-
 @Service
 public class VirtualMachineServiceImpl implements VirtualMachineService {
     private final VirtualMachineRepository repository;
     private final AuthenticationService authService;
     private final OrganizationService orgService;
     private final CategoryService catService;
+    private final EntitySpecification2<VirtualMachine> spec;
 
     public VirtualMachineServiceImpl(
             VirtualMachineRepository repository,
             AuthenticationService authService,
             OrganizationService orgService,
-            CategoryService catService
+            CategoryService catService,
+            EntitySpecification2<VirtualMachine> spec
     ) {
         this.repository = repository;
         this.authService = authService;
         this.orgService = orgService;
         this.catService = catService;
+        this.spec = spec;
     }
 
     @Override
@@ -73,7 +75,7 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
         String orgId = authenticated.getOrganization() == null ? null : authenticated.getOrganization().getId().toString();
         filter.put("organizationId", orgId);
 
-        return repository.findAll(getSpec(filter, false), pageable);
+        return repository.findAll(spec.get(filter), pageable);
     }
 
     @Override
