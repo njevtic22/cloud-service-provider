@@ -5,6 +5,7 @@ import com.demo.cloud.core.error.exceptions.MultipleAffectedRowsException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Organization;
 import com.demo.cloud.repository.OrganizationRepository;
+import com.demo.cloud.repository.specification.EntitySpecification2;
 import com.demo.cloud.service.OrganizationService;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -14,14 +15,14 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.demo.cloud.repository.specification.OrganizationSpecification.getSpec;
-
 @Service
 public class OrganizationServiceImpl implements OrganizationService {
     private final OrganizationRepository repository;
+    private final EntitySpecification2<Organization> spec;
 
-    public OrganizationServiceImpl(OrganizationRepository repository) {
+    public OrganizationServiceImpl(OrganizationRepository repository, EntitySpecification2<Organization> spec) {
         this.repository = repository;
+        this.spec = spec;
     }
 
     @Override
@@ -40,7 +41,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     public Page<Organization> getAll(Pageable pageable, Map<String, String> filter) {
-        return repository.findAll(getSpec(filter, false), pageable);
+        return repository.findAll(spec.get(filter), pageable);
     }
 
     @Override
