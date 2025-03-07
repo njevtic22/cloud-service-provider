@@ -8,8 +8,10 @@ import java.util.Map;
 
 @Component
 public class UserSpecification extends EntitySpecification<User> {
+    private final String[] roleKeys = {"role", "name"};
+
     public Specification<User> get2(Map<String, String> filter) {
-        return Specification.<User>where(attrLike(new String[]{"role", "name"}, filter.get("role")))
+        return Specification.<User>where(attrLike(roleKeys, filter.get("role")))
                 .and(attrLike("surname", filter.get("surname")))
                 .and(attrLike("email", filter.get("email")))
                 .and(attrLike("username", filter.get("username")))
@@ -23,7 +25,7 @@ public class UserSpecification extends EntitySpecification<User> {
     public Specification<User> get(String key, String value) {
         return switch (key) {
             case "name", "surname", "email", "username" -> attrLike(key, value);
-            case "role" -> attrLike(new String[]{"role", "name"}, value);
+            case "role" -> attrLike(roleKeys, value);
             case "archived" -> attrEqual(key, Boolean.valueOf(value));
             default -> throw new IllegalArgumentException("Invalid filter key " + key);
         };

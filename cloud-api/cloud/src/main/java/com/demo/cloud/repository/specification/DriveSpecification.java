@@ -6,21 +6,20 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DriveSpecification extends EntitySpecification<Drive> {
+    private final String[] orgKeys = {"organization", "name"};
+    private final String[] machineKeys = {"machine", "name"};
+    private final String[] nameKey = {"name"};
+    private final String[] typeKey = {"type"};
+
     @Override
     public Specification<Drive> get(String key, String value) {
-        final String[] orgKeys = {"organization", "name"};
-        final String[] machineKeys = {"machine", "name"};
-
         return switch (key) {
-            case "name", "type" -> attrLike(key, value);
+            case "name", "type", "organization", "machine" -> attrLike(getKeys(key), value);
 
             case "minCapacity" -> attrMin("capacity", value);
             case "maxCapacity" -> attrMax("capacity", value);
 
-            case "organization" -> attrLike(orgKeys, value);
-            case "machine" -> attrLike(machineKeys, value);
             case "attached" -> isAttached("machine", value);
-
             case "archived" -> attrEqual(key, Boolean.valueOf(value));
             default -> throw new IllegalArgumentException("Invalid filter key " + key);
         };
@@ -33,5 +32,15 @@ public class DriveSpecification extends EntitySpecification<Drive> {
 
         boolean attached = Boolean.parseBoolean(attachedStr);
         return attached ? attrNotNull(key) : attrNull(key);
+    }
+
+    private String[] getKeys(String key) {
+        return switch (key) {
+            case "name" -> nameKey;
+            case "type" -> typeKey;
+            case "organization" -> orgKeys;
+            case "machine" -> machineKeys;
+            default -> throw new IllegalArgumentException("Invalid filter key " + key);
+        };
     }
 }
