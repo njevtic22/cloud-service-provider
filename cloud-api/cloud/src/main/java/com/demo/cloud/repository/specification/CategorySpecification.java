@@ -5,7 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CategorySpecification extends EntitySpecification2<Category> {
+public class CategorySpecification extends EntitySpecification<Category> {
     @Override
     public Specification<Category> get(String key, String value) {
         return switch (key) {

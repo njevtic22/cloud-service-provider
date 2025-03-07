@@ -5,7 +5,7 @@ import com.demo.cloud.core.error.exceptions.MultipleAffectedRowsException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Category;
 import com.demo.cloud.repository.CategoryRepository;
-import com.demo.cloud.repository.specification.EntitySpecification2;
+import com.demo.cloud.repository.specification.EntitySpecification;
 import com.demo.cloud.service.CategoryService;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -18,9 +18,9 @@ import java.util.Objects;
 @Service
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository repository;
-    private final EntitySpecification2<Category> spec;
+    private final EntitySpecification<Category> spec;
 
-    public CategoryServiceImpl(CategoryRepository repository, EntitySpecification2<Category> spec) {
+    public CategoryServiceImpl(CategoryRepository repository, EntitySpecification<Category> spec) {
         this.repository = repository;
         this.spec = spec;
     }

@@ -8,7 +8,7 @@ import com.demo.cloud.model.Organization;
 import com.demo.cloud.model.Role;
 import com.demo.cloud.model.User;
 import com.demo.cloud.repository.UserRepository;
-import com.demo.cloud.repository.specification.EntitySpecification2;
+import com.demo.cloud.repository.specification.EntitySpecification;
 import com.demo.cloud.security.AuthenticationService;
 import com.demo.cloud.service.OrganizationService;
 import com.demo.cloud.service.RoleService;
@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     private final OrganizationService orgService;
     private final AuthenticationService authService;
     private final PasswordEncoder encoder;
-    private final EntitySpecification2<User> spec;
+    private final EntitySpecification<User> spec;
 
     public UserServiceImpl(
             UserRepository repository,
@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
             OrganizationService orgService,
             AuthenticationService authService,
             PasswordEncoder encoder,
-            EntitySpecification2<User> spec
+            EntitySpecification<User> spec
     ) {
         this.repository = repository;
         this.roleService = roleService;

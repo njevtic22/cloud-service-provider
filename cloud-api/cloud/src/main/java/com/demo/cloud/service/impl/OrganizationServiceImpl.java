@@ -5,7 +5,7 @@ import com.demo.cloud.core.error.exceptions.MultipleAffectedRowsException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Organization;
 import com.demo.cloud.repository.OrganizationRepository;
-import com.demo.cloud.repository.specification.EntitySpecification2;
+import com.demo.cloud.repository.specification.EntitySpecification;
 import com.demo.cloud.service.OrganizationService;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -18,9 +18,9 @@ import java.util.Objects;
 @Service
 public class OrganizationServiceImpl implements OrganizationService {
     private final OrganizationRepository repository;
-    private final EntitySpecification2<Organization> spec;
+    private final EntitySpecification<Organization> spec;
 
-    public OrganizationServiceImpl(OrganizationRepository repository, EntitySpecification2<Organization> spec) {
+    public OrganizationServiceImpl(OrganizationRepository repository, EntitySpecification<Organization> spec) {
         this.repository = repository;
         this.spec = spec;
     }

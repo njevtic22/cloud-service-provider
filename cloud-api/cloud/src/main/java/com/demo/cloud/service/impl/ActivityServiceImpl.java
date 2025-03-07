@@ -4,7 +4,7 @@ import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
 import com.demo.cloud.model.Activity;
 import com.demo.cloud.model.VirtualMachine;
 import com.demo.cloud.repository.ActivityRepository;
-import com.demo.cloud.repository.specification.EntitySpecification2;
+import com.demo.cloud.repository.specification.EntitySpecification;
 import com.demo.cloud.service.ActivityService;
 import com.demo.cloud.service.VirtualMachineService;
 import jakarta.transaction.Transactional;
@@ -20,9 +20,9 @@ import java.util.Map;
 public class ActivityServiceImpl implements ActivityService {
     private final ActivityRepository repository;
     private final VirtualMachineService service;
-    private final EntitySpecification2<Activity> spec;
+    private final EntitySpecification<Activity> spec;
 
-    public ActivityServiceImpl(ActivityRepository repository, VirtualMachineService service, EntitySpecification2<Activity> spec) {
+    public ActivityServiceImpl(ActivityRepository repository, VirtualMachineService service, EntitySpecification<Activity> spec) {
         this.repository = repository;
         this.service = service;
         this.spec = spec;

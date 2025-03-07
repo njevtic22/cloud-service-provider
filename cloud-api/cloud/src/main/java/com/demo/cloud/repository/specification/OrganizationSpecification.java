@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class OrganizationSpecification extends EntitySpecification2<Organization> {
+public class OrganizationSpecification extends EntitySpecification<Organization> {
     public Specification<Organization> getSpec2(Map<String, String> filter) {
         return Specification.<Organization>where(attrLike("name", filter.get("name")))
                 .and(attrLike("description", filter.get("description")));

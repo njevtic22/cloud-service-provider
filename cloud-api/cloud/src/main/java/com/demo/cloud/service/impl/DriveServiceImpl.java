@@ -7,7 +7,7 @@ import com.demo.cloud.model.Drive;
 import com.demo.cloud.model.Organization;
 import com.demo.cloud.model.User;
 import com.demo.cloud.repository.DriveRepository;
-import com.demo.cloud.repository.specification.EntitySpecification2;
+import com.demo.cloud.repository.specification.EntitySpecification;
 import com.demo.cloud.security.AuthenticationService;
 import com.demo.cloud.service.DriveService;
 import com.demo.cloud.service.OrganizationService;
@@ -24,9 +24,9 @@ public class DriveServiceImpl implements DriveService {
     private final DriveRepository repository;
     private final OrganizationService orgService;
     private final AuthenticationService authService;
-    private final EntitySpecification2<Drive> spec;
+    private final EntitySpecification<Drive> spec;
 
-    public DriveServiceImpl(DriveRepository repository, OrganizationService orgService, AuthenticationService authService, EntitySpecification2<Drive> spec) {
+    public DriveServiceImpl(DriveRepository repository, OrganizationService orgService, AuthenticationService authService, EntitySpecification<Drive> spec) {
         this.repository = repository;
         this.orgService = orgService;
         this.authService = authService;

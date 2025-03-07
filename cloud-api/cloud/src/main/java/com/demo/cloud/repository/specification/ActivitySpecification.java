@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import static com.demo.cloud.util.DateTimeUtil.toDateTime;
 
 @Component
-public class ActivitySpecification extends EntitySpecification2<Activity> {
+public class ActivitySpecification extends EntitySpecification<Activity> {
     @Override
     public Specification<Activity> get(String key, String value) {
         final String[] machineKeys = {"machine", "id"};

@@ -8,7 +8,7 @@ import com.demo.cloud.model.Organization;
 import com.demo.cloud.model.User;
 import com.demo.cloud.model.VirtualMachine;
 import com.demo.cloud.repository.VirtualMachineRepository;
-import com.demo.cloud.repository.specification.EntitySpecification2;
+import com.demo.cloud.repository.specification.EntitySpecification;
 import com.demo.cloud.security.AuthenticationService;
 import com.demo.cloud.service.CategoryService;
 import com.demo.cloud.service.OrganizationService;
@@ -27,14 +27,14 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     private final AuthenticationService authService;
     private final OrganizationService orgService;
     private final CategoryService catService;
-    private final EntitySpecification2<VirtualMachine> spec;
+    private final EntitySpecification<VirtualMachine> spec;
 
     public VirtualMachineServiceImpl(
             VirtualMachineRepository repository,
             AuthenticationService authService,
             OrganizationService orgService,
             CategoryService catService,
-            EntitySpecification2<VirtualMachine> spec
+            EntitySpecification<VirtualMachine> spec
     ) {
         this.repository = repository;
         this.authService = authService;

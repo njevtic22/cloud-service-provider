@@ -5,7 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DriveSpecification extends EntitySpecification2<Drive> {
+public class DriveSpecification extends EntitySpecification<Drive> {
     @Override
     public Specification<Drive> get(String key, String value) {
         final String[] orgKeys = {"organization", "name"};
