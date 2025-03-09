@@ -1,8 +1,8 @@
 package com.demo.cloud.core.error.exceptions;
 
 public class UniquePropertyException extends RuntimeException {
-    public UniquePropertyException(String message) {
-        super(message);
+    public UniquePropertyException(String propertyName, String propertyValue) {
+        super(propertyName + " '" + propertyValue + "' is already taken");
     }
 
     public UniquePropertyException(String entityName, String propertyName, String propertyValue) {

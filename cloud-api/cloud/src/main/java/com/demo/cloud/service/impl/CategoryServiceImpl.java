@@ -83,7 +83,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private void validateName(String name) {
         if (repository.existsByName(name)) {
-            throw new UniquePropertyException("Name '" + name + "' is already taken");
+            throw new UniquePropertyException("Name", name);
         }
     }
 }
