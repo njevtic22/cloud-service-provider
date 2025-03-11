@@ -1,5 +1,6 @@
 package com.demo.cloud.repository.specification;
 
+import com.demo.cloud.core.error.exceptions.FilterKeyException;
 import com.demo.cloud.model.Activity;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -26,7 +27,7 @@ public class ActivitySpecification extends EntitySpecification<Activity> {
             case "machineId", "organizationId" -> attrEqual(getKeys(key), value);
 
             case "archived" -> null;
-            default -> throw new IllegalArgumentException("Invalid filter key " + key);
+            default -> throw new FilterKeyException(key);
         };
     }
 
@@ -45,7 +46,7 @@ public class ActivitySpecification extends EntitySpecification<Activity> {
             case "minTurnedOff", "maxTurnedOff" -> turnedOffKey;
             case "machineId" -> machineKeys;
             case "organizationId" -> orgKeys;
-            default -> throw new IllegalArgumentException("Invalid filter key " + key);
+            default -> throw new FilterKeyException(key);
         };
     }
 }

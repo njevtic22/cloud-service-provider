@@ -1,5 +1,6 @@
 package com.demo.cloud.repository.specification;
 
+import com.demo.cloud.core.error.exceptions.FilterKeyException;
 import com.demo.cloud.model.Drive;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,7 @@ public class DriveSpecification extends EntitySpecification<Drive> {
 
             case "attached" -> isAttached("machine", value);
             case "archived" -> attrEqual(key, Boolean.valueOf(value));
-            default -> throw new IllegalArgumentException("Invalid filter key " + key);
+            default -> throw new FilterKeyException(key);
         };
     }
 
@@ -40,7 +41,7 @@ public class DriveSpecification extends EntitySpecification<Drive> {
             case "type" -> typeKey;
             case "organization" -> orgKeys;
             case "machine" -> machineKeys;
-            default -> throw new IllegalArgumentException("Invalid filter key " + key);
+            default -> throw new FilterKeyException(key);
         };
     }
 }

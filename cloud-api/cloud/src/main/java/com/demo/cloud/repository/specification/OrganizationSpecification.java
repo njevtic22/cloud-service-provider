@@ -1,5 +1,6 @@
 package com.demo.cloud.repository.specification;
 
+import com.demo.cloud.core.error.exceptions.FilterKeyException;
 import com.demo.cloud.model.Organization;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,7 @@ public class OrganizationSpecification extends EntitySpecification<Organization>
         return switch (key) {
             case "name", "description" -> attrLike(key, value);
             case "archived" -> attrEqual(key, Boolean.valueOf(value));
-            default -> throw new IllegalArgumentException("Invalid filter key " + key);
+            default -> throw new FilterKeyException(key);
         };
     }
 }

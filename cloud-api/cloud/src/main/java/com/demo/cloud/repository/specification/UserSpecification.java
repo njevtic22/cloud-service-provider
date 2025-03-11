@@ -1,5 +1,6 @@
 package com.demo.cloud.repository.specification;
 
+import com.demo.cloud.core.error.exceptions.FilterKeyException;
 import com.demo.cloud.model.User;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,7 @@ public class UserSpecification extends EntitySpecification<User> {
             case "name", "surname", "email", "username" -> attrLike(key, value);
             case "role" -> attrLike(roleKeys, value);
             case "archived" -> attrEqual(key, Boolean.valueOf(value));
-            default -> throw new IllegalArgumentException("Invalid filter key " + key);
+            default -> throw new FilterKeyException(key);
         };
     }
 }

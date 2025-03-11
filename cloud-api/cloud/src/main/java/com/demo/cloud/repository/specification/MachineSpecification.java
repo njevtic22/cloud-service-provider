@@ -1,5 +1,6 @@
 package com.demo.cloud.repository.specification;
 
+import com.demo.cloud.core.error.exceptions.FilterKeyException;
 import com.demo.cloud.model.VirtualMachine;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,7 @@ public class MachineSpecification extends EntitySpecification<VirtualMachine> {
 
             case "organizationId" -> attrEqual(orgKeys, value);
             case "active", "archived" -> attrEqual(key, Boolean.valueOf(value));
-            default -> throw new IllegalArgumentException("Invalid filter key " + key);
+            default -> throw new FilterKeyException(key);
         };
     }
 
@@ -30,7 +31,7 @@ public class MachineSpecification extends EntitySpecification<VirtualMachine> {
             case "minCpu", "maxCpu" -> cpuKeys;
             case "minRam", "maxRam" -> ramKeys;
             case "minGpu", "maxGpu" -> gpuKeys;
-            default -> throw new IllegalArgumentException("Invalid filter key " + key);
+            default -> throw new FilterKeyException(key);
         };
     }
 }
