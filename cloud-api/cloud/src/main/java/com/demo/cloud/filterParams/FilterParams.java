@@ -1,5 +1,7 @@
 package com.demo.cloud.filterParams;
 
+import com.demo.cloud.core.error.exceptions.FilterException;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
 import java.util.HashMap;
@@ -11,7 +13,7 @@ public abstract class FilterParams {
         Class<? extends FilterParams> clazz = this.getClass();
         Constructor<?>[] cs = clazz.getDeclaredConstructors();
         if (cs.length != 1) {
-            throw new IllegalArgumentException(clazz.getSimpleName() + " has more than one constructor");
+            throw new FilterException(clazz.getSimpleName() + " has more than one constructor");
         }
 
         putIfNotNull(cs[0], values);
@@ -24,7 +26,7 @@ public abstract class FilterParams {
 
     protected void putIfNotNull(Parameter[] params, Object[] values) {
         if (params.length != values.length) {
-            throw new IllegalArgumentException("Params and values length do not match");
+            throw new FilterException("Params and values length do not match");
         }
 
         for (int i = 0; i < params.length; i++) {
