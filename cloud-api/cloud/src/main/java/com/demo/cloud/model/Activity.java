@@ -1,5 +1,6 @@
 package com.demo.cloud.model;
 
+import com.demo.cloud.core.error.exceptions.ModelConstraintException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -40,7 +41,7 @@ public class Activity {
 
     public Activity(Long id, LocalDateTime turnedOn, LocalDateTime turnedOff, float profit, VirtualMachine machine) {
         if (profit < 0) {
-            throw new IllegalArgumentException("Profit must be positive number or zero.");
+            throw new ModelConstraintException("Profit must be positive number or zero.");
         }
 
         this.id = id;

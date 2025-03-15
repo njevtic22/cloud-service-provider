@@ -1,5 +1,6 @@
 package com.demo.cloud.model;
 
+import com.demo.cloud.core.error.exceptions.ModelConstraintException;
 import com.demo.cloud.util.Strings;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,13 +43,13 @@ public class Category {
 
     public Category(Long id, String name, int cpu, int ram, int gpu, boolean archived) {
         if (cpu <= 0) {
-            throw new IllegalArgumentException("Number of cpu cores must be positive integer");
+            throw new ModelConstraintException("Number of cpu cores must be positive integer");
         }
         if (ram <= 0) {
-            throw new IllegalArgumentException("Capacity of ram must be positive integer");
+            throw new ModelConstraintException("Capacity of ram must be positive integer");
         }
         if (gpu < 0) {
-            throw new IllegalArgumentException("Number of gpu cores must be positive integer or zero");
+            throw new ModelConstraintException("Number of gpu cores must be positive integer or zero");
         }
 
         this.id = id;

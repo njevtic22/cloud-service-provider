@@ -1,6 +1,7 @@
 package com.demo.cloud.service.impl;
 
 import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
+import com.demo.cloud.core.error.exceptions.ModelConstraintException;
 import com.demo.cloud.model.Activity;
 import com.demo.cloud.model.VirtualMachine;
 import com.demo.cloud.repository.ActivityRepository;
@@ -34,7 +35,7 @@ public class ActivityServiceImpl implements ActivityService {
         VirtualMachine found = service.getById(machineId);
 
         if (found.isActive()) {
-            throw new IllegalArgumentException("Chosen machine is already active");
+            throw new ModelConstraintException("Chosen machine is already active");
         }
 
         Activity toAdd = new Activity(
@@ -65,7 +66,7 @@ public class ActivityServiceImpl implements ActivityService {
         VirtualMachine found = service.getById(machineId);
 
         if (!found.isActive()) {
-            throw new IllegalArgumentException("Chosen machine is not active");
+            throw new ModelConstraintException("Chosen machine is not active");
         }
 
         Activity ongoing = repository.findByMachineIdAndTurnedOffNull(found.getId())

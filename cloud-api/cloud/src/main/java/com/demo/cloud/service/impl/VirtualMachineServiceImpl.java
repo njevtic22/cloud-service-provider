@@ -1,6 +1,7 @@
 package com.demo.cloud.service.impl;
 
 import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
+import com.demo.cloud.core.error.exceptions.ModelConstraintException;
 import com.demo.cloud.core.error.exceptions.MultipleAffectedRowsException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Category;
@@ -53,7 +54,7 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
         }
 
         if (organizationId == null) {
-            throw new IllegalArgumentException("Organization id must not be null.");
+            throw new ModelConstraintException("Organization id must not be null.");
         }
 
         Organization org = orgService.getById(organizationId);

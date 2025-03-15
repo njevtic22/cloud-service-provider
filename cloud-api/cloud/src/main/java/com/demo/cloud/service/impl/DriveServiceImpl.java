@@ -1,6 +1,7 @@
 package com.demo.cloud.service.impl;
 
 import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
+import com.demo.cloud.core.error.exceptions.ModelConstraintException;
 import com.demo.cloud.core.error.exceptions.MultipleAffectedRowsException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Drive;
@@ -74,7 +75,7 @@ public class DriveServiceImpl implements DriveService {
         User authenticated = authService.getAuthenticated();
         if (authenticated.isAdmin()) {
             if (!authenticated.getOrganization().equals(existing.getOrganization())) {
-                throw new IllegalArgumentException("Admin can only update drive which belong to his organization");
+                throw new ModelConstraintException("Admin can only update drive which belong to his organization");
             }
         }
 

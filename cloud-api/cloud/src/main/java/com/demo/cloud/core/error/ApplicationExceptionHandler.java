@@ -3,6 +3,7 @@ package com.demo.cloud.core.error;
 import com.demo.cloud.core.error.exceptions.BlankStringException;
 import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
 import com.demo.cloud.core.error.exceptions.InvalidPasswordException;
+import com.demo.cloud.core.error.exceptions.ModelConstraintException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,8 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     @ExceptionHandler({
             UniquePropertyException.class,
             InvalidPasswordException.class,
-            BlankStringException.class
+            BlankStringException.class,
+            ModelConstraintException.class
     })
     public ResponseEntity<ApiError> handleBadRequest(RuntimeException ex) {
         logger.info(ex.getMessage(), ex);

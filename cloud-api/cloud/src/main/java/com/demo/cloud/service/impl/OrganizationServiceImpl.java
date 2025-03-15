@@ -1,6 +1,7 @@
 package com.demo.cloud.service.impl;
 
 import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
+import com.demo.cloud.core.error.exceptions.ModelConstraintException;
 import com.demo.cloud.core.error.exceptions.MultipleAffectedRowsException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Organization;
@@ -104,7 +105,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private void validateDescription(String description) {
         if (description.length() > 1000) {
-            throw new IllegalArgumentException("Description must be at most 1000 characters long");
+            throw new ModelConstraintException("Description must be at most 1000 characters long");
         }
     }
 }
