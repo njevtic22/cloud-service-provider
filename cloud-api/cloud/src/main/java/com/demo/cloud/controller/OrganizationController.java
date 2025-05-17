@@ -95,9 +95,9 @@ public class OrganizationController {
         }
 
         return ResponseEntity.ok(new PaginatedResponse<>(
-                orgsDto,
                 orgs.getTotalElements(),
-                orgs.getTotalPages()
+                orgs.getTotalPages(),
+                orgsDto
         ));
     }
 

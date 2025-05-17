@@ -13,9 +13,9 @@ public abstract class PageMapper<T, DTO> {
                 .toList();
 
         return new PaginatedResponse<>(
-                dto,
                 model.getTotalElements(),
-                model.getTotalPages()
+                model.getTotalPages(),
+                dto
         );
     }
 
