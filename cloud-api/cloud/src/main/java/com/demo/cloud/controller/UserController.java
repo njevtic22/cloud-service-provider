@@ -4,7 +4,6 @@ import com.demo.cloud.core.PaginatedResponse;
 import com.demo.cloud.dto.user.AddUserDto;
 import com.demo.cloud.dto.user.PasswordChangeDto;
 import com.demo.cloud.dto.user.UpdateUserDto;
-import com.demo.cloud.dto.user.UpdatedUserDto;
 import com.demo.cloud.dto.user.UserViewDto;
 import com.demo.cloud.filterParams.UserFilter;
 import com.demo.cloud.mapper.UserMapper;
@@ -81,21 +80,12 @@ public class UserController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<UpdatedUserDto<UserViewDto>> update(@PathVariable Long id, @Valid @RequestBody UpdateUserDto changesDto) {
-        User authenticated = authService.getAuthenticated();
-        Long authId = authenticated.getId();
-        String authUsername = authenticated.getUsername();
-
+    public ResponseEntity<UserViewDto> update(@PathVariable Long id, @Valid @RequestBody UpdateUserDto changesDto) {
         User changes = mapper.toModel(changesDto);
         User updated = service.update(id, changes, changesDto.getRole(), changesDto.getOrganization());
 
-        String jwt = "";
-        if (updated.getId().equals(authId) && !updated.getUsername().equals(authUsername)) {
-            jwt = tokenUtil.generateToken(updated.getUsername());
-        }
-
         UserViewDto updatedDto = mapper.toDto(updated);
-        return ResponseEntity.ok(new UpdatedUserDto<>(updatedDto, jwt));
+        return ResponseEntity.ok(updatedDto);
     }
 
     @DeleteMapping("{id}")

@@ -3,6 +3,7 @@ package com.demo.cloud.config;
 import com.demo.cloud.security.AppAuthenticationEntryPoint;
 import com.demo.cloud.security.TokenAuthenticationFilter;
 import com.demo.cloud.security.TokenUtil;
+import com.demo.cloud.security.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,7 +14,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
@@ -22,10 +22,10 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @EnableMethodSecurity
 public class WebSecurityConfiguration {
     private final TokenUtil tokenUtil;
-    private final UserDetailsService service;
+    private final UserDetailsServiceImpl service;
     private final AppAuthenticationEntryPoint entryPoint;
 
-    public WebSecurityConfiguration(TokenUtil tokenUtil, UserDetailsService service, AppAuthenticationEntryPoint entryPoint) {
+    public WebSecurityConfiguration(TokenUtil tokenUtil, UserDetailsServiceImpl service, AppAuthenticationEntryPoint entryPoint) {
         this.tokenUtil = tokenUtil;
         this.service = service;
         this.entryPoint = entryPoint;

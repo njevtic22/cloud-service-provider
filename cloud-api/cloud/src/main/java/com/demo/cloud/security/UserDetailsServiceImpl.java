@@ -1,5 +1,6 @@
 package com.demo.cloud.security;
 
+import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
 import com.demo.cloud.model.User;
 import com.demo.cloud.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -31,5 +32,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 found.getPassword(),
                 List.of(new SimpleGrantedAuthority(found.getRole().getName()))
         );
+    }
+
+    public User loadUserById(Long id) {
+        return repository.findByIdAndArchivedFalse(id)
+                .orElseThrow(() -> new EntityNotFoundException("User", id));
     }
 }
