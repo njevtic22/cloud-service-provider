@@ -4,17 +4,20 @@
  */
 
 // Composables
-import Index from "@/pages/index.vue";
 import { createRouter, createWebHistory } from "vue-router/auto";
+import Index from "@/pages/index.vue";
+import AboutPage from "@/pages/AboutPage.vue";
 
 const routes = [
     {
         path: "/",
         name: "Index",
         component: Index,
-        meta: {
-            title: "Index page",
-        },
+    },
+    {
+        path: "/about",
+        name: "About",
+        component: AboutPage,
     },
 ];
 
