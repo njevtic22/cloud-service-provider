@@ -7,9 +7,11 @@
             >
                 Cloud service
             </v-app-bar-title>
+            <v-app-bar-nav-icon
+                @click="emit('toggle-sidebar')"
+            ></v-app-bar-nav-icon>
         </template>
-        <v-btn @click="router.push('/about')" variant="plain">About</v-btn>
-        <v-spacer> </v-spacer>
+
         <template v-slot:append>
             <v-app-bar-title
                 v-show="route.name"
@@ -27,6 +29,7 @@ import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
 const router = useRouter();
+const emit = defineEmits(["toggle-sidebar"]);
 </script>
 
 <style scoped></style>

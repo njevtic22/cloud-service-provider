@@ -5,14 +5,14 @@
 
 // Composables
 import { createRouter, createWebHistory } from "vue-router/auto";
-import Index from "@/pages/index.vue";
+import MachinesPage from "@/pages/MachinesPage.vue";
 import AboutPage from "@/pages/AboutPage.vue";
 
 const routes = [
     {
         path: "/",
-        name: "Index",
-        component: Index,
+        name: "Machines",
+        component: MachinesPage,
     },
     {
         path: "/about",
