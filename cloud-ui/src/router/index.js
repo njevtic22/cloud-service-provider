@@ -6,7 +6,7 @@
 // Composables
 import { createRouter, createWebHistory } from "vue-router/auto";
 import MachinesPage from "@/pages/MachinesPage.vue";
-import AboutPage from "@/pages/AboutPage.vue";
+import UsersPage from "@/pages/UsersPage.vue";
 
 const routes = [
     {
@@ -15,9 +15,9 @@ const routes = [
         component: MachinesPage,
     },
     {
-        path: "/about",
-        name: "About",
-        component: AboutPage,
+        path: "/users",
+        name: "Users",
+        component: UsersPage,
     },
 ];
 
