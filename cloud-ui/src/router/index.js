@@ -11,7 +11,7 @@ import UsersPage from "@/pages/UsersPage.vue";
 const routes = [
     {
         path: "/",
-        name: "Machines",
+        name: "Virtual Machines",
         component: MachinesPage,
     },
     {

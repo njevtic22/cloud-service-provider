@@ -14,7 +14,6 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { defineModel } from "vue";
 import { ref } from "vue";
 
 const router = useRouter();
