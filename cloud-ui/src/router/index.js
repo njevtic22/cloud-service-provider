@@ -5,19 +5,28 @@
 
 // Composables
 import { createRouter, createWebHistory } from "vue-router/auto";
-import MachinesPage from "@/pages/MachinesPage.vue";
-import UsersPage from "@/pages/UsersPage.vue";
 
 const routes = [
     {
         path: "/",
         name: "Virtual Machines",
-        component: MachinesPage,
+        component: () => import("@/pages/MachinesPage.vue"),
+    },
+    {
+        path: "/login",
+        name: "Login",
+        component: () => import("@/pages/LoginPage.vue"),
     },
     {
         path: "/users",
         name: "Users",
-        component: UsersPage,
+        component: () => import("@/pages/UsersPage.vue"),
+    },
+    {
+        path: "/not-found",
+        alias: "/:pathMatch(.*)*",
+        name: "Not Found",
+        component: () => import("@/pages/NotFoundPage.vue"),
     },
 ];
 

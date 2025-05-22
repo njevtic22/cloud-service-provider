@@ -21,6 +21,13 @@ const isOpened = defineModel();
 
 const links = ref([
     {
+        name: "Login",
+        icon: "mdi-login",
+        redirect() {
+            router.push("/login");
+        },
+    },
+    {
         name: "Machines",
         icon: "mdi-server",
         redirect() {
@@ -32,6 +39,14 @@ const links = ref([
         icon: "mdi-account-multiple",
         redirect() {
             router.push("/users");
+        },
+    },
+    // TODO: Remove
+    {
+        name: "Not Found",
+        icon: "mdi-not-found",
+        redirect() {
+            router.push("/not-found");
         },
     },
 ]);
