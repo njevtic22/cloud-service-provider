@@ -1,18 +1,20 @@
 <template>
     <h1>Machines</h1>
-    {{ machines }}
-    {{ machines }}
-    {{ machines }}
-    {{ machines }}
-    {{ machines }}
-    {{ machines }}
+    {{ store.machines }}
+    {{ store.machines }}
+    {{ store.machines }}
+    {{ store.machines }}
+    {{ store.machines }}
+    {{ store.machines }}
 </template>
 
 <script setup>
-import { machines, fetchMachines } from "@/stores/machine";
+import { useMachineStore } from "@/stores/machine";
+
+const store = useMachineStore();
 
 function loadMachines() {
-    fetchMachines();
+    store.fetchMachines();
 }
 loadMachines();
 </script>

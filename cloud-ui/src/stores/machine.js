@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { defineStore } from "pinia";
 import env from "@/environment/env";
 import axios from "axios";
 
@@ -10,27 +10,38 @@ function getdefaultState() {
     };
 }
 
-const machines = ref(getdefaultState());
 const machinesUrl = `${env.apiUrl}/virtual-machines`;
 
-function fetchMachines() {
-    axios.defaults.headers.common["Authorization"] =
-        "Bearer " + response.data.token;
+export const useMachineStore = defineStore("machine", {
+    state: () => ({
+        machines: getdefaultState(),
+    }),
 
-    axios
-        .get(machinesUrl)
-        .then((response) => {
-            machines.value.data = response.data.data;
-            machines.value.totalElements = response.data.totalElements;
-            machines.value.totalPages = response.data.totalPages;
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-}
+    getters: {
+        machinesGetter: (state) => state,
+    },
 
-function clear() {
-    machines.value = getDefaultState();
-}
+    actions: {
+        fetchMachines() {
+            axios.defaults.headers.common["Authorization"] =
+                "Bearer " +
+                "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhZG1pbi1hcHAiLCJzdWIiOiIzMSIsImF1ZCI6IndlYiIsImlhdCI6MTc0OTc1NDMwNCwiZXhwIjoxNzQ5NzcyMzA0fQ.1JmOnOH9WIRewLwNFEZcdvEBuW7k0_oYoaujRNL5S4y9dYNbet5300OlffgHEZBHjB0KooqOnwbT4bXyUezRUA";
 
-export { machines, fetchMachines, clear };
+            axios
+                .get(machinesUrl)
+                .then((response) => {
+                    this.machines.data = response.data.data;
+                    this.machines.totalElements = response.totalElements;
+                    this.machines.totalPages = response.data.totalPages;
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        },
+
+        // Not needed when pinia has $reset function
+        // clear() {
+        //     machines.value = getDefaultState();
+        // },
+    },
+});
