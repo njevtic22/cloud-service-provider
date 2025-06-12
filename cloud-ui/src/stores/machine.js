@@ -24,8 +24,7 @@ export const useMachineStore = defineStore("machine", {
     actions: {
         fetchMachines() {
             axios.defaults.headers.common["Authorization"] =
-                "Bearer " +
-                "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhZG1pbi1hcHAiLCJzdWIiOiIzMSIsImF1ZCI6IndlYiIsImlhdCI6MTc0OTc1NDMwNCwiZXhwIjoxNzQ5NzcyMzA0fQ.1JmOnOH9WIRewLwNFEZcdvEBuW7k0_oYoaujRNL5S4y9dYNbet5300OlffgHEZBHjB0KooqOnwbT4bXyUezRUA";
+                "Bearer " + response.data.token;
 
             axios
                 .get(machinesUrl)
