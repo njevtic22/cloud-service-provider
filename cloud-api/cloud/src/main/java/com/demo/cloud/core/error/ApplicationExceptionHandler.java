@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -54,6 +55,14 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 
         ApiError errorBody = new ApiError(ex.getMessage());
         return ResponseEntity.badRequest().body(errorBody);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    protected ResponseEntity<ApiError> handleUnauthorized(RuntimeException ex) {
+        logger.info(ex.getMessage(), ex);
+        
+        ApiError apiError = new ApiError(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
     }
 
     @ExceptionHandler(AuthorizationDeniedException.class)

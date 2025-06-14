@@ -44,8 +44,9 @@ function showErrorSnack(error) {
     theSnack.value.show(errorMessage, -1, "red-darken-1", "");
 }
 
-axios.defaults.headers.common["Authorization"] =
-    "Bearer " + localStorage.getItem("token");
+axios.defaults.headers.common["Authorization"] = localStorage.getItem("token")
+    ? "Bearer " + localStorage.getItem("token")
+    : null;
 
 onMounted(() => {
     provide("snackbar", theSnack.value.show);

@@ -20,6 +20,13 @@
                 required
             ></v-text-field>
 
+            <v-card-item
+                :class="error.occured ? '' : 'error-hidden'"
+                class="d-flex justify-center error-color"
+            >
+                {{ error.message }}
+            </v-card-item>
+
             <v-card-actions class="justify-center">
                 <v-btn
                     :disabled="!form?.isValid"
@@ -36,6 +43,10 @@
 
 <script setup>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { logIn } from "@/stores/auth.js";
+
+const router = useRouter();
 
 const form = ref(null);
 const required = (value) => !!value || "Required";
@@ -47,6 +58,11 @@ const data = ref({
 
 const showPassword = ref(false);
 
+const error = ref({
+    message: "Bad credentials",
+    occured: false,
+});
+
 async function login() {
     const { valid } = await form.value.validate();
 
@@ -55,7 +71,14 @@ async function login() {
     }
 
     const copy = { ...data.value };
-    console.log(copy);
+
+    const successCallback = () => router.push("/");
+    const errorCallback = (err) => {
+        error.value.message = err.response.data.message;
+        error.value.occured = true;
+    };
+
+    logIn(copy, successCallback, errorCallback);
 }
 
 // :disabled="!form?.isValid"
@@ -64,4 +87,12 @@ async function login() {
 // });
 </script>
 
-<style scoped></style>
+<style scoped>
+.error-hidden {
+    visibility: hidden;
+}
+
+.error-color {
+    color: #b71c1c;
+}
+</style>
