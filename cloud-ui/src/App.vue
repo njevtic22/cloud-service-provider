@@ -5,7 +5,7 @@
             <the-header @toggle-sidebar="sidebarOpened = !sidebarOpened">
             </the-header>
             <the-sidebar v-model="sidebarOpened"></the-sidebar>
-            <div class="main-container">
+            <div class="padded-2">
                 <router-view />
             </div>
         </v-main>
@@ -53,8 +53,4 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
-.main-container {
-    padding: 2%;
-}
-</style>
+<style scoped></style>
