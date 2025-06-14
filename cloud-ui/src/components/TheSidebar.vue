@@ -9,6 +9,10 @@
                 @click="link.redirect"
             ></v-list-item>
         </v-list>
+
+        <template v-slot:append>
+            <the-logout-button></the-logout-button>
+        </template>
     </v-navigation-drawer>
 </template>
 
