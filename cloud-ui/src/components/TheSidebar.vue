@@ -11,7 +11,7 @@
         </v-list>
 
         <template v-slot:append>
-            <the-logout-button></the-logout-button>
+            <the-logout-button v-if="!auth.isAnonymous"></the-logout-button>
         </template>
     </v-navigation-drawer>
 </template>
@@ -19,8 +19,11 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { ref } from "vue";
+import { useAuthStore } from "@/stores/auth.js";
 
 const router = useRouter();
+const auth = useAuthStore();
+
 const isOpened = defineModel();
 
 const links = ref([

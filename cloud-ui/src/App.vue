@@ -14,6 +14,7 @@
 
 <script setup>
 import { ref, provide, onMounted } from "vue";
+import { getActivePinia } from "pinia";
 import axios from "axios";
 
 const sidebarOpened = ref(true);
@@ -48,9 +49,14 @@ axios.defaults.headers.common["Authorization"] = localStorage.getItem("token")
     ? "Bearer " + localStorage.getItem("token")
     : null;
 
+const pinia = getActivePinia();
+pinia.use(() => ({
+    showErrorSnack,
+}));
+
+provide("showErrorSnack", showErrorSnack);
 onMounted(() => {
     provide("snackbar", theSnack.value.show);
-    provide("showErrorSnack", showErrorSnack);
 });
 </script>
 

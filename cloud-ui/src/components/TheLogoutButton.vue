@@ -6,21 +6,22 @@
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { useMachineStore } from "@/stores/machine.js";
+import { useAuthStore } from "@/stores/auth.js";
 
 const router = useRouter();
+const auth = useAuthStore();
 
 function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
+    const callback = () => {
+        useMachineStore().$reset();
 
-    useMachineStore().$reset();
+        router.push("/login");
 
-    delete axios.defaults.headers.common["Authorization"];
-    router.push("/login");
-
-    // _s is not officially documented - it is internal to pinia
-    // import { getActivePinia } from 'pinia';
-    // getActivePinia()._s.forEach(store => store.$reset());
+        // _s is not officially documented - it is internal to pinia
+        // import { getActivePinia } from 'pinia';
+        // getActivePinia()._s.forEach(store => store.$reset());
+    };
+    auth.logout(callback);
 }
 </script>
 

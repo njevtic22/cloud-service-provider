@@ -2,28 +2,50 @@ import { defineStore } from "pinia";
 import env from "@/environment/env";
 import axios from "axios";
 
+const Role = Object.freeze({
+    SUPER_ADMIN: "ROLE_SUPER_ADMIN",
+    ADMIN: "ROLE_ADMIN",
+    USER: "ROLE_USER",
+    ANONYMOUS: "",
+});
+
 const loginUrl = `${env.apiUrl}/auth/login`;
 
-function logIn(data, successCallback, errorCallback = this.showErrorSnack) {
-    axios
-        .post(loginUrl, data)
-        .then((response) => {
-            localStorage.setItem("token", response.data.token);
-            localStorage.setItem("role", response.data.role);
+export const useAuthStore = defineStore("auth", {
+    state: () => ({
+        role: "",
+    }),
 
-            axios.defaults.headers.common["Authorization"] =
-                "Bearer " + response.data.token;
+    getters: {
+        isAnonymous(state) {
+            return state.role === Role.ANONYMOUS;
+        },
+    },
 
-            successCallback(response);
-        })
-        .catch(errorCallback);
-}
+    actions: {
+        login(data, successCallback, errorCallback = this.showErrorSnack) {
+            axios
+                .post(loginUrl, data)
+                .then((response) => {
+                    localStorage.setItem("token", response.data.token);
+                    localStorage.setItem("role", response.data.role);
+                    this.role = response.data.role;
 
-function logOut() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
+                    axios.defaults.headers.common["Authorization"] =
+                        "Bearer " + response.data.token;
 
-    delete axios.defaults.headers.common["Authorization"];
-}
+                    successCallback(response);
+                })
+                .catch(errorCallback);
+        },
 
-export { logIn, logOut };
+        logout(callback) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("role");
+            this.role = "";
+
+            delete axios.defaults.headers.common["Authorization"];
+            callback();
+        },
+    },
+});
