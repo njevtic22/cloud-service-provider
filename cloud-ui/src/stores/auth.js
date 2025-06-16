@@ -6,17 +6,29 @@ const Role = Object.freeze({
     SUPER_ADMIN: "ROLE_SUPER_ADMIN",
     ADMIN: "ROLE_ADMIN",
     USER: "ROLE_USER",
-    ANONYMOUS: "",
+    ANONYMOUS: "ROLE_ANONYMOUS",
 });
 
 const loginUrl = `${env.apiUrl}/auth/login`;
 
-export const useAuthStore = defineStore("auth", {
+const useAuthStore = defineStore("auth", {
     state: () => ({
-        role: "",
+        role: localStorage.getItem("role") || Role.ANONYMOUS,
     }),
 
     getters: {
+        isSuperAdmin(state) {
+            return state.role === Role.SUPER_ADMIN;
+        },
+
+        isAdmin(state) {
+            return state.role === Role.ADMIN;
+        },
+
+        isUser(state) {
+            return state.role === Role.USER;
+        },
+
         isAnonymous(state) {
             return state.role === Role.ANONYMOUS;
         },
@@ -42,10 +54,12 @@ export const useAuthStore = defineStore("auth", {
         logout(callback) {
             localStorage.removeItem("token");
             localStorage.removeItem("role");
-            this.role = "";
+            this.role = Role.ANONYMOUS;
 
             delete axios.defaults.headers.common["Authorization"];
             callback();
         },
     },
 });
+
+export { Role, useAuthStore };

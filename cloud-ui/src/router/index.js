@@ -5,22 +5,32 @@
 
 // Composables
 import { createRouter, createWebHistory } from "vue-router/auto";
+import { Role } from "@/stores/auth.js";
 
 const routes = [
     {
         path: "/",
         name: "Virtual Machines",
         component: () => import("@/pages/MachinesPage.vue"),
+        meta: {
+            requiredRole: [Role.SUPER_ADMIN, Role.ADMIN, Role.USER],
+        },
     },
     {
         path: "/login",
         name: "Login",
         component: () => import("@/pages/LoginPage.vue"),
+        meta: {
+            requiredRole: [Role.ANONYMOUS],
+        },
     },
     {
         path: "/users",
         name: "Users",
         component: () => import("@/pages/UsersPage.vue"),
+        meta: {
+            requiredRole: [Role.SUPER_ADMIN, Role.ADMIN],
+        },
     },
     {
         path: "/not-found",
@@ -57,6 +67,26 @@ router.onError((err, to) => {
 
 router.isReady().then(() => {
     localStorage.removeItem("vuetify:dynamic-reload");
+});
+
+router.beforeEach((to, from, next) => {
+    const roles = to.meta.requiredRole;
+    if (!roles || roles.length === 0) {
+        next();
+        return;
+    }
+
+    const authorized = roles.some(
+        (role) => role === (localStorage.getItem("role") || Role.ANONYMOUS)
+    );
+
+    if (authorized) {
+        next();
+        return;
+    }
+
+    next({ path: "/not-found" });
+    return;
 });
 
 export default router;

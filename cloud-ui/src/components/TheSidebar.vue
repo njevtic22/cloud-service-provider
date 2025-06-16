@@ -2,7 +2,7 @@
     <v-navigation-drawer v-model="isOpened" elevation="4">
         <v-list density="compact" nav>
             <v-list-item
-                v-for="link in links"
+                v-for="link in activeLinks"
                 :key="link.name"
                 :title="link.name"
                 :prepend-icon="link.icon"
@@ -17,8 +17,8 @@
 </template>
 
 <script setup>
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import { ref } from "vue";
 import { useAuthStore } from "@/stores/auth.js";
 
 const router = useRouter();
@@ -33,12 +33,18 @@ const links = ref([
         redirect() {
             router.push("/login");
         },
+        isActive() {
+            return auth.isAnonymous;
+        },
     },
     {
         name: "Machines",
         icon: "mdi-server",
         redirect() {
             router.push("/");
+        },
+        isActive() {
+            return !auth.isAnonymous;
         },
     },
     {
@@ -47,16 +53,15 @@ const links = ref([
         redirect() {
             router.push("/users");
         },
-    },
-    // TODO: Remove
-    {
-        name: "Not Found",
-        icon: "mdi-not-found",
-        redirect() {
-            router.push("/not-found");
+        isActive() {
+            return auth.isSuperAdmin || auth.isAdmin;
         },
     },
 ]);
+
+const activeLinks = computed(() => {
+    return links.value.filter((link) => link.isActive());
+});
 </script>
 
 <style scoped></style>
