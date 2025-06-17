@@ -2,8 +2,9 @@
     <v-app-bar scroll-behavior="hide" color="primary">
         <template v-slot:prepend>
             <v-app-bar-title
+                v-if="display.width.value > 400"
                 @click="router.push('/')"
-                class="cursor-pointer ma-2 pa-2 hidden"
+                class="cursor-pointer ma-2 pa-2"
             >
                 Cloud service
             </v-app-bar-title>
@@ -26,16 +27,20 @@
 
 <script setup>
 import { useRoute, useRouter } from "vue-router";
+import { useDisplay } from "vuetify";
 
 const route = useRoute();
 const router = useRouter();
 const emit = defineEmits(["toggle-sidebar"]);
+
+const display = useDisplay();
 </script>
 
 <style scoped>
+/* using useDisplay instead
 @media (max-width: 375px) {
     .hidden {
         display: none;
     }
-}
+} */
 </style>
