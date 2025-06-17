@@ -3,7 +3,7 @@
         <template v-slot:prepend>
             <v-app-bar-title
                 @click="router.push('/')"
-                class="cursor-pointer ma-2 pa-2"
+                class="cursor-pointer ma-2 pa-2 hidden"
             >
                 Cloud service
             </v-app-bar-title>
@@ -32,4 +32,10 @@ const router = useRouter();
 const emit = defineEmits(["toggle-sidebar"]);
 </script>
 
-<style scoped></style>
+<style scoped>
+@media (max-width: 375px) {
+    .hidden {
+        display: none;
+    }
+}
+</style>
