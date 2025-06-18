@@ -3,7 +3,7 @@
         <template v-slot:prepend>
             <v-app-bar-title
                 v-if="display.width.value > 400"
-                @click="router.push('/')"
+                @click="redirect"
                 class="cursor-pointer ma-2 pa-2"
             >
                 Cloud service
@@ -29,10 +29,23 @@
 import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useDisplay } from "vuetify";
+import { useAuthStore } from "@/stores/auth.js";
 
 const route = useRoute();
 const router = useRouter();
 const emit = defineEmits(["toggle-sidebar"]);
+
+const auth = useAuthStore();
+
+function redirect() {
+    if (auth.isAnonymous) {
+        router.push("/login");
+        return;
+    }
+
+    router.push("/");
+    return;
+}
 
 const display = useDisplay();
 
