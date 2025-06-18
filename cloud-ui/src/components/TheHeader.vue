@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar scroll-behavior="hide" color="primary">
+    <v-app-bar :density="density" scroll-behavior="hide" color="primary">
         <template v-slot:prepend>
             <v-app-bar-title
                 v-if="display.width.value > 400"
@@ -26,6 +26,7 @@
 </template>
 
 <script setup>
+import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useDisplay } from "vuetify";
 
@@ -34,6 +35,13 @@ const router = useRouter();
 const emit = defineEmits(["toggle-sidebar"]);
 
 const display = useDisplay();
+
+const density = computed(() => {
+    if (display.mdAndDown.value) {
+        return "compact";
+    }
+    return "default";
+});
 </script>
 
 <style scoped>
