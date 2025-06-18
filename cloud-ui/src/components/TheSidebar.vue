@@ -57,6 +57,16 @@ const links = ref([
             return auth.isSuperAdmin || auth.isAdmin;
         },
     },
+    {
+        name: "Profile",
+        icon: "mdi-account",
+        redirect() {
+            router.push("/profile");
+        },
+        isActive() {
+            return !auth.isAnonymous;
+        },
+    },
 ]);
 
 const activeLinks = computed(() => {
