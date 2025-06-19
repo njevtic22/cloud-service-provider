@@ -12,38 +12,71 @@
             <v-card-text>
                 <v-row>
                     <v-col>
-                        <v-text-field label="Name" variant="underlined">
+                        <v-text-field
+                            v-model="store.profile.name"
+                            label="Name"
+                            variant="underlined"
+                            readonly
+                        >
                         </v-text-field>
                     </v-col>
                     <v-col>
-                        <v-text-field label="Surname" variant="underlined">
+                        <v-text-field
+                            v-model="store.profile.surname"
+                            label="Surname"
+                            variant="underlined"
+                            readonly
+                        >
                         </v-text-field>
                     </v-col>
                     <v-col>
-                        <v-text-field label="Email" variant="underlined">
-                        </v-text-field>
-                    </v-col>
-                    <v-col>
-                        <v-text-field label="Username" variant="underlined">
-                        </v-text-field>
-                    </v-col>
-                    <v-col>
-                        <v-text-field label="Role" variant="underlined">
-                        </v-text-field>
-                    </v-col>
-                    <v-col>
-                        <v-text-field label="Organization" variant="underlined">
+                        <v-text-field
+                            v-model="store.profile.role"
+                            label="Role"
+                            variant="underlined"
+                            readonly
+                        >
                         </v-text-field>
                     </v-col>
                 </v-row>
-                <v-btn color="primary">Chevron</v-btn>
+                <v-row>
+                    <v-col>
+                        <v-text-field
+                            v-model="store.profile.email"
+                            label="Email"
+                            variant="underlined"
+                            readonly
+                        >
+                        </v-text-field>
+                    </v-col>
+                    <v-col>
+                        <v-text-field
+                            v-model="store.profile.username"
+                            label="Username"
+                            variant="underlined"
+                            readonly
+                        >
+                        </v-text-field>
+                    </v-col>
+                    <v-col>
+                        <v-text-field
+                            v-model="store.profile.organizationName"
+                            label="Organization"
+                            variant="underlined"
+                            readonly
+                        >
+                        </v-text-field>
+                    </v-col>
+                </v-row>
             </v-card-text>
         </v-col>
     </v-row>
 </template>
 
 <script setup>
-//
+import { useProfileStore } from "@/stores/profile.js";
+
+const store = useProfileStore();
 </script>
 
 <style scoped>

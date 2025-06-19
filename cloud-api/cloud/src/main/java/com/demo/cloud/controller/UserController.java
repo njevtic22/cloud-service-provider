@@ -9,7 +9,6 @@ import com.demo.cloud.filterParams.UserFilter;
 import com.demo.cloud.mapper.UserMapper;
 import com.demo.cloud.model.User;
 import com.demo.cloud.security.AuthenticationService;
-import com.demo.cloud.security.TokenUtil;
 import com.demo.cloud.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -33,13 +32,11 @@ import java.net.URI;
 public class UserController {
     private final UserService service;
     private final AuthenticationService authService;
-    private final TokenUtil tokenUtil;
     private final UserMapper mapper;
 
-    public UserController(UserService service, AuthenticationService authService, TokenUtil tokenUtil, UserMapper mapper) {
+    public UserController(UserService service, AuthenticationService authService, UserMapper mapper) {
         this.service = service;
         this.authService = authService;
-        this.tokenUtil = tokenUtil;
         this.mapper = mapper;
     }
 
@@ -67,6 +64,14 @@ public class UserController {
         User found = service.getById(id);
         UserViewDto foundDto = mapper.toDto(found);
         return ResponseEntity.ok(foundDto);
+    }
+
+    @GetMapping("profile")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'USER')")
+    public ResponseEntity<UserViewDto> getProfile() {
+        User auth = authService.getAuthenticated();
+        UserViewDto authDto = mapper.toDto(auth);
+        return ResponseEntity.ok(authDto);
     }
 
     @PutMapping("password")

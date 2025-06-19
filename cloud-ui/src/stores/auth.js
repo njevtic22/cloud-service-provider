@@ -54,7 +54,7 @@ const useAuthStore = defineStore("auth", {
         logout(callback) {
             localStorage.removeItem("token");
             localStorage.removeItem("role");
-            this.role = Role.ANONYMOUS;
+            this.$reset();
 
             delete axios.defaults.headers.common["Authorization"];
             callback();

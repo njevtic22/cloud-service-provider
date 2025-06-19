@@ -19,7 +19,8 @@ public class UserMapper extends PageMapper<User, UserViewDto> {
                 user.getEmail(),
                 user.getUsername(),
                 user.getRole().getName(),
-                org == null ? null : org.getId()
+                org == null ? null : org.getId(),
+                org == null ? null : org.getName()
         );
     }
 
