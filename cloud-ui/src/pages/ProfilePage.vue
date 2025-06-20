@@ -1,5 +1,5 @@
 <template>
-    <v-card class="mx-auto" elevation="4" width="90%">
+    <v-card class="ma-auto" elevation="4" width="90%">
         <profile-data></profile-data>
     </v-card>
 </template>
