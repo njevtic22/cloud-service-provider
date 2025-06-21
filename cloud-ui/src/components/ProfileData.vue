@@ -11,7 +11,7 @@
         <v-col cols="12" sm="10" md="8">
             <v-card-text>
                 <v-row>
-                    <v-col cols="12" sm="4" md="4">
+                    <v-col cols="12" :sm="nameWidth" :md="nameWidth">
                         <v-text-field
                             v-model="store.profile.name"
                             label="Name"
@@ -20,7 +20,7 @@
                         >
                         </v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="4" md="4">
+                    <v-col cols="12" :sm="nameWidth" :md="nameWidth">
                         <v-text-field
                             v-model="store.profile.surname"
                             label="Surname"
@@ -29,7 +29,12 @@
                         >
                         </v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="4" md="4">
+                    <v-col
+                        v-if="!authStore.isSuperAdmin"
+                        cols="12"
+                        sm="4"
+                        md="4"
+                    >
                         <v-text-field
                             v-model="store.profile.organizationName"
                             label="Organization"
@@ -74,9 +79,19 @@
 </template>
 
 <script setup>
+import { computed } from "vue";
 import { useProfileStore } from "@/stores/profile.js";
+import { useAuthStore } from "@/stores/auth.js";
 
 const store = useProfileStore();
+const authStore = useAuthStore();
+
+const nameWidth = computed(() => {
+    if (authStore.isSuperAdmin) {
+        return "6";
+    }
+    return "4";
+});
 </script>
 
 <style scoped>
