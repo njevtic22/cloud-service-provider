@@ -14,7 +14,7 @@
                 </v-tabs-window-item>
 
                 <v-tabs-window-item value="Password">
-                    Password
+                    <profile-change-password></profile-change-password>
                 </v-tabs-window-item>
             </v-tabs-window>
         </v-card-text>

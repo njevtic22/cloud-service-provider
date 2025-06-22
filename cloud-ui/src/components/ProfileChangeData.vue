@@ -59,6 +59,7 @@ const rules = {
 };
 
 function update() {
+    // TODO validate form
     const successCallback = () => snackbar("Profile updated", 3 * 1000);
 
     store.update(profile.value, successCallback);

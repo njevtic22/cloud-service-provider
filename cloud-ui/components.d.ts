@@ -12,6 +12,7 @@ declare module 'vue' {
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     ProfileChange: typeof import('./src/components/ProfileChange.vue')['default']
     ProfileChangeData: typeof import('./src/components/ProfileChangeData.vue')['default']
+    ProfileChangePassword: typeof import('./src/components/ProfileChangePassword.vue')['default']
     ProfileData: typeof import('./src/components/ProfileData.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
