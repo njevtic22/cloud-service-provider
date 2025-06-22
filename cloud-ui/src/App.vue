@@ -24,7 +24,7 @@ function showErrorSnack(error) {
     let errorMessage = error.response.data.message;
     let errorDetails = error.response.data.details;
 
-    if (errorMessage === "Invalid field(s)") {
+    if (errorMessage === "Invalid field(s).") {
         errorMessage = "";
         for (let i = 0; i < errorDetails.length; i++) {
             const detail = errorDetails[i];
