@@ -1,14 +1,14 @@
 <template>
     <v-form ref="form">
         <v-row class="d-flex justify-center">
-            <v-col cols="4">
+            <v-col cols="12" sm="4">
                 <v-text-field
                     v-model="profile.name"
                     :rules="[rules.required]"
                     label="Name"
                 ></v-text-field>
             </v-col>
-            <v-col cols="4">
+            <v-col cols="12" sm="4">
                 <v-text-field
                     v-model="profile.surname"
                     :rules="[rules.required]"
@@ -17,14 +17,14 @@
             </v-col>
         </v-row>
         <v-row class="d-flex justify-center">
-            <v-col cols="4">
+            <v-col cols="12" sm="4">
                 <v-text-field
                     v-model="profile.email"
                     :rules="[rules.required, rules.email]"
                     label="Email"
                 ></v-text-field>
             </v-col>
-            <v-col cols="4">
+            <v-col cols="12" sm="4">
                 <v-text-field
                     v-model="profile.username"
                     :rules="[rules.required]"
