@@ -42,17 +42,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, inject } from "vue";
 import { useProfileStore } from "@/stores/profile.js";
 
+const snackbar = inject("snackbar");
 const store = useProfileStore();
 
-const profile = ref({
-    name: store.profile.name,
-    surname: store.profile.surname,
-    email: store.profile.email,
-    username: store.profile.username,
-});
+const profile = ref({ ...store.profile });
 
 const form = ref(null);
 
@@ -63,7 +59,9 @@ const rules = {
 };
 
 function update() {
-    console.log("UPDATED");
+    const successCallback = () => snackbar("Profile updated", 3 * 1000);
+
+    store.update(profile.value, successCallback);
 }
 </script>
 

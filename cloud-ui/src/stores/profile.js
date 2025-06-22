@@ -2,7 +2,8 @@ import { defineStore } from "pinia";
 import env from "@/environment/env";
 import axios from "axios";
 
-const profileUrl = `${env.apiUrl}/users/profile`;
+const userUrl = `${env.apiUrl}/users`;
+const profileUrl = `${userUrl}/profile`;
 
 export const useProfileStore = defineStore("profile", {
     state: () => ({
@@ -24,6 +25,16 @@ export const useProfileStore = defineStore("profile", {
                 .get(profileUrl)
                 .then((response) => {
                     this.profile = response.data;
+                })
+                .catch(errorCallback);
+        },
+
+        update(changes, successCallback, errorCallback = this.showErrorSnack) {
+            axios
+                .put(`${userUrl}/${changes.id}`, changes)
+                .then((response) => {
+                    this.profile = response.data;
+                    successCallback(response);
                 })
                 .catch(errorCallback);
         },
