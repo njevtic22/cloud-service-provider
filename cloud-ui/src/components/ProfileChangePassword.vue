@@ -61,6 +61,9 @@
 import { ref, computed, watch, inject } from "vue";
 import { useProfileStore } from "@/stores/profile.js";
 
+const snackbar = inject("snackbar");
+const store = useProfileStore();
+
 const data = ref({
     oldPassword: "",
     newPassword: "",
@@ -93,12 +96,13 @@ const rules = {
 
 async function update() {
     const { valid } = await form.value.validate();
-
     if (!valid) {
         return;
     }
 
-    console.log(data.value);
+    const successCallback = () => snackbar("Password changed", 3 * 1000);
+
+    store.updatePassword(data.value, successCallback);
 }
 </script>
 

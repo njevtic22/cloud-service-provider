@@ -30,12 +30,25 @@ export const useProfileStore = defineStore("profile", {
         },
 
         update(changes, successCallback, errorCallback = this.showErrorSnack) {
+            const userIdUrl = `${userUrl}/${changes.id}`;
             axios
-                .put(`${userUrl}/${changes.id}`, changes)
+                .put(userIdUrl, changes)
                 .then((response) => {
                     this.profile = response.data;
                     successCallback(response);
                 })
+                .catch(errorCallback);
+        },
+
+        updatePassword(
+            changes,
+            successCallback,
+            errorCallback = this.showErrorSnack
+        ) {
+            const passwordUrl = `${userUrl}/password`;
+            axios
+                .put(passwordUrl, changes)
+                .then(successCallback)
                 .catch(errorCallback);
         },
     },
