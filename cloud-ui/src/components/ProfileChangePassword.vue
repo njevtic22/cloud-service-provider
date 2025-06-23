@@ -1,7 +1,7 @@
 <template>
     <v-form ref="form">
-        <v-row>
-            <v-col>
+        <v-row class="d-flex justify-center">
+            <v-col cols="11" sm="6">
                 <v-text-field
                     v-model="data.oldPassword"
                     :append-inner-icon="
@@ -15,8 +15,8 @@
             </v-col>
         </v-row>
 
-        <v-row>
-            <v-col>
+        <v-row class="d-flex justify-center">
+            <v-col cols="11" sm="6">
                 <v-text-field
                     v-model="data.newPassword"
                     :append-inner-icon="
@@ -32,8 +32,8 @@
             </v-col>
         </v-row>
 
-        <v-row>
-            <v-col>
+        <v-row class="d-flex justify-center">
+            <v-col cols="11" sm="6">
                 <v-text-field
                     v-model="data.repeatedPassword"
                     :append-inner-icon="
@@ -47,7 +47,13 @@
                 ></v-text-field>
             </v-col>
         </v-row>
-        <v-btn @click="form.validate()">validate</v-btn>
+
+        <v-row class="d-flex justify-center">
+            <v-btn :disabled="!form?.isValid" @click="update" color="primary">
+                Save
+            </v-btn>
+        </v-row>
+        <br />
     </v-form>
 </template>
 
@@ -84,6 +90,16 @@ const rules = {
         value === data.value.newPassword ||
         "Repeated password does not match new password",
 };
+
+async function update() {
+    const { valid } = await form.value.validate();
+
+    if (!valid) {
+        return;
+    }
+
+    console.log(data.value);
+}
 </script>
 
 <style scoped></style>

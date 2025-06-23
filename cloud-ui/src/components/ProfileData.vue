@@ -10,8 +10,8 @@
         </v-col>
         <v-col cols="12" sm="10" md="8">
             <v-card-text>
-                <v-row>
-                    <v-col cols="12" :sm="nameWidth" :md="nameWidth">
+                <v-row class="d-xs-flex justify-center">
+                    <v-col cols="11" :sm="nameWidth" :md="nameWidth">
                         <v-text-field
                             v-model="store.profile.name"
                             label="Name"
@@ -20,7 +20,7 @@
                         >
                         </v-text-field>
                     </v-col>
-                    <v-col cols="12" :sm="nameWidth" :md="nameWidth">
+                    <v-col cols="11" :sm="nameWidth" :md="nameWidth">
                         <v-text-field
                             v-model="store.profile.surname"
                             label="Surname"
@@ -29,12 +29,7 @@
                         >
                         </v-text-field>
                     </v-col>
-                    <v-col
-                        v-if="!authStore.isSuperAdmin"
-                        cols="12"
-                        sm="4"
-                        md="4"
-                    >
+                    <v-col v-if="!authStore.isSuperAdmin" cols="11" sm="4">
                         <v-text-field
                             v-model="store.profile.organizationName"
                             label="Organization"
@@ -44,8 +39,8 @@
                         </v-text-field>
                     </v-col>
                 </v-row>
-                <v-row>
-                    <v-col cols="12" sm="4" md="4">
+                <v-row class="d-xs-flex justify-center">
+                    <v-col cols="11" sm="4">
                         <v-text-field
                             v-model="store.profile.email"
                             label="Email"
@@ -54,7 +49,7 @@
                         >
                         </v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="4" md="4">
+                    <v-col cols="11" sm="4">
                         <v-text-field
                             v-model="store.profile.username"
                             label="Username"
@@ -63,7 +58,7 @@
                         >
                         </v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="4" md="4">
+                    <v-col cols="11" sm="4">
                         <v-text-field
                             v-model="store.profile.role"
                             label="Role"
