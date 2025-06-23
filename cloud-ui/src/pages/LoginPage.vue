@@ -1,6 +1,6 @@
 <template>
     <!-- <v-card class="mx-auto padded-3 w-25"> -->
-    <v-card class="padded-3 login-card" elevation="4">
+    <v-card class="login-card" elevation="4">
         <v-form ref="form">
             <v-text-field
                 v-model="data.username"
@@ -102,12 +102,14 @@ async function login() {
     margin: auto;
     width: 100%;
     max-width: 25%; /* default fallback */
+    padding: 3%;
 }
 
 /* xs */
 @media (max-width: 600px) {
     .login-card {
         max-width: 60%;
+        padding: 5%;
     }
 }
 
@@ -115,6 +117,7 @@ async function login() {
 @media (min-width: 601px) and (max-width: 960px) {
     .login-card {
         max-width: 40%;
+        padding: 4%;
     }
 }
 </style>
