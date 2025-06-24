@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AppFooter: typeof import('./src/components/AppFooter.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    PasswordStrength: typeof import('./src/components/PasswordStrength.vue')['default']
     ProfileChange: typeof import('./src/components/ProfileChange.vue')['default']
     ProfileChangeData: typeof import('./src/components/ProfileChangeData.vue')['default']
     ProfileChangePassword: typeof import('./src/components/ProfileChangePassword.vue')['default']

@@ -23,12 +23,39 @@
                         show.newPassword ? 'mdi-eye' : 'mdi-eye-off'
                     "
                     @click:append-inner="show.newPassword = !show.newPassword"
+                    :append-icon="
+                        show.passwordRules
+                            ? 'mdi-chevron-up'
+                            : 'mdi-chevron-down'
+                    "
+                    @click:append="show.passwordRules = !show.passwordRules"
                     :type="show.newPassword ? 'text' : 'password'"
                     :rules="[rules.required]"
                     :maxlength="50"
+                    :error="!isNewPasswordValid && Boolean(data.newPassword)"
                     label="New password"
                     counter
-                ></v-text-field>
+                >
+                    <template v-slot:loader>
+                        <v-progress-linear
+                            :model-value="progress.value"
+                            :color="progress.color"
+                            height="7"
+                        ></v-progress-linear>
+                    </template>
+                </v-text-field>
+
+                <v-expand-transition>
+                    <div v-show="show.passwordRules" class="padded-2">
+                        <password-strength
+                            v-model="data.newPassword"
+                            @progress-changed="updateProgressBar"
+                            @password-valid-changed="
+                                isNewPasswordValid = $event
+                            "
+                        ></password-strength>
+                    </div>
+                </v-expand-transition>
             </v-col>
         </v-row>
 
@@ -85,6 +112,12 @@ watch(
 const show = ref({
     oldPassword: false,
     newPassword: false,
+    passwordRules: false,
+});
+
+const progress = ref({
+    value: 0,
+    color: "red-darken-1",
 });
 
 const rules = {
@@ -103,6 +136,33 @@ async function update() {
     const successCallback = () => snackbar("Password changed", 3 * 1000);
 
     store.updatePassword(data.value, successCallback);
+}
+
+const isNewPasswordValid = ref(false);
+
+function updateProgressBar(newProgres) {
+    progress.value.value = newProgres;
+    progress.value.color = getProgressColor(newProgres);
+}
+
+function getProgressColor(progress) {
+    if (progress <= 25) {
+        return "red-darken-1";
+    }
+
+    if (progress <= 50) {
+        return "orange-darken-1";
+    }
+
+    if (progress <= 75) {
+        return "yellow-darken-1";
+    }
+
+    if (progress < 100) {
+        return "light-blue-darken-1";
+    }
+
+    return "green-darken-1";
 }
 </script>
 
