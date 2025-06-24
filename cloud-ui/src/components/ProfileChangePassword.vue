@@ -133,7 +133,10 @@ async function update() {
         return;
     }
 
-    const successCallback = () => snackbar("Password changed", 3 * 1000);
+    const successCallback = () => {
+        form.value.reset();
+        snackbar("Password changed", 3 * 1000);
+    };
 
     store.updatePassword(data.value, successCallback);
 }

@@ -6,19 +6,11 @@
 </template>
 
 <script setup>
-import { ref, defineModel, watch } from "vue";
-import specialCharsRegex from "@/util/validator/special-characters";
+import { ref, watch } from "vue";
+import { Rule, validate } from "@/util/validator/password-validator.js";
 
 const password = defineModel();
 const emit = defineEmits(["progress-changed", "password-valid-changed"]);
-
-const regs = {
-    upperCase: /.*[A-Z].*/,
-    lowerCase: /.*[a-z].*/,
-    digit: /.*[0-9].*/,
-    special: specialCharsRegex,
-    noWhitespace: /^\S+$/,
-};
 
 // Validation of illegal sequences and blacklist can be found in musical instrument shop
 const rules = ref([
@@ -27,10 +19,7 @@ const rules = ref([
         icon: getIcon(false),
         color: getColor(false),
         validate(password) {
-            const valid = password?.length <= 50;
-            this.icon = getIcon(valid);
-            this.color = getColor(valid);
-            return valid;
+            return validateWithIconColor(this, password, Rule.MAX_LENGTH_50);
         },
     },
     {
@@ -38,10 +27,7 @@ const rules = ref([
         icon: getIcon(false),
         color: getColor(false),
         validate(password) {
-            const valid = password?.length >= 8;
-            this.icon = getIcon(valid);
-            this.color = getColor(valid);
-            return valid;
+            return validateWithIconColor(this, password, Rule.MIN_LENGTH_8);
         },
     },
     {
@@ -49,10 +35,7 @@ const rules = ref([
         icon: getIcon(false),
         color: getColor(false),
         validate(password) {
-            const valid = regs.upperCase.test(password);
-            this.icon = getIcon(valid);
-            this.color = getColor(valid);
-            return valid;
+            return validateWithIconColor(this, password, Rule.UPPER_CASE);
         },
     },
     {
@@ -60,10 +43,7 @@ const rules = ref([
         icon: getIcon(false),
         color: getColor(false),
         validate(password) {
-            const valid = regs.lowerCase.test(password);
-            this.icon = getIcon(valid);
-            this.color = getColor(valid);
-            return valid;
+            return validateWithIconColor(this, password, Rule.LOWER_CASE);
         },
     },
     {
@@ -71,10 +51,7 @@ const rules = ref([
         icon: getIcon(false),
         color: getColor(false),
         validate(password) {
-            const valid = regs.digit.test(password);
-            this.icon = getIcon(valid);
-            this.color = getColor(valid);
-            return valid;
+            return validateWithIconColor(this, password, Rule.DIGIT);
         },
     },
     {
@@ -82,10 +59,7 @@ const rules = ref([
         icon: getIcon(false),
         color: getColor(false),
         validate(password) {
-            const valid = regs.special.test(password);
-            this.icon = getIcon(valid);
-            this.color = getColor(valid);
-            return valid;
+            return validateWithIconColor(this, password, Rule.SPECIAL);
         },
     },
     {
@@ -93,13 +67,17 @@ const rules = ref([
         icon: getIcon(false),
         color: getColor(false),
         validate(password) {
-            const valid = regs.noWhitespace.test(password);
-            this.icon = getIcon(valid);
-            this.color = getColor(valid);
-            return valid;
+            return validateWithIconColor(this, password, Rule.NO_WHITESPACE);
         },
     },
 ]);
+
+function validateWithIconColor(refRule, password, passwordRule) {
+    const valid = validate(password, passwordRule);
+    refRule.icon = getIcon(valid);
+    refRule.color = getColor(valid);
+    return valid;
+}
 
 let passwordValid = false;
 
