@@ -26,6 +26,7 @@ public class UserSpecification extends EntitySpecification<User> {
     public Specification<User> get(String key, String value) {
         return switch (key) {
             case "name", "surname", "email", "username" -> attrLike(key, value);
+            case "organization" -> attrLike(new String[]{"organization", "name"}, value);
             case "role" -> attrLike(roleKeys, value);
             case "archived" -> attrEqual(key, Boolean.valueOf(value));
             default -> throw new FilterKeyException(key);

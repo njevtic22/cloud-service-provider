@@ -11,6 +11,11 @@
         class="elevation-4"
         multi-sort
     >
+        <!-- sorting works well with both 'role.name' and 'roleName' as key -->
+        <!-- TODO: see how to convert sort key 'role' to 'role.name'/'roleName' in backend so frontend is not affected -->
+        <template v-slot:item.roleName="{ item }">
+            {{ item.role }}
+        </template>
         <template v-slot:item.organizationName="{ item }">
             {{ item.organizationName ? item.organizationName : "/" }}
         </template>
@@ -46,7 +51,7 @@ const headers = [
     },
     {
         title: "Role",
-        key: "role",
+        key: "roleName",
     },
     {
         title: "Organization",
@@ -69,15 +74,14 @@ const sizeOptions = [
 function updateOptions(options) {
     page.value = options.page - 1;
     size.value = options.itemsPerPage;
-    // sortBy.value = options.sortBy;
+    sortBy.value = options.sortBy;
 
     // TODO: fix sending request after logout
-    // TODO: different users for admin and superadmin
     loadUsers();
 }
 
 function loadUsers() {
-    store.fetchUsers(page.value, size.value);
+    store.fetchUsers(page.value, size.value, sortBy.value);
 }
 </script>
 

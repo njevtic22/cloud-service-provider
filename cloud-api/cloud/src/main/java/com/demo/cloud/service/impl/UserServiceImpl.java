@@ -76,6 +76,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<User> getAll(Pageable pageable, Map<String, String> filter) {
+        User requester = authService.getAuthenticated();
+        if (requester.isAdmin()) {
+            filter.put("organization", requester.getOrganization().getName());
+        }
+
         return repository.findAll(spec.get(filter), pageable);
     }
 
