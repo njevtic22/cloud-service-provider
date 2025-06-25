@@ -14,9 +14,10 @@ export const useUserStore = defineStore("user", {
     }),
 
     actions: {
-        fetchUsers(errorCallback = this.showErrorSnack) {
+        fetchUsers(page, size, errorCallback = this.showErrorSnack) {
+            const pageUrl = `${usersUrl}?page=${page}&size=${size}`;
             axios
-                .get(usersUrl)
+                .get(pageUrl)
                 .then((response) => {
                     this.users = response.data;
                 })
