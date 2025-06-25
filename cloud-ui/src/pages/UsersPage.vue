@@ -19,6 +19,16 @@
         <template v-slot:item.organizationName="{ item }">
             {{ item.organizationName ? item.organizationName : "/" }}
         </template>
+
+        <template v-slot:footer.prepend>
+            <v-expansion-panels static elevation="0" variant="accordion">
+                <v-expansion-panel title="Filter users">
+                    <v-expansion-panel-text>
+                        <users-filter @filter="filter"></users-filter>
+                    </v-expansion-panel-text>
+                </v-expansion-panel>
+            </v-expansion-panels>
+        </template>
     </v-data-table-server>
 </template>
 
@@ -63,6 +73,7 @@ const headers = [
 const page = ref(0);
 const size = ref(20);
 const sortBy = ref([]);
+let filterData = {};
 
 const sizeOptions = [
     { value: 5, title: "5" },
@@ -70,6 +81,11 @@ const sizeOptions = [
     { value: 20, title: "20" },
     { value: 2 ** 31 - 1, title: "$vuetify.dataFooter.itemsPerPageAll" },
 ];
+
+function filter(newFilter) {
+    filterData = newFilter;
+    loadUsers();
+}
 
 function updateOptions(options) {
     page.value = options.page - 1;
@@ -81,7 +97,7 @@ function updateOptions(options) {
 }
 
 function loadUsers() {
-    store.fetchUsers(page.value, size.value, sortBy.value);
+    store.fetchUsers(page.value, size.value, sortBy.value, filterData);
 }
 </script>
 

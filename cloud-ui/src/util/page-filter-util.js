@@ -17,7 +17,7 @@ function formFilter(filter, prefix) {
     let filterStr = "";
     for (const [key, value] of Object.entries(filter)) {
         if (value) {
-            filterStr += `filter=${key}-${value}&`;
+            filterStr += `${key}=${value}&`;
         }
     }
 

@@ -16,9 +16,12 @@ function logout() {
     const callback = () => {
         useMachineStore().$reset();
         useProfileStore().$reset();
-        useUserStore().$reset();
 
         router.push("/login");
+
+        setTimeout(() => {
+            useUserStore().$reset();
+        }, 0.01 * 1000);
 
         // _s is not officially documented - it is internal to pinia
         // import { getActivePinia } from 'pinia';

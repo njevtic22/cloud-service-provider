@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import env from "@/environment/env";
 import axios from "axios";
-import { formSort } from "@/util/page-filter-util";
+import { formSort, formFilter } from "@/util/page-filter-util";
 
 const usersUrl = `${env.apiUrl}/users`;
 
@@ -15,9 +15,16 @@ export const useUserStore = defineStore("user", {
     }),
 
     actions: {
-        fetchUsers(page, size, sort, errorCallback = this.showErrorSnack) {
+        fetchUsers(
+            page,
+            size,
+            sort,
+            filter,
+            errorCallback = this.showErrorSnack
+        ) {
             const sortStr = formSort(sort, "&");
-            const pageUrl = `${usersUrl}?page=${page}&size=${size}${sortStr}`;
+            const filterStr = formFilter(filter, "&");
+            const pageUrl = `${usersUrl}?page=${page}&size=${size}${sortStr}${filterStr}`;
             axios
                 .get(pageUrl)
                 .then((response) => {
