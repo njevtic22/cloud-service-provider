@@ -74,6 +74,7 @@ async function login() {
 
     const copy = { ...data.value };
 
+    // TODO: reset form in callback (or not because component is destroyed)
     const successCallback = () => router.push("/");
     const errorCallback = (err) => {
         error.value.message = err.response.data.message;

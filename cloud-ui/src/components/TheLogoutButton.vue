@@ -4,10 +4,10 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import axios from "axios";
 import { useMachineStore } from "@/stores/machine.js";
 import { useAuthStore } from "@/stores/auth.js";
 import { useProfileStore } from "@/stores/profile.js";
+import { useUserStore } from "@/stores/user.js";
 
 const router = useRouter();
 const auth = useAuthStore();
@@ -16,6 +16,7 @@ function logout() {
     const callback = () => {
         useMachineStore().$reset();
         useProfileStore().$reset();
+        useUserStore().$reset();
 
         router.push("/login");
 
