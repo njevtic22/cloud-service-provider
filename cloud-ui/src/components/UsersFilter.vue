@@ -1,56 +1,50 @@
 <template>
     <v-form ref="form">
         <v-row>
-            <v-col>
+            <v-col cols="12" sm="4" md="2">
                 <v-text-field
                     v-model="filter.name"
-                    density="compact"
-                    placeholder="Search name"
+                    label="Search name"
                     hide-details
                     clearable
                 ></v-text-field>
             </v-col>
-            <v-col>
+            <v-col cols="12" sm="4" md="2">
                 <v-text-field
                     v-model="filter.surname"
-                    density="compact"
-                    placeholder="Search surname"
+                    label="Search surname"
                     hide-details
                     clearable
                 ></v-text-field>
             </v-col>
-            <v-col>
+            <v-col cols="12" sm="4" md="2">
                 <v-text-field
                     v-model="filter.email"
-                    density="compact"
-                    placeholder="Search email"
+                    label="Search email"
                     hide-details
                     clearable
                 ></v-text-field>
             </v-col>
-            <v-col>
+            <v-col cols="12" sm="4" md="2">
                 <v-text-field
                     v-model="filter.username"
-                    density="compact"
-                    placeholder="Search username"
+                    label="Search username"
                     hide-details
                     clearable
                 ></v-text-field>
             </v-col>
-            <v-col>
+            <v-col cols="12" sm="4" md="2">
                 <v-text-field
                     v-model="filter.role"
-                    density="compact"
-                    placeholder="Search role"
+                    label="Search role"
                     hide-details
                     clearable
                 ></v-text-field>
             </v-col>
-            <v-col>
+            <v-col cols="12" sm="4" md="2">
                 <v-text-field
                     v-model="filter.organization"
-                    density="compact"
-                    placeholder="Search organization"
+                    label="Search organization"
                     hide-details
                     clearable
                 ></v-text-field>

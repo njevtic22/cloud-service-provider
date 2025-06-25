@@ -24,7 +24,10 @@
             <v-expansion-panels static elevation="0" variant="accordion">
                 <v-expansion-panel title="Filter users">
                     <v-expansion-panel-text>
-                        <users-filter @filter="filter"></users-filter>
+                        <users-filter
+                            class="mx-n2"
+                            @filter="filter"
+                        ></users-filter>
                     </v-expansion-panel-text>
                 </v-expansion-panel>
             </v-expansion-panels>
