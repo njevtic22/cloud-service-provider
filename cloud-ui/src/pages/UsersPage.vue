@@ -1,4 +1,11 @@
 <template>
+    <div class="text-right">
+        <v-btn @click="dialog = true" color="primary" class="mb-2">
+            Add user
+        </v-btn>
+    </div>
+    <user-add-dialog v-model="dialog"></user-add-dialog>
+
     <v-data-table-server
         v-model:items-per-page="size"
         :items="store.users.data"
@@ -40,6 +47,7 @@ import { ref } from "vue";
 import { useUserStore } from "@/stores/user.js";
 
 const store = useUserStore();
+const dialog = ref(false);
 
 const headers = [
     // {
