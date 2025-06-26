@@ -8,8 +8,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    AppFooter: typeof import('./src/components/AppFooter.vue')['default']
-    HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     PasswordStrength: typeof import('./src/components/PasswordStrength.vue')['default']
     ProfileChange: typeof import('./src/components/ProfileChange.vue')['default']
     ProfileChangeData: typeof import('./src/components/ProfileChangeData.vue')['default']
@@ -21,7 +19,7 @@ declare module 'vue' {
     TheLogoutButton: typeof import('./src/components/TheLogoutButton.vue')['default']
     TheSidebar: typeof import('./src/components/TheSidebar.vue')['default']
     TheSnackbar: typeof import('./src/components/TheSnackbar.vue')['default']
-    UserAddDialog: typeof import('./src/components/UserAddDialog.vue')['default']
+    UserDialog: typeof import('./src/components/UserDialog.vue')['default']
     UserForm: typeof import('./src/components/UserForm.vue')['default']
     UsersFilter: typeof import('./src/components/UsersFilter.vue')['default']
   }
