@@ -45,7 +45,9 @@
         </v-row>
 
         <v-row class="d-flex justify-center">
-            <v-btn @click="update" color="primary"> Save </v-btn>
+            <v-btn :disabled="!form?.isValid" @click="update" color="primary">
+                Save
+            </v-btn>
         </v-row>
         <br />
     </v-form>
