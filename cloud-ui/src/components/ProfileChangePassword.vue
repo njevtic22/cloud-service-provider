@@ -17,45 +17,14 @@
 
         <v-row class="d-flex justify-center">
             <v-col cols="11" sm="6">
-                <v-text-field
-                    v-model="data.newPassword"
-                    :append-inner-icon="
-                        show.newPassword ? 'mdi-eye' : 'mdi-eye-off'
-                    "
-                    @click:append-inner="show.newPassword = !show.newPassword"
-                    :append-icon="
-                        show.passwordRules
-                            ? 'mdi-chevron-up'
-                            : 'mdi-chevron-down'
-                    "
-                    @click:append="show.passwordRules = !show.passwordRules"
-                    :type="show.newPassword ? 'text' : 'password'"
+                <password-input
+                    v-model:password="data.newPassword"
+                    v-model:showPassword="show.newPassword"
+                    v-model:showRules="show.passwordRules"
                     :rules="[rules.required]"
-                    :maxlength="50"
-                    :error="!isNewPasswordValid && Boolean(data.newPassword)"
                     label="New password"
-                    counter
-                >
-                    <template v-slot:loader>
-                        <v-progress-linear
-                            :model-value="progress.value"
-                            :color="progress.color"
-                            height="7"
-                        ></v-progress-linear>
-                    </template>
-                </v-text-field>
-
-                <v-expand-transition>
-                    <div v-show="show.passwordRules" class="padded-2">
-                        <password-strength
-                            v-model="data.newPassword"
-                            @progress-changed="updateProgressBar"
-                            @password-valid-changed="
-                                isNewPasswordValid = $event
-                            "
-                        ></password-strength>
-                    </div>
-                </v-expand-transition>
+                    ref="newPasswordRef"
+                ></password-input>
             </v-col>
         </v-row>
 
@@ -76,9 +45,7 @@
         </v-row>
 
         <v-row class="d-flex justify-center">
-            <v-btn :disabled="!form?.isValid" @click="update" color="primary">
-                Save
-            </v-btn>
+            <v-btn @click="update" color="primary"> Save </v-btn>
         </v-row>
         <br />
     </v-form>
@@ -99,6 +66,7 @@ const data = ref({
 
 const form = ref(null);
 const repeatedPasswordRef = ref(null);
+const newPasswordRef = ref(null);
 
 watch(
     () => data.value.newPassword,
@@ -115,11 +83,6 @@ const show = ref({
     passwordRules: false,
 });
 
-const progress = ref({
-    value: 0,
-    color: "red-darken-1",
-});
-
 const rules = {
     required: (value) => Boolean(value) || "Required",
     matchWithNewPassword: (value) =>
@@ -129,43 +92,18 @@ const rules = {
 
 async function update() {
     const { valid } = await form.value.validate();
-    if (!valid) {
+    const passValid = newPasswordRef.value.validate();
+    if (!valid || !passValid) {
         return;
     }
 
     const successCallback = () => {
         form.value.reset();
+        newPasswordRef.value.reset();
         snackbar("Password changed", 3 * 1000);
     };
 
     store.updatePassword(data.value, successCallback);
-}
-
-const isNewPasswordValid = ref(false);
-
-function updateProgressBar(newProgres) {
-    progress.value.value = newProgres;
-    progress.value.color = getProgressColor(newProgres);
-}
-
-function getProgressColor(progress) {
-    if (progress <= 25) {
-        return "red-darken-1";
-    }
-
-    if (progress <= 50) {
-        return "orange-darken-1";
-    }
-
-    if (progress <= 75) {
-        return "yellow-darken-1";
-    }
-
-    if (progress < 100) {
-        return "light-blue-darken-1";
-    }
-
-    return "green-darken-1";
 }
 </script>
 

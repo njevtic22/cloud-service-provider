@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    PasswordInput: typeof import('./src/components/PasswordInput.vue')['default']
     PasswordStrength: typeof import('./src/components/PasswordStrength.vue')['default']
     ProfileChange: typeof import('./src/components/ProfileChange.vue')['default']
     ProfileChangeData: typeof import('./src/components/ProfileChangeData.vue')['default']
