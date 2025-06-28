@@ -10,16 +10,14 @@
                 required
             ></v-text-field>
 
-            <v-text-field
-                v-model="data.password"
+            <password-input
+                v-model:password="data.password"
+                v-model:showPassword="showPassword"
                 :rules="[required]"
-                :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                @click:append-inner="showPassword = !showPassword"
-                :type="showPassword ? 'text' : 'password'"
                 label="Password"
                 class="padded-3"
-                required
-            ></v-text-field>
+                ref="passwordRef"
+            ></password-input>
 
             <v-card-item
                 :class="error.occured ? '' : 'error-hidden'"
@@ -30,7 +28,7 @@
 
             <v-card-actions class="justify-center">
                 <v-btn
-                    :disabled="!form?.isValid"
+                    :disabled="!isFormValid"
                     @click="login"
                     variant="elevated"
                     color="primary"
@@ -43,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth.js";
 
@@ -51,6 +49,7 @@ const router = useRouter();
 const auth = useAuthStore();
 
 const form = ref(null);
+const passwordRef = ref(null);
 const required = (value) => !!value || "Required";
 
 const data = ref({
@@ -65,29 +64,37 @@ const error = ref({
     occured: false,
 });
 
-async function login() {
+async function validateForm() {
     const { valid } = await form.value.validate();
+    const passValid = passwordRef.value.validate();
+    return valid && passValid;
+}
 
+function login() {
+    const valid = validateForm();
     if (!valid) {
         return;
     }
 
-    const copy = { ...data.value };
-
-    // TODO: reset form in callback (or not because component is destroyed)
+    // reset form in callback (or not because component is destroyed)
     const successCallback = () => router.push("/");
     const errorCallback = (err) => {
         error.value.message = err.response.data.message;
         error.value.occured = true;
     };
 
-    auth.login(copy, successCallback, errorCallback);
+    auth.login(data.value, successCallback, errorCallback);
 }
 
+// without PasswordInput component
 // :disabled="!form?.isValid"
 // const isFormValid = computed(() => {
 //     return form.value?.isValid;
 // });
+
+const isFormValid = computed(() => {
+    return form.value?.isValid && passwordRef.value?.isValid;
+});
 </script>
 
 <style scoped>

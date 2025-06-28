@@ -14,7 +14,7 @@
             ref="fieldRef"
             counter
         >
-            <template v-slot:loader>
+            <template v-if="enableRules" v-slot:loader>
                 <v-progress-linear
                     :model-value="progress.value"
                     :color="progress.color"
@@ -23,12 +23,12 @@
             </template>
         </v-text-field>
 
-        <v-expand-transition>
+        <v-expand-transition v-if="enableRules">
             <div v-show="showRules" class="padded-2">
                 <password-strength
                     v-model="password"
                     @progress-changed="updateProgressBar"
-                    @password-valid-changed="isNewPasswordValid = $event"
+                    @password-valid-changed="isPasswordValid = $event"
                 ></password-strength>
             </div>
         </v-expand-transition>
@@ -57,6 +57,9 @@ const showRules = defineModel("showRules", {
     default: undefined,
 });
 
+const enableRules = computed(() => {
+    return showRules.value != undefined;
+});
 const innerIcon = computed(() => {
     if (showPassword.value == undefined) {
         return undefined;
@@ -78,7 +81,12 @@ function reset() {
     fieldRef.value.reset();
 }
 
+const isValid = computed(() => {
+    return fieldRef.value.isValid;
+});
+
 defineExpose({
+    isValid,
     validate,
     reset,
 });
