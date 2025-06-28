@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
@@ -48,7 +49,8 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
             UniquePropertyException.class,
             InvalidPasswordException.class,
             BlankStringException.class,
-            ModelConstraintException.class
+            ModelConstraintException.class,
+            BadCredentialsException.class
     })
     public ResponseEntity<ApiError> handleBadRequest(RuntimeException ex) {
         logger.info(ex.getMessage(), ex);

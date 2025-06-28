@@ -66,12 +66,12 @@ const error = ref({
 
 async function validateForm() {
     const { valid } = await form.value.validate();
-    const passValid = passwordRef.value.validate();
+    const passValid = (await passwordRef.value.validate()).length === 0;
     return valid && passValid;
 }
 
-function login() {
-    const valid = validateForm();
+async function login() {
+    const valid = await validateForm();
     if (!valid) {
         return;
     }

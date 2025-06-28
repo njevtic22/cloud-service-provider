@@ -73,12 +73,16 @@ const icon = computed(() => {
     return showRules.value ? "mdi-chevron-up" : "mdi-chevron-down";
 });
 
-function validate() {
-    return fieldRef.value.validate();
+async function validate() {
+    return await fieldRef.value.validate();
 }
 
-function reset() {
-    fieldRef.value.reset();
+async function reset() {
+    await fieldRef.value.reset();
+}
+
+async function resetValidation() {
+    await fieldRef.value.resetValidation();
 }
 
 const isValid = computed(() => {
@@ -89,6 +93,7 @@ defineExpose({
     isValid,
     validate,
     reset,
+    resetValidation,
 });
 
 function updateProgressBar(newProgres) {
