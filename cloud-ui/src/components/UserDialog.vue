@@ -1,10 +1,7 @@
 <template>
     <v-dialog v-model="dialog" :width="width">
         <user-form
-            @submit="
-                console.log('submitted with ' + $event);
-                dialog = false;
-            "
+            @submit="submit"
             @cancel="dialog = false"
             icon="mdi-account-plus"
             title="Add user"
@@ -29,6 +26,11 @@ const width = computed(() => {
     }
     return "50%";
 });
+
+function submit(user) {
+    console.log(user);
+    dialog.value = false;
+}
 </script>
 
 <style scoped></style>
