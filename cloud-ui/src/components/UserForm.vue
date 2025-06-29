@@ -43,11 +43,13 @@
                         ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6">
-                        <v-text-field
+                        <v-select
                             v-model="user.role"
                             :rules="[rules.required]"
+                            :items="['ROLE_ADMIN', 'ROLE_USER']"
                             label="Role"
-                        ></v-text-field>
+                            clearable
+                        ></v-select>
                     </v-col>
                 </v-row>
                 <v-row>
