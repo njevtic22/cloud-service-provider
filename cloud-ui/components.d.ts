@@ -8,6 +8,8 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    OrganizationSelect: typeof import('./src/components/OrganizationSelect.vue')['default']
+    PaginatedAutocomplete: typeof import('./src/components/PaginatedAutocomplete.vue')['default']
     PasswordInput: typeof import('./src/components/PasswordInput.vue')['default']
     PasswordStrength: typeof import('./src/components/PasswordStrength.vue')['default']
     ProfileChange: typeof import('./src/components/ProfileChange.vue')['default']

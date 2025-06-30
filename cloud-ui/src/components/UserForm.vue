@@ -41,6 +41,9 @@
                             :rules="[rules.required]"
                             label="Organization"
                         ></v-text-field>
+                        <organization-select
+                            v-model="user.organization"
+                        ></organization-select>
                     </v-col>
                     <v-col cols="12" sm="6">
                         <v-select
