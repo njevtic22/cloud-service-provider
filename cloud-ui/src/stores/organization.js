@@ -15,31 +15,41 @@ export const useOrganizationStore = defineStore("organization", {
     }),
 
     actions: {
-        fetchOrganizations(
+        appendOrganizations(
             page,
             size,
             sort,
             filter,
-            mode,
             errorCallback = this.showErrorSnack
         ) {
-            const sortStr = formSort(sort, "&");
-            const filterStr = formFilter(filter, "&");
-            const pageUrl = `${organizationsUrl}?page=${page}&size=${size}${sortStr}${filterStr}`;
-            axios
-                .get(pageUrl)
-                .then((response) => {
-                    if (mode === "append") {
-                        this.organizations.data.push(...response.data.data);
-                        this.organizations.totalElements =
-                            response.data.totalElements;
-                        this.organizations.totalPages =
-                            response.data.totalPages;
-                    } else {
-                        this.organizations = response.data;
-                    }
-                })
-                .catch(errorCallback);
+            const appendCallback = (response) => {
+                this.organizations.data.push(...response.data.data);
+                this.organizations.totalElements = response.data.totalElements;
+                this.organizations.totalPages = response.data.totalPages;
+            };
+            requestOrganizations(
+                page,
+                size,
+                sort,
+                filter,
+                appendCallback,
+                errorCallback
+            );
         },
     },
 });
+
+function requestOrganizations(
+    page,
+    size,
+    sort,
+    filter,
+    successCallback,
+    errorCallback
+) {
+    const sortStr = formSort(sort, "&");
+    const filterStr = formFilter(filter, "&");
+    const pageUrl = `${organizationsUrl}?page=${page}&size=${size}${sortStr}${filterStr}`;
+
+    axios.get(pageUrl).then(successCallback).catch(errorCallback);
+}

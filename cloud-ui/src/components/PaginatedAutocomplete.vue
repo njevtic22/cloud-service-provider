@@ -14,7 +14,7 @@
     >
         <template v-slot:append-item>
             <template v-if="Boolean(items.length)">
-                <div v-if="!loading" v-intersect="handleIntersection" />
+                <div v-if="!loading" v-intersect="handleIntersection"></div>
 
                 <v-list-item v-else class="text-primary">
                     Loading more...

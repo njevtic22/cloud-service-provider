@@ -24,11 +24,10 @@ let page = 0;
 const size = 20;
 const sort = [{ key: "id", order: "asc" }];
 const filter = { name: "" };
-let fetchMode = "append";
 
 function loadOrganizations() {
     loading.value = true;
-    store.fetchOrganizations(page, size, sort, filter, fetchMode);
+    store.appendOrganizations(page, size, sort, filter);
     loading.value = false;
 }
 loadOrganizations();
@@ -51,9 +50,7 @@ function handleFilter(filterName) {
     filter.name = filterName;
     page = 0;
     store.$reset();
-    // fetchMode = "overwrite";
     loadOrganizations();
-    // fetchMode = "append";
 }
 
 onUnmounted(() => {
