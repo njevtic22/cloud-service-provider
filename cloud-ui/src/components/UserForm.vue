@@ -41,9 +41,17 @@
                             :rules="[rules.required]"
                             label="Organization"
                         ></v-text-field>
-                        <organization-select
+                        <fetching-autocomplete
                             v-model="user.organization"
-                        ></organization-select>
+                            :items="store.organizations"
+                            :return-object="true"
+                            :fetch="store.fetchOrganizations"
+                            :append="store.appendOrganizations"
+                            :reset="store.$reset"
+                            compare-property="name"
+                            label="Organization"
+                            item-title="name"
+                        ></fetching-autocomplete>
                     </v-col>
                     <v-col cols="12" sm="6">
                         <v-select
@@ -100,6 +108,9 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import { useOrganizationStore } from "@/stores/organization.js";
+
+const store = useOrganizationStore();
 
 defineProps({
     icon: String,

@@ -15,6 +15,26 @@ export const useOrganizationStore = defineStore("organization", {
     }),
 
     actions: {
+        fetchOrganizations(
+            page,
+            size,
+            sort,
+            filter,
+            errorCallback = this.showErrorSnack
+        ) {
+            const overwriteCallback = (response) => {
+                this.organizations = response.data;
+            };
+            requestOrganizations(
+                page,
+                size,
+                sort,
+                filter,
+                overwriteCallback,
+                errorCallback
+            );
+        },
+
         appendOrganizations(
             page,
             size,
