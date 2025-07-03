@@ -7,15 +7,21 @@
         :item-value="itemValue"
         :return-object="returnObject"
         :label="label"
+        :rules="rules"
         @end-reached="loadMoreItems"
         @update:search-input="handleFilter"
+        ref="input"
     ></paginated-autocomplete>
 </template>
 
 <script setup>
-import { ref, onUnmounted } from "vue";
+import { ref, onUnmounted, computed } from "vue";
 
 const props = defineProps({
+    rules: {
+        type: Array,
+        required: false,
+    },
     label: {
         type: String,
         required: false,
@@ -95,6 +101,31 @@ function handleFilter(filterValue) {
     page = 0;
     filterItems();
 }
+
+const input = ref(null);
+
+async function validate() {
+    return await input.value.validate();
+}
+
+async function reset() {
+    await input.value.reset();
+}
+
+async function resetValidation() {
+    await input.value.resetValidation();
+}
+
+const isValid = computed(() => {
+    return input.value.isValid;
+});
+
+defineExpose({
+    isValid,
+    validate,
+    reset,
+    resetValidation,
+});
 
 onUnmounted(() => {
     props.reset();

@@ -28,8 +28,8 @@ const width = computed(() => {
 });
 
 function submit(user) {
-    console.log(user);
     dialog.value = false;
+    console.log(user);
 }
 </script>
 

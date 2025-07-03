@@ -9,6 +9,8 @@
         :return-object="returnObject"
         :label="label"
         :menu-props="{ class: menuClass }"
+        :rules="rules"
+        ref="input"
         clearable
         no-filter
     >
@@ -32,9 +34,14 @@
 </template>
 
 <script setup>
+import { ref, computed } from "vue";
 import debounce from "lodash/debounce";
 
 defineProps({
+    rules: {
+        type: Array,
+        required: false,
+    },
     label: {
         type: String,
         required: false,
@@ -91,6 +98,31 @@ function resetDropdownScroll() {
         menuList.scrollTop = 0;
     }
 }
+
+const input = ref(null);
+
+async function validate() {
+    return await input.value.validate();
+}
+
+async function reset() {
+    await input.value.reset();
+}
+
+async function resetValidation() {
+    await input.value.resetValidation();
+}
+
+const isValid = computed(() => {
+    return input.value.isValid;
+});
+
+defineExpose({
+    isValid,
+    validate,
+    reset,
+    resetValidation,
+});
 </script>
 
 <style scoped></style>

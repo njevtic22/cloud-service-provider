@@ -36,18 +36,15 @@
                 </v-row>
                 <v-row>
                     <v-col cols="12" sm="6">
-                        <v-text-field
-                            v-model="user.organization"
-                            :rules="[rules.required]"
-                            label="Organization"
-                        ></v-text-field>
                         <fetching-autocomplete
                             v-model="user.organization"
                             :items="store.organizations"
                             :return-object="true"
+                            :rules="[rules.required]"
                             :fetch="store.fetchOrganizations"
                             :append="store.appendOrganizations"
-                            :reset="store.$reset"
+                            :reset="clearOrganizations"
+                            ref="organizationRef"
                             compare-property="name"
                             label="Organization"
                             item-title="name"
@@ -111,6 +108,9 @@ import { ref, computed } from "vue";
 import { useOrganizationStore } from "@/stores/organization.js";
 
 const store = useOrganizationStore();
+function clearOrganizations() {
+    store.$reset();
+}
 
 defineProps({
     icon: String,
@@ -126,6 +126,7 @@ const emit = defineEmits(["submit", "cancel"]);
 const form = ref(null);
 const passwordRef = ref(null);
 const repeatedRef = ref(null);
+const organizationRef = ref(null);
 
 const user = ref({
     name: "",
@@ -156,13 +157,16 @@ async function validateForm() {
     const { valid } = await form.value.validate();
     const passValid = (await passwordRef.value.validate()).length === 0;
     const repeatedValid = (await repeatedRef.value.validate()).length === 0;
-    return valid && passValid && repeatedValid;
+    const organizationValid =
+        (await organizationRef.value.validate()).length === 0;
+    return valid && passValid && repeatedValid && organizationValid;
 }
 
 function resetForm() {
     form.value.reset();
     passwordRef.value.reset();
     repeatedRef.value.reset();
+    organizationRef.value.reset();
 }
 
 function clear() {
@@ -175,7 +179,7 @@ async function submit() {
         return;
     }
 
-    emit("submit", user.value);
+    emit("submit", { ...user.value });
     clear();
 }
 
@@ -184,11 +188,13 @@ function cancel() {
     clear();
 }
 
+// is form.value?.isValid enough
 const isFormValid = computed(() => {
     return (
         form.value?.isValid &&
         passwordRef.value?.isValid &&
-        repeatedRef.value?.isValid
+        repeatedRef.value?.isValid &&
+        organizationRef.value?.isValid
     );
 });
 </script>
