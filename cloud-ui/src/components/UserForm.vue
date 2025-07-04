@@ -104,7 +104,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, defineExpose } from "vue";
 import { useOrganizationStore } from "@/stores/organization.js";
 
 const store = useOrganizationStore();
@@ -169,9 +169,9 @@ function resetForm() {
     organizationRef.value.reset();
 }
 
-function clear() {
-    resetForm();
-}
+defineExpose({
+    resetForm,
+});
 
 async function submit() {
     const valid = await validateForm();
@@ -180,12 +180,14 @@ async function submit() {
     }
 
     emit("submit", { ...user.value });
-    clear();
+
+    // resetForm is called from UserDialog if request is successful
+    // resetForm();
 }
 
 function cancel() {
     emit("cancel");
-    clear();
+    resetForm();
 }
 
 // is form.value?.isValid enough

@@ -21,6 +21,9 @@ const sidebarOpened = ref(true);
 const theSnack = ref(null);
 
 function showErrorSnack(error) {
+    // What if error happens inside success callback and therefore
+    // there is no error.response.data
+
     let errorMessage = error.response.data.message;
     let errorDetails = error.response.data.details;
 

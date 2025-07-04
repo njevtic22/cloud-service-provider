@@ -11,8 +11,13 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, inject } from "vue";
 import { useDisplay } from "vuetify";
+import { useUserStore } from "@/stores/user.js";
+
+const emit = defineEmits(["submit"]);
+
+const snackbar = inject("snackbar");
 
 const dialog = defineModel();
 const display = useDisplay();
@@ -27,9 +32,15 @@ const width = computed(() => {
     return "50%";
 });
 
+const store = useUserStore();
+
 function submit(user) {
-    dialog.value = false;
-    console.log(user);
+    user.organization = user.organization.id;
+    store.addUser(user, () => {
+        dialog.value = false;
+        emit("submit");
+        snackbar("User added", 3 * 3000);
+    });
 }
 </script>
 

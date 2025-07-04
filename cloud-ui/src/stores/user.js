@@ -32,5 +32,12 @@ export const useUserStore = defineStore("user", {
                 })
                 .catch(errorCallback);
         },
+
+        addUser(newUser, successCallback, errorCallback = this.showErrorSnack) {
+            axios
+                .post(usersUrl, newUser)
+                .then(successCallback)
+                .catch(errorCallback);
+        },
     },
 });

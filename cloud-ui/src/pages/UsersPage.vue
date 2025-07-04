@@ -4,7 +4,7 @@
             Add user
         </v-btn>
     </div>
-    <user-dialog v-model="dialog"></user-dialog>
+    <user-dialog v-model="dialog" @submit="loadUsers"></user-dialog>
 
     <v-data-table-server
         v-model:items-per-page="size"
@@ -103,7 +103,6 @@ function updateOptions(options) {
     size.value = options.itemsPerPage;
     sortBy.value = options.sortBy;
 
-    // TODO: fix sending request after logout
     loadUsers();
 }
 
