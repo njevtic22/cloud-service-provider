@@ -37,6 +37,7 @@
                 <v-row>
                     <v-col cols="12" sm="6">
                         <fetching-autocomplete
+                            v-show="authStore.isSuperAdmin"
                             v-model="user.organization"
                             :items="store.organizations"
                             :return-object="true"
@@ -49,6 +50,12 @@
                             label="Organization"
                             item-title="name"
                         ></fetching-autocomplete>
+                        <v-text-field
+                            v-if="authStore.isAdmin"
+                            v-model="profileStore.profile.organizationName"
+                            label="Organization"
+                            disabled
+                        ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6">
                         <v-select
@@ -104,13 +111,37 @@
 </template>
 
 <script setup>
-import { ref, computed, defineExpose } from "vue";
+import { ref, computed } from "vue";
 import { useOrganizationStore } from "@/stores/organization.js";
+import { useProfileStore } from "@/stores/profile.js";
+import { useAuthStore } from "@/stores/auth.js";
 
 const store = useOrganizationStore();
 function clearOrganizations() {
     store.$reset();
 }
+
+const profileStore = useProfileStore();
+const authStore = useAuthStore();
+const profileOrg = computed(() => profileStore.profile.organization);
+function initOrganization() {
+    if (authStore.isAdmin) {
+        profileStore.fetchProfile();
+        user.value.organization = { id: profileOrg };
+    }
+}
+
+const user = ref({
+    name: "",
+    surname: "",
+    email: "",
+    username: "",
+    organization: null,
+    role: "",
+    password: "",
+    repeatedPassword: "",
+});
+initOrganization();
 
 defineProps({
     icon: String,
@@ -127,17 +158,6 @@ const form = ref(null);
 const passwordRef = ref(null);
 const repeatedRef = ref(null);
 const organizationRef = ref(null);
-
-const user = ref({
-    name: "",
-    surname: "",
-    email: "",
-    username: "",
-    organization: null,
-    role: "",
-    password: "",
-    repeatedPassword: "",
-});
 
 const show = ref({
     password: false,
