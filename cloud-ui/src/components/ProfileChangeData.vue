@@ -58,8 +58,12 @@ const rules = {
         /.+@.+\..+/.test(email) || "Email must be valid email adress",
 };
 
-function update() {
-    // TODO validate form
+async function update() {
+    const { valid } = await form.value.validate();
+    if (!valid) {
+        return;
+    }
+
     const successCallback = () => snackbar("Profile updated", 3 * 1000);
 
     store.update(profile.value, successCallback);
