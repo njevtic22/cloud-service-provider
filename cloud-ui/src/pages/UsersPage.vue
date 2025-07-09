@@ -4,7 +4,7 @@
             Add user
         </v-btn>
     </div>
-    <user-dialog v-model="dialog" @submit="loadUsers"></user-dialog>
+    <user-add-dialog v-model="dialog" @submit="loadUsers"></user-add-dialog>
 
     <v-data-table-server
         v-model:items-per-page="size"

@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialog" :width="width">
+    <the-dialog v-model="dialog">
         <user-form
             @submit="submit"
             @cancel="dialog = false"
@@ -7,31 +7,17 @@
             title="Add user"
             submit-text="Add"
         ></user-form>
-    </v-dialog>
+    </the-dialog>
 </template>
 
 <script setup>
-import { computed, inject } from "vue";
-import { useDisplay } from "vuetify";
+import { inject } from "vue";
 import { useUserStore } from "@/stores/user.js";
 
 const emit = defineEmits(["submit"]);
 
 const snackbar = inject("snackbar");
-
 const dialog = defineModel();
-const display = useDisplay();
-const width = computed(() => {
-    if (display.xs.value) {
-        return "100%";
-    } else if (display.smAndDown.value) {
-        return "85%";
-    } else if (display.mdAndDown.value) {
-        return "75%";
-    }
-    return "50%";
-});
-
 const store = useUserStore();
 
 function submit(user) {

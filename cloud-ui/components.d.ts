@@ -18,11 +18,12 @@ declare module 'vue' {
     ProfileData: typeof import('./src/components/ProfileData.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    TheDialog: typeof import('./src/components/TheDialog.vue')['default']
     TheHeader: typeof import('./src/components/TheHeader.vue')['default']
     TheLogoutButton: typeof import('./src/components/TheLogoutButton.vue')['default']
     TheSidebar: typeof import('./src/components/TheSidebar.vue')['default']
     TheSnackbar: typeof import('./src/components/TheSnackbar.vue')['default']
-    UserDialog: typeof import('./src/components/UserDialog.vue')['default']
+    UserAddDialog: typeof import('./src/components/UserAddDialog.vue')['default']
     UserForm: typeof import('./src/components/UserForm.vue')['default']
     UsersFilter: typeof import('./src/components/UsersFilter.vue')['default']
   }
