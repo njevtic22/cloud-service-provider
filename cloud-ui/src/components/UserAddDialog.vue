@@ -1,12 +1,12 @@
 <template>
     <the-dialog v-model="dialog">
-        <user-form
+        <user-add-form
             @submit="submit"
             @cancel="dialog = false"
             icon="mdi-account-plus"
             title="Add user"
             submit-text="Add"
-        ></user-form>
+        ></user-add-form>
     </the-dialog>
 </template>
 

@@ -24,8 +24,8 @@ declare module 'vue' {
     TheSidebar: typeof import('./src/components/TheSidebar.vue')['default']
     TheSnackbar: typeof import('./src/components/TheSnackbar.vue')['default']
     UserAddDialog: typeof import('./src/components/UserAddDialog.vue')['default']
+    UserAddForm: typeof import('./src/components/UserAddForm.vue')['default']
     UserEditDialog: typeof import('./src/components/UserEditDialog.vue')['default']
-    UserForm: typeof import('./src/components/UserForm.vue')['default']
     UsersFilter: typeof import('./src/components/UsersFilter.vue')['default']
   }
 }
