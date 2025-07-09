@@ -1,17 +1,18 @@
 <template>
     <div class="text-right">
-        <v-btn @click="dialog = true" color="primary" class="mb-2">
+        <v-btn @click="addDialog = true" color="primary" class="mb-2">
             Add user
         </v-btn>
     </div>
-    <user-add-dialog v-model="dialog" @submit="loadUsers"></user-add-dialog>
+    <user-add-dialog v-model="addDialog" @submit="loadUsers"></user-add-dialog>
+    <user-edit-dialog v-model="editDialog" ref="editRef"></user-edit-dialog>
 
     <v-data-table-server
         v-model:items-per-page="size"
         :items="store.users.data"
         :items-length="store.users.totalElements"
         :items-per-page-options="sizeOptions"
-        :headers="headers"
+        :headers="filteredHeaders"
         :sort-by="sortBy"
         @update:options="updateOptions"
         item-value="id"
@@ -25,6 +26,17 @@
         </template>
         <template v-slot:item.organizationName="{ item }">
             {{ item.organizationName ? item.organizationName : "/" }}
+        </template>
+
+        <template v-slot:item.actions="{ item }">
+            <v-btn
+                @click="openEditDialog(item)"
+                icon="mdi-pencil"
+                variant="flat"
+                size="small"
+                class="me-2"
+            >
+            </v-btn>
         </template>
 
         <template v-slot:footer.prepend>
@@ -43,11 +55,15 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useUserStore } from "@/stores/user.js";
+import { useAuthStore } from "@/stores/auth.js";
 
 const store = useUserStore();
-const dialog = ref(false);
+const authstore = useAuthStore();
+const addDialog = ref(false);
+const editDialog = ref(false);
+const editRef = ref(null);
 
 const headers = [
     // {
@@ -77,9 +93,19 @@ const headers = [
     {
         title: "Organization",
         key: "organizationName",
+        show: authstore.isSuperAdmin,
+    },
+    {
+        title: "Actions",
+        key: "actions",
+        sortable: false,
         align: "end",
     },
 ];
+
+const filteredHeaders = computed(() => {
+    return headers.filter((h) => (h.show == undefined ? true : h.show));
+});
 
 const page = ref(0);
 const size = ref(20);
@@ -108,6 +134,11 @@ function updateOptions(options) {
 
 function loadUsers() {
     store.fetchUsers(page.value, size.value, sortBy.value, filterData);
+}
+
+function openEditDialog(user) {
+    editRef.value.init(user);
+    editDialog.value = true;
 }
 </script>
 
