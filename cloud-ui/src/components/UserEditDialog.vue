@@ -1,31 +1,38 @@
 <template>
     <the-dialog v-model="dialog">
-        <v-card> {{ user }} </v-card>
+        <user-edit-form
+            @submit="submit"
+            @cancel="dialog = false"
+            icon="mdi-account-edit"
+            title="Edit user"
+            submit-text="Save"
+            ref="form"
+        ></user-edit-form>
     </the-dialog>
 </template>
 
 <script setup>
 import { ref } from "vue";
 
-const dialog = defineModel();
+const dialog = defineModel({ default: false });
+const form = ref(null);
 
-const user = ref({
-    name: "",
-    surname: "",
-    email: "",
-    username: "",
-    organization: null,
-    role: "",
-    password: "",
-    repeatedPassword: "",
-});
+function open(user) {
+    dialog.value = true;
 
-function init(data) {
-    user.value = data;
+    const id = setTimeout(() => {
+        form.value.init(user);
+        clearTimeout(id);
+    }, 0.1);
+}
+
+function submit(user) {
+    dialog.value = false;
+    console.log(user);
 }
 
 defineExpose({
-    init,
+    open,
 });
 </script>
 

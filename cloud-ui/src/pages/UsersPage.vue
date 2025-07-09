@@ -5,7 +5,7 @@
         </v-btn>
     </div>
     <user-add-dialog v-model="addDialog" @submit="loadUsers"></user-add-dialog>
-    <user-edit-dialog v-model="editDialog" ref="editRef"></user-edit-dialog>
+    <user-edit-dialog ref="editRef"></user-edit-dialog>
 
     <v-data-table-server
         v-model:items-per-page="size"
@@ -30,7 +30,7 @@
 
         <template v-slot:item.actions="{ item }">
             <v-btn
-                @click="openEditDialog(item)"
+                @click="editRef.open(item)"
                 icon="mdi-pencil"
                 variant="flat"
                 size="small"
@@ -62,7 +62,6 @@ import { useAuthStore } from "@/stores/auth.js";
 const store = useUserStore();
 const authstore = useAuthStore();
 const addDialog = ref(false);
-const editDialog = ref(false);
 const editRef = ref(null);
 
 const headers = [
@@ -134,11 +133,6 @@ function updateOptions(options) {
 
 function loadUsers() {
     store.fetchUsers(page.value, size.value, sortBy.value, filterData);
-}
-
-function openEditDialog(user) {
-    editRef.value.init(user);
-    editDialog.value = true;
 }
 </script>
 
