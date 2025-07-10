@@ -5,7 +5,7 @@
         </v-btn>
     </div>
     <user-add-dialog v-model="addDialog" @submit="loadUsers"></user-add-dialog>
-    <user-edit-dialog ref="editRef"></user-edit-dialog>
+    <user-edit-dialog @submit="loadUsers" ref="editRef"></user-edit-dialog>
 
     <v-data-table-server
         v-model:items-per-page="size"
@@ -30,7 +30,7 @@
 
         <template v-slot:item.actions="{ item }">
             <v-btn
-                @click="editRef.open(item)"
+                @click="editRef.open({ ...item })"
                 icon="mdi-pencil"
                 variant="flat"
                 size="small"

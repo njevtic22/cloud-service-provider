@@ -39,5 +39,10 @@ export const useUserStore = defineStore("user", {
                 .then(successCallback)
                 .catch(errorCallback);
         },
+
+        update(changes, successCallback, errorCallback = this.showErrorSnack) {
+            const url = `${usersUrl}/${changes.id}`;
+            axios.put(url, changes).then(successCallback).catch(errorCallback);
+        },
     },
 });

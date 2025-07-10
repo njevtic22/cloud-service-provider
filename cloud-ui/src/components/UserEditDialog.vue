@@ -12,8 +12,13 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, inject } from "vue";
+import { useUserStore } from "@/stores/user.js";
 
+const emit = defineEmits(["submit"]);
+
+const snackbar = inject("snackbar");
+const store = useUserStore();
 const dialog = defineModel({ default: false });
 const form = ref(null);
 
@@ -21,14 +26,22 @@ function open(user) {
     dialog.value = true;
 
     const id = setTimeout(() => {
+        user.organization = {
+            id: user.organization,
+            name: user.organizationName,
+        };
         form.value.init(user);
         clearTimeout(id);
     }, 0.1);
 }
 
 function submit(user) {
-    dialog.value = false;
-    console.log(user);
+    user.organization = user.organization.id;
+    store.update(user, () => {
+        dialog.value = false;
+        emit("submit");
+        snackbar("User updated", 3 * 3000);
+    });
 }
 
 defineExpose({
