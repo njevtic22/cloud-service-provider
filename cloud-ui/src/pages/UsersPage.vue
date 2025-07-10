@@ -34,9 +34,15 @@
                 icon="mdi-pencil"
                 variant="flat"
                 size="small"
-                class="me-2"
             >
             </v-btn>
+            <v-btn
+                @click="console.log(item.name + ' ' + item.surname)"
+                icon="mdi-delete"
+                variant="flat"
+                size="small"
+                class="text-red"
+            ></v-btn>
         </template>
 
         <template v-slot:footer.prepend>
