@@ -13,6 +13,8 @@ import com.demo.cloud.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -53,7 +55,10 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
-    public ResponseEntity<PaginatedResponse<UserViewDto>> getAll(Pageable pageable, UserFilter filter) {
+    public ResponseEntity<PaginatedResponse<UserViewDto>> getAll(
+            @PageableDefault(sort={"id"}, direction = Sort.Direction.ASC) Pageable pageable,
+            UserFilter filter
+    ) {
         Page<User> users = service.getAll(pageable, filter.getParams());
         return ResponseEntity.ok(mapper.toDto(users));
     }
