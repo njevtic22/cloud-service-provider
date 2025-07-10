@@ -37,6 +37,7 @@
                 <v-row v-show="user.role !== 'ROLE_SUPER_ADMIN'">
                     <v-col cols="12" sm="6">
                         <fetching-autocomplete
+                            v-show="authStore.isSuperAdmin"
                             v-model="user.organization"
                             :items="store.organizations"
                             :return-object="true"
@@ -49,6 +50,12 @@
                             label="Organization"
                             item-title="name"
                         ></fetching-autocomplete>
+                        <v-text-field
+                            v-if="authStore.isAdmin"
+                            v-model="profileStore.profile.organizationName"
+                            label="Organization"
+                            disabled
+                        ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6">
                         <v-select
