@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialog" :width="width">
+    <v-dialog v-model="dialog" :width="width" :fullscreen="_fullscreen">
         <slot></slot>
     </v-dialog>
 </template>
@@ -7,6 +7,13 @@
 <script setup>
 import { computed } from "vue";
 import { useDisplay } from "vuetify";
+
+const props = defineProps({
+    fullscreen: {
+        type: Boolean,
+        default: undefined,
+    },
+});
 
 const dialog = defineModel();
 const display = useDisplay();
@@ -19,6 +26,10 @@ const width = computed(() => {
         return "75%";
     }
     return "50%";
+});
+
+const _fullscreen = computed(() => {
+    return props.fullscreen == undefined ? display.xs.value : props.fullscreen;
 });
 </script>
 
