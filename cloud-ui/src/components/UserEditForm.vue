@@ -164,7 +164,9 @@ async function submit() {
 
 function cancel() {
     emit("cancel");
-    resetForm();
+    // Commented out so that form does not have additional fields
+    // for a split second when dialog closes
+    // resetForm();
 }
 
 defineExpose({

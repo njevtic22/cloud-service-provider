@@ -9,6 +9,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     FetchingAutocomplete: typeof import('./src/components/FetchingAutocomplete.vue')['default']
+    HidingButton: typeof import('./src/components/HidingButton.vue')['default']
     PaginatedAutocomplete: typeof import('./src/components/PaginatedAutocomplete.vue')['default']
     PasswordInput: typeof import('./src/components/PasswordInput.vue')['default']
     PasswordStrength: typeof import('./src/components/PasswordStrength.vue')['default']

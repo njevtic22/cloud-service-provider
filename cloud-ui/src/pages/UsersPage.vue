@@ -1,9 +1,16 @@
 <template>
-    <div class="text-right">
+    <div v-if="display.mdAndUp.value" class="text-right">
         <v-btn @click="addDialog = true" color="primary" class="mb-2">
             Add user
         </v-btn>
     </div>
+    <hiding-button
+        v-else
+        @click="addDialog = true"
+        :frozen="addDialog"
+        icon="mdi-account-plus"
+    ></hiding-button>
+
     <user-add-dialog v-model="addDialog" @submit="loadUsers"></user-add-dialog>
     <user-edit-dialog @submit="loadUsers" ref="editRef"></user-edit-dialog>
 
@@ -62,9 +69,11 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import { useDisplay } from "vuetify";
 import { useUserStore } from "@/stores/user.js";
 import { useAuthStore } from "@/stores/auth.js";
 
+const display = useDisplay();
 const store = useUserStore();
 const authstore = useAuthStore();
 const addDialog = ref(false);
