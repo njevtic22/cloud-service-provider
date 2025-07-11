@@ -1,5 +1,10 @@
 <template>
-    <v-dialog v-model="dialog" :width="width" :fullscreen="_fullscreen">
+    <v-dialog
+        v-model="dialog"
+        :width="width"
+        :fullscreen="_fullscreen"
+        :persistent="persistent"
+    >
         <slot></slot>
     </v-dialog>
 </template>
@@ -12,6 +17,10 @@ const props = defineProps({
     fullscreen: {
         type: Boolean,
         default: undefined,
+    },
+    persistent: {
+        type: Boolean,
+        default: false,
     },
 });
 

@@ -13,6 +13,7 @@
 
     <user-add-dialog v-model="addDialog" @submit="loadUsers"></user-add-dialog>
     <user-edit-dialog @submit="loadUsers" ref="editRef"></user-edit-dialog>
+    <confirmation-dialog ref="confirm"></confirmation-dialog>
 
     <v-data-table-server
         v-model:items-per-page="size"
@@ -44,7 +45,7 @@
             >
             </v-btn>
             <v-btn
-                @click="console.log(item.name + ' ' + item.surname)"
+                @click="openConfirmDialog(item)"
                 icon="mdi-delete"
                 variant="flat"
                 size="small"
@@ -78,6 +79,7 @@ const store = useUserStore();
 const authstore = useAuthStore();
 const addDialog = ref(false);
 const editRef = ref(null);
+const confirm = ref(null);
 
 const headers = [
     // {
@@ -148,6 +150,19 @@ function updateOptions(options) {
 
 function loadUsers() {
     store.fetchUsers(page.value, size.value, sortBy.value, filterData);
+}
+
+async function openConfirmDialog(userToDelete) {
+    const confirmed = await confirm.value.open(
+        "Are you sure you want to permanently delete user with full name: " +
+            userToDelete.name +
+            " " +
+            userToDelete.surname +
+            "?",
+        "Delete user"
+    );
+
+    console.log(confirmed);
 }
 </script>
 
