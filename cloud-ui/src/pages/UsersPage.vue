@@ -69,12 +69,14 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, inject } from "vue";
 import { useDisplay } from "vuetify";
 import { useUserStore } from "@/stores/user.js";
 import { useAuthStore } from "@/stores/auth.js";
 
 const display = useDisplay();
+
+const snackbar = inject("snackbar");
 const store = useUserStore();
 const authstore = useAuthStore();
 const addDialog = ref(false);
@@ -162,7 +164,12 @@ async function openConfirmDialog(userToDelete) {
         "Delete user"
     );
 
-    console.log(confirmed);
+    if (confirmed) {
+        store.delete(userToDelete.id, () => {
+            snackbar("User deleted", 3000);
+            loadUsers();
+        });
+    }
 }
 </script>
 

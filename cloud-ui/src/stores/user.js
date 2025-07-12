@@ -44,5 +44,10 @@ export const useUserStore = defineStore("user", {
             const url = `${usersUrl}/${changes.id}`;
             axios.put(url, changes).then(successCallback).catch(errorCallback);
         },
+
+        delete(userId, successCallback, errorCallback = this.showErrorSnack) {
+            const deleteUrl = `${usersUrl}/${userId}`;
+            axios.delete(deleteUrl).then(successCallback).catch(errorCallback);
+        },
     },
 });
