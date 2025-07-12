@@ -7,7 +7,7 @@
     <hiding-button
         v-else
         @click="addDialog = true"
-        :frozen="addDialog"
+        :frozen="addDialog || deleteDialog"
         icon="mdi-account-plus"
     ></hiding-button>
 
@@ -154,7 +154,9 @@ function loadUsers() {
     store.fetchUsers(page.value, size.value, sortBy.value, filterData);
 }
 
+const deleteDialog = ref(false);
 async function openConfirmDialog(userToDelete) {
+    deleteDialog.value = true;
     const confirmed = await confirm.value.open(
         "Are you sure you want to permanently delete user with full name: " +
             userToDelete.name +
@@ -163,6 +165,7 @@ async function openConfirmDialog(userToDelete) {
             "?",
         "Delete user"
     );
+    deleteDialog.value = false;
 
     if (confirmed) {
         store.delete(userToDelete.id, () => {
