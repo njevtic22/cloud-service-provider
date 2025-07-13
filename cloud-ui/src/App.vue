@@ -6,7 +6,13 @@
             </the-header>
             <the-sidebar v-model="sidebarOpened"></the-sidebar>
             <div class="padded-2">
-                <router-view />
+                <router-view v-slot="{ Component, route }">
+                    <transition name="fade">
+                        <div :key="route.path">
+                            <component :is="Component" />
+                        </div>
+                    </transition>
+                </router-view>
             </div>
         </v-main>
     </v-app>
@@ -63,4 +69,18 @@ onMounted(() => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.fade-enter-active {
+    transition: opacity 0.3s ease;
+    transition-delay: 0.3s;
+}
+
+.fade-leave-active {
+    transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+</style>

@@ -14,19 +14,21 @@
         </template>
 
         <template v-slot:append>
-            <v-app-bar-title
-                v-show="route.name"
-                :key="route.meta.title"
-                class="ma-2 pa-2"
-            >
-                {{ route.name }}
-            </v-app-bar-title>
+            <transition name="fade">
+                <v-app-bar-title
+                    v-show="route.name"
+                    :key="route.name"
+                    class="ma-2 pa-2"
+                >
+                    {{ route.name }}
+                </v-app-bar-title>
+            </transition>
         </template>
     </v-app-bar>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useDisplay } from "vuetify";
 import { useAuthStore } from "@/stores/auth.js";
@@ -64,4 +66,18 @@ const density = computed(() => {
         display: none;
     }
 } */
+
+.fade-enter-active {
+    transition: opacity 0.3s ease;
+    transition-delay: 0.3s;
+}
+
+.fade-leave-active {
+    transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
 </style>

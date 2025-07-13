@@ -1,17 +1,21 @@
 <template>
     <v-navigation-drawer v-model="isOpened" elevation="4">
         <v-list density="compact" nav>
-            <v-list-item
-                v-for="link in activeLinks"
-                :key="link.name"
-                :title="link.name"
-                :prepend-icon="link.icon"
-                @click="link.redirect"
-            ></v-list-item>
+            <transition-group name="fade">
+                <v-list-item
+                    v-for="link in activeLinks"
+                    :key="link.name"
+                    :title="link.name"
+                    :prepend-icon="link.icon"
+                    @click="link.redirect"
+                ></v-list-item>
+            </transition-group>
         </v-list>
 
         <template v-slot:append>
-            <the-logout-button v-if="!auth.isAnonymous"></the-logout-button>
+            <transition name="fade">
+                <the-logout-button v-if="!auth.isAnonymous"></the-logout-button>
+            </transition>
         </template>
     </v-navigation-drawer>
 </template>
@@ -74,4 +78,20 @@ const activeLinks = computed(() => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+/* shop-ui has sliding fade */
+
+.fade-enter-active {
+    transition: opacity 0.3s ease;
+    transition-delay: 0.3s;
+}
+
+.fade-leave-active {
+    transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+</style>
