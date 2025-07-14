@@ -25,6 +25,14 @@ const routes = [
         },
     },
     {
+        path: "/organizations",
+        name: "Organizations",
+        component: () => import("@/pages/OrganizationsPage.vue"),
+        meta: {
+            requiredRole: [Role.SUPER_ADMIN, Role.ADMIN],
+        },
+    },
+    {
         path: "/profile",
         name: "Profile",
         component: () => import("@/pages/ProfilePage.vue"),

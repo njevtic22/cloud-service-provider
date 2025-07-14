@@ -52,6 +52,16 @@ const links = ref([
         },
     },
     {
+        name: "Organizations",
+        icon: "mdi-domain",
+        redirect() {
+            router.push("/organizations");
+        },
+        isActive() {
+            return auth.isSuperAdmin || auth.isAdmin;
+        },
+    },
+    {
         name: "Users",
         icon: "mdi-account-multiple",
         redirect() {
