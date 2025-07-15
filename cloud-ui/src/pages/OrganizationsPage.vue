@@ -9,11 +9,20 @@
         @update:options="updateOptions"
         class="elevation-4"
         multi-sort
+        show-expand
     >
         <template v-slot:item.logo="{ item }">
             <div class="padded-2">
                 <v-img :src="item.logo" height="100" />
             </div>
+        </template>
+
+        <template v-slot:expanded-row="{ columns, item }">
+            <tr class="details">
+                <td :colspan="columns.length" class="pa-4">
+                    {{ item.description }}
+                </td>
+            </tr>
         </template>
     </v-data-table-server>
 </template>
@@ -32,6 +41,9 @@ const modofiedOrgs = computed(() => {
 });
 
 const headers = [
+    {
+        key: "data-table-expand",
+    },
     // {
     //     title: "ID",
     //     key: "id",
@@ -77,4 +89,9 @@ function loadOrgs() {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.details {
+    box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.1),
+        inset 0 -4px 10px rgba(0, 0, 0, 0.1);
+}
+</style>
