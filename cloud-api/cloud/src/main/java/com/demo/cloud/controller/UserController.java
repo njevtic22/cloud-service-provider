@@ -56,7 +56,7 @@ public class UserController {
     @GetMapping
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public ResponseEntity<PaginatedResponse<UserViewDto>> getAll(
-            @PageableDefault(sort={"id"}, direction = Sort.Direction.ASC) Pageable pageable,
+            @PageableDefault(sort="id") Pageable pageable,
             UserFilter filter
     ) {
         Page<User> users = service.getAll(pageable, filter.getParams());

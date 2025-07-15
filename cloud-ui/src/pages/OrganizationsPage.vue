@@ -6,7 +6,7 @@
         :items-per-page-options="sizeOptions"
         :headers="headers"
         :sort-by="sortBy"
-        @update:options="console.log('update options')"
+        @update:options="updateOptions"
         class="elevation-4"
         multi-sort
     >
@@ -23,6 +23,13 @@ import { ref, computed } from "vue";
 import { useOrganizationStore } from "@/stores/organization.js";
 
 const store = useOrganizationStore();
+
+const modofiedOrgs = computed(() => {
+    return store.organizations.data.map((org) => {
+        const result = `data:image/${org.logo.type};base64,${org.logo.content}`;
+        return { ...org, logo: result };
+    });
+});
 
 const headers = [
     // {
@@ -41,29 +48,33 @@ const headers = [
         title: "Logo",
         key: "logo",
         align: "center",
+        sortable: false,
     },
 ];
 
 let page = 0;
-const size = ref(20);
+const size = ref(5);
 const sortBy = ref([]);
 let filterData = {};
 
 const sizeOptions = [
+    { value: 2, title: "2" },
     { value: 5, title: "5" },
     { value: 10, title: "10" },
-    { value: 20, title: "20" },
     { value: 2 ** 31 - 1, title: "$vuetify.dataFooter.itemsPerPageAll" },
 ];
 
-store.fetchOrganizations(page, size.value, sortBy.value, filterData);
+function updateOptions(options) {
+    page = options.page - 1;
+    size.value = options.itemsPerPage;
+    sortBy.value = options.sortBy;
 
-const modofiedOrgs = computed(() => {
-    return store.organizations.data.map((org) => {
-        const result = `data:image/${org.logo.type};base64,${org.logo.content}`;
-        return { ...org, logo: result };
-    });
-});
+    loadOrgs();
+}
+
+function loadOrgs() {
+    store.fetchOrganizations(page, size.value, sortBy.value, filterData);
+}
 </script>
 
 <style scoped></style>
