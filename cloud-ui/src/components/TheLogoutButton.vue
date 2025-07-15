@@ -8,6 +8,7 @@ import { useMachineStore } from "@/stores/machine.js";
 import { useAuthStore } from "@/stores/auth.js";
 import { useProfileStore } from "@/stores/profile.js";
 import { useUserStore } from "@/stores/user.js";
+import { useOrganizationStore } from "@/stores/organization.js";
 
 const router = useRouter();
 const auth = useAuthStore();
@@ -21,7 +22,8 @@ function logout() {
 
         setTimeout(() => {
             useUserStore().$reset();
-        }, 0.01 * 1000);
+            useOrganizationStore().$reset();
+        }, 10);
 
         // _s is not officially documented - it is internal to pinia
         // import { getActivePinia } from 'pinia';

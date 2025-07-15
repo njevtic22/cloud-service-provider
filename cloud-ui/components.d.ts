@@ -11,6 +11,7 @@ declare module 'vue' {
     ConfirmationDialog: typeof import('./src/components/ConfirmationDialog.vue')['default']
     FetchingAutocomplete: typeof import('./src/components/FetchingAutocomplete.vue')['default']
     HidingButton: typeof import('./src/components/HidingButton.vue')['default']
+    OrganizationFilter: typeof import('./src/components/OrganizationFilter.vue')['default']
     PaginatedAutocomplete: typeof import('./src/components/PaginatedAutocomplete.vue')['default']
     PasswordInput: typeof import('./src/components/PasswordInput.vue')['default']
     PasswordStrength: typeof import('./src/components/PasswordStrength.vue')['default']

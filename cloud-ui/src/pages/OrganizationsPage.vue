@@ -13,7 +13,7 @@
     >
         <template v-slot:item.logo="{ item }">
             <div class="padded-2">
-                <v-img :src="item.logo" height="100" />
+                <img :src="item.logo" height="75" />
             </div>
         </template>
 
@@ -23,6 +23,18 @@
                     {{ item.description }}
                 </td>
             </tr>
+        </template>
+
+        <template v-slot:footer.prepend>
+            <v-expansion-panels static elevation="0" variant="accordion">
+                <v-expansion-panel title="Filter organizations">
+                    <v-expansion-panel-text>
+                        <organization-filter
+                            @filter="filter"
+                        ></organization-filter>
+                    </v-expansion-panel-text>
+                </v-expansion-panel>
+            </v-expansion-panels>
         </template>
     </v-data-table-server>
 </template>
@@ -75,6 +87,11 @@ const sizeOptions = [
     { value: 10, title: "10" },
     { value: 2 ** 31 - 1, title: "$vuetify.dataFooter.itemsPerPageAll" },
 ];
+
+function filter(newFilter) {
+    filterData = newFilter;
+    loadOrgs();
+}
 
 function updateOptions(options) {
     page = options.page - 1;
