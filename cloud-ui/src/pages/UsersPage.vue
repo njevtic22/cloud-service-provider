@@ -37,20 +37,22 @@
         </template>
 
         <template v-slot:item.actions="{ item }">
-            <v-btn
-                @click="editRef.open({ ...item })"
-                icon="mdi-pencil"
-                variant="flat"
-                size="small"
-            >
-            </v-btn>
-            <v-btn
-                @click="openConfirmDialog(item)"
-                icon="mdi-delete"
-                variant="flat"
-                size="small"
-                class="text-red"
-            ></v-btn>
+            <div v-if="profileStore.profile.username !== item.username">
+                <v-btn
+                    @click="editRef.open({ ...item })"
+                    icon="mdi-pencil"
+                    variant="flat"
+                    size="small"
+                >
+                </v-btn>
+                <v-btn
+                    @click="openConfirmDialog(item)"
+                    icon="mdi-delete"
+                    variant="flat"
+                    size="small"
+                    class="text-red"
+                ></v-btn>
+            </div>
         </template>
 
         <template v-slot:footer.prepend>
@@ -73,12 +75,16 @@ import { ref, computed, inject } from "vue";
 import { useDisplay } from "vuetify";
 import { useUserStore } from "@/stores/user.js";
 import { useAuthStore } from "@/stores/auth.js";
+import { useProfileStore } from "@/stores/profile.js";
 
 const display = useDisplay();
-
 const snackbar = inject("snackbar");
+
 const store = useUserStore();
 const authstore = useAuthStore();
+const profileStore = useProfileStore();
+profileStore.fetchProfile();
+
 const addDialog = ref(false);
 const editRef = ref(null);
 const confirm = ref(null);
