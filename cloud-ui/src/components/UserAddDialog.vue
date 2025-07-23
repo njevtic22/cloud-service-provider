@@ -1,5 +1,6 @@
 <template>
     <the-dialog v-model="dialog">
+        <!-- Convert to <slot></slot> or <v-card><slot></slot></v-card> -->
         <user-add-form
             @submit="submit"
             @cancel="dialog = false"
@@ -25,7 +26,7 @@ function submit(user) {
     store.addUser(user, () => {
         dialog.value = false;
         emit("submit");
-        snackbar("User added", 3 * 3000);
+        snackbar("User added", 3000);
     });
 }
 </script>
