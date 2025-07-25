@@ -24,6 +24,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TheDialog: typeof import('./src/components/TheDialog.vue')['default']
+    TheDialogCard: typeof import('./src/components/TheDialogCard.vue')['default']
     TheHeader: typeof import('./src/components/TheHeader.vue')['default']
     TheLogoutButton: typeof import('./src/components/TheLogoutButton.vue')['default']
     TheSidebar: typeof import('./src/components/TheSidebar.vue')['default']

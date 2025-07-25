@@ -1,7 +1,15 @@
 <template>
     <the-dialog v-model="dialog">
-        <!-- Convert to <slot></slot> or <v-card><slot></slot></v-card> -->
-        <organization-add-form></organization-add-form>
+        <the-dialog-card
+            @submit="submit"
+            @cancel="cancel"
+            :actions-disabled="true"
+            icon="mdi-domain-plus"
+            title="Add organization"
+            submit-text="Add"
+        >
+            <organization-add-form></organization-add-form>
+        </the-dialog-card>
     </the-dialog>
 </template>
 
@@ -15,8 +23,13 @@ const dialog = defineModel();
 
 function submit() {
     dialog.value = false;
-    emit("submit");
-    snackbar("Organization added", 3000);
+    // emit("submit");
+    // snackbar("Organization added", 3000);
+}
+
+function cancel() {
+    dialog.value = false;
+    // clear form
 }
 </script>
 
