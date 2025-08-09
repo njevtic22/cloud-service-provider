@@ -56,6 +56,13 @@ export const useOrganizationStore = defineStore("organization", {
                 errorCallback
             );
         },
+
+        add(newOrg, successCallback, errorCallback = this.showErrorSnack) {
+            axios
+                .post(organizationsUrl, newOrg)
+                .then(successCallback)
+                .catch(errorCallback);
+        },
     },
 });
 

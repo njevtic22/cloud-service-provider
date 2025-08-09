@@ -130,11 +130,6 @@ const buttons = ref({
 function submit() {
     if (stepper.value.step === 1) {
         emit("submit-data", data.value);
-
-        stepper.value.step++;
-        stepper.value.completedFirst = true;
-        buttons.value.next = "Save and close";
-        buttons.value.cancel = "Skip";
         return;
     }
 
@@ -158,6 +153,17 @@ const isNextActive = computed(() => {
 
 const imagePreview = computed(() => {
     return image.value ? URL.createObjectURL(image.value) : null;
+});
+
+function secondStep() {
+    stepper.value.step++;
+    stepper.value.completedFirst = true;
+    buttons.value.next = "Save and close";
+    buttons.value.cancel = "Skip";
+}
+
+defineExpose({
+    secondStep,
 });
 </script>
 

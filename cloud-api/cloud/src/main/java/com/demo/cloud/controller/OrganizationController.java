@@ -96,7 +96,8 @@ public class OrganizationController {
         List<OrganizationViewDto> orgsDto = new ArrayList<>(orgs.getNumberOfElements());
         for (Organization org : orgs.getContent()) {
             Pair<byte[], String> image = imgService.read(org.getLogo());
-            orgsDto.add(mapper.toDto(org, new ImageViewDto(image.first(), image.second())));
+            ImageViewDto imageDto = image == null ? null : new ImageViewDto(image.first(), image.second());
+            orgsDto.add(mapper.toDto(org, imageDto));
         }
 
         return ResponseEntity.ok(new PaginatedResponse<>(

@@ -12,7 +12,10 @@
     >
     </hiding-button>
 
-    <organization-add-dialog v-model="addDialog"></organization-add-dialog>
+    <organization-add-dialog
+        v-model="addDialog"
+        @submit="loadOrgs"
+    ></organization-add-dialog>
 
     <v-data-table-server
         v-model:items-per-page="size"
@@ -66,8 +69,10 @@ const addDialog = ref(false);
 
 const modofiedOrgs = computed(() => {
     return store.organizations.data.map((org) => {
-        const result = `data:image/${org.logo.type};base64,${org.logo.content}`;
-        return { ...org, logo: result };
+        let logo = org.logo
+            ? `data:image/${org.logo.type};base64,${org.logo.content}`
+            : "src\\assets\\no-image.png";
+        return { ...org, logo };
     });
 });
 

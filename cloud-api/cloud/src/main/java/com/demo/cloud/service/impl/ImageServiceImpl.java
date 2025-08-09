@@ -31,9 +31,12 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Pair<byte[], String> read(String path) throws IOException {
-        // TODO: what if path is null
+        if (path == null) {
+            return null;
+        }
+
         String[] split = path.split("\\.");
-        // TODO: check if prefix image/ is needed
+        // check if prefix image/ is needed - yes it is needed for displaying base64 encoded image
         String type = split[split.length - 1];
 
         byte[] content;

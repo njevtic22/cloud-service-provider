@@ -1,5 +1,5 @@
 <template>
-    <the-dialog v-model="dialog">
+    <the-dialog v-model="dialog" persistent>
         <the-dialog-card
             :actions-disabled="true"
             icon="mdi-domain-plus"
@@ -10,36 +10,44 @@
                 @submit-data="submitData"
                 @submit-image="submitImage"
                 @cancel="cancel"
+                ref="orgAdder"
             ></organization-add-form>
         </the-dialog-card>
     </the-dialog>
 </template>
 
 <script setup>
-import { inject } from "vue";
+import { ref, inject } from "vue";
+import { useOrganizationStore } from "@/stores/organization.js";
 
 const emit = defineEmits(["submit"]);
 
 const snackbar = inject("snackbar");
 const dialog = defineModel();
+const orgStore = useOrganizationStore();
+
+const orgAdder = ref(null);
 
 function submitData(data) {
-    console.log(data);
-
-    // emit("submit");
-    // snackbar("Organization added", 3000);
+    orgStore.add(data, () => {
+        orgAdder.value.secondStep();
+    });
 }
 
 function submitImage(image) {
     console.log(image);
 
     dialog.value = false;
-    // emit("submit");
-    // snackbar("Organization added", 3000);
+    emit("submit");
 }
 
+// Perhaps 'close' fits better in this context
 function cancel(reload) {
     console.log("reload: " + reload);
+    if (reload) {
+        emit("submit");
+        snackbar("Organization added", 3000);
+    }
 
     dialog.value = false;
     // clear form
