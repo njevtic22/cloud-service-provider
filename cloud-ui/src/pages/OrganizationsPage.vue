@@ -61,6 +61,7 @@
 import { ref, computed } from "vue";
 import { useDisplay } from "vuetify";
 import { useOrganizationStore } from "@/stores/organization.js";
+import noImage from "@/assets/no-image.png";
 
 const display = useDisplay();
 const store = useOrganizationStore();
@@ -71,7 +72,7 @@ const modofiedOrgs = computed(() => {
     return store.organizations.data.map((org) => {
         let logo = org.logo
             ? `data:image/${org.logo.type};base64,${org.logo.content}`
-            : "src\\assets\\no-image.png";
+            : noImage;
         return { ...org, logo };
     });
 });
