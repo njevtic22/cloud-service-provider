@@ -28,22 +28,30 @@ const orgStore = useOrganizationStore();
 
 const orgAdder = ref(null);
 
+let orgId = null;
+
 function submitData(data) {
-    orgStore.add(data, () => {
+    orgStore.add(data, (response) => {
         orgAdder.value.secondStep();
+
+        const uploadedUrl = response.headers.location;
+        orgId = uploadedUrl.split("/").at(-1);
     });
 }
 
 function submitImage(image) {
-    console.log(image);
+    if (!orgId) {
+        snackbar("Organization data is not added", -1, "red-darken-1");
+    }
 
-    dialog.value = false;
-    emit("submit");
+    orgStore.uploadImage(image, orgId, () => {
+        dialog.value = false;
+        emit("submit");
+    });
 }
 
 // Perhaps 'close' fits better in this context
 function cancel(reload) {
-    console.log("reload: " + reload);
     if (reload) {
         emit("submit");
         snackbar("Organization added", 3000);

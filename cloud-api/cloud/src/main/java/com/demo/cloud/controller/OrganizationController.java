@@ -73,12 +73,7 @@ public class OrganizationController {
 
         service.updateLogo(found.getId(), uploaded);
 
-        // TODO: what if logo is null
-        String[] logoSplit = logo.split("\\.");
-        String logoType = logoSplit[logoSplit.length - 1];
-        if (!logoType.equals(uploadedType)) {
-            imgService.delete(logo);
-        }
+        deleteOldLogo(logo, uploadedType);
 
         Pair<byte[], String> read = imgService.read(uploaded);
         OrganizationViewDto foundDto = mapper.toDto(found, new ImageViewDto(read.first(), read.second()));
@@ -131,5 +126,17 @@ public class OrganizationController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private void deleteOldLogo(String oldLogo, String newType) throws IOException {
+        if (oldLogo == null) {
+            return;
+        }
+
+        String[] logoSplit = oldLogo.split("\\.");
+        String logoType = logoSplit[logoSplit.length - 1];
+        if (!logoType.equals(newType)) {
+            imgService.delete(oldLogo);
+        }
     }
 }

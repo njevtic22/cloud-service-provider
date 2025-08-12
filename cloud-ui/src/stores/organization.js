@@ -63,6 +63,25 @@ export const useOrganizationStore = defineStore("organization", {
                 .then(successCallback)
                 .catch(errorCallback);
         },
+
+        uploadImage(
+            image,
+            orgId,
+            successCallback,
+            errorCallback = this.showErrorSnack
+        ) {
+            const multipart = new FormData();
+            multipart.append("image", image);
+
+            axios
+                .post(`${organizationsUrl}/${orgId}/image`, multipart, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                })
+                .then(successCallback)
+                .catch(errorCallback);
+        },
     },
 });
 
