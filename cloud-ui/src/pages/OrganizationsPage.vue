@@ -16,6 +16,7 @@
         v-model="addDialog"
         @submit="loadOrgs"
     ></organization-add-dialog>
+    <organization-edit-dialog ref="editOrg"></organization-edit-dialog>
 
     <v-data-table-server
         v-model:items-per-page="size"
@@ -33,6 +34,15 @@
             <div class="padded-2">
                 <img :src="item.logo" height="75" />
             </div>
+        </template>
+
+        <template #item.actions="{ item }">
+            <v-btn
+                @click="editOrg.open({ ...item })"
+                icon="mdi-pencil"
+                variant="flat"
+                size="small"
+            ></v-btn>
         </template>
 
         <template v-slot:expanded-row="{ columns, item }">
@@ -67,6 +77,7 @@ const display = useDisplay();
 const store = useOrganizationStore();
 
 const addDialog = ref(false);
+const editOrg = ref(null);
 
 const modofiedOrgs = computed(() => {
     return store.organizations.data.map((org) => {
@@ -98,6 +109,12 @@ const headers = [
         key: "logo",
         align: "center",
         sortable: false,
+    },
+    {
+        title: "Actions",
+        key: "actions",
+        sortable: false,
+        align: "end",
     },
 ];
 
