@@ -10,6 +10,7 @@
         <v-card-text>
             <v-tabs-window v-model="tab">
                 <v-tabs-window-item value="Profile">
+                    <!-- profile-edit-data -->
                     <profile-change-data></profile-change-data>
                 </v-tabs-window-item>
 

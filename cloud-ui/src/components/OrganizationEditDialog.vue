@@ -4,8 +4,26 @@
             icon="mdi-pencil"
             title="Edit organization"
             submit-text="Save"
+            actions-disabled
         >
-            <organization-edit-form ref="form"></organization-edit-form>
+            <v-tabs v-model="tab" bg-color="primary" align-tabs="center" grow>
+                <v-tab prepend-icon="mdi-pencil" value="Data"> Data</v-tab>
+                <v-tab prepend-icon="mdi-image-edit" value="Logo"> Logo</v-tab>
+            </v-tabs>
+
+            <v-tabs-window v-model="tab">
+                <v-tabs-window-item value="Data">
+                    <organization-edit-data
+                        ref="editData"
+                    ></organization-edit-data>
+                </v-tabs-window-item>
+
+                <v-tabs-window-item value="Logo" eager>
+                    <organization-edit-logo
+                        ref="editLogo"
+                    ></organization-edit-logo>
+                </v-tabs-window-item>
+            </v-tabs-window>
         </the-dialog-card>
     </the-dialog>
 </template>
@@ -14,13 +32,24 @@
 import { ref } from "vue";
 
 const dialog = defineModel({ default: false });
-const form = ref(null);
+const tab = ref("Data");
+
+const editData = ref(null);
+const editLogo = ref(null);
 
 function open(org) {
     dialog.value = true;
 
     setTimeout(() => {
-        form.value.init(org);
+        editData.value.init({
+            id: org.id,
+            name: org.name,
+            description: org.description,
+        });
+        editLogo.value.init({
+            orgId: org.id,
+            logo: org.logo,
+        });
     }, 0.1);
 }
 
