@@ -1,16 +1,18 @@
 <template>
-    <div v-if="display.mdAndUp.value" class="text-right">
-        <v-btn @click="addDialog = true" color="primary" class="mb-2">
-            Add organization
-        </v-btn>
+    <div v-if="authStore.isSuperAdmin">
+        <div v-if="display.mdAndUp.value" class="text-right">
+            <v-btn @click="addDialog = true" color="primary" class="mb-2">
+                Add organization
+            </v-btn>
+        </div>
+        <hiding-button
+            v-else
+            @click="addDialog = true"
+            :frozen="addDialog"
+            icon="mdi-domain-plus"
+        >
+        </hiding-button>
     </div>
-    <hiding-button
-        v-else
-        @click="addDialog = true"
-        :frozen="addDialog"
-        icon="mdi-domain-plus"
-    >
-    </hiding-button>
 
     <organization-add-dialog
         v-model="addDialog"
@@ -23,7 +25,7 @@
         :items="modofiedOrgs"
         :items-length="store.organizations.totalElements"
         :items-per-page-options="sizeOptions"
-        :headers="headers"
+        :headers="filteredHeaders"
         :sort-by="sortBy"
         @update:options="updateOptions"
         class="elevation-4"
@@ -71,10 +73,12 @@
 import { ref, computed } from "vue";
 import { useDisplay } from "vuetify";
 import { useOrganizationStore } from "@/stores/organization.js";
+import { useAuthStore } from "@/stores/auth.js";
 import noImage from "@/assets/no-image.png";
 
 const display = useDisplay();
 const store = useOrganizationStore();
+const authStore = useAuthStore();
 
 const addDialog = ref(false);
 const editOrg = ref(null);
@@ -115,8 +119,13 @@ const headers = [
         key: "actions",
         sortable: false,
         align: "end",
+        show: () => authStore.isSuperAdmin,
     },
 ];
+
+const filteredHeaders = computed(() => {
+    return headers.filter((h) => (h.show ? h.show() : true));
+});
 
 let page = 0;
 const size = ref(5);
