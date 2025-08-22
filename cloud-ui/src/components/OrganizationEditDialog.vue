@@ -11,9 +11,11 @@
                 <v-tab prepend-icon="mdi-image-edit" value="Logo"> Logo</v-tab>
             </v-tabs>
 
-            <v-tabs-window v-model="tab">
+            <v-tabs-window v-model="tab" class="padded-3">
                 <v-tabs-window-item value="Data">
                     <organization-edit-data
+                        @submit="submit"
+                        @cancel="close"
                         ref="editData"
                     ></organization-edit-data>
                 </v-tabs-window-item>
@@ -30,6 +32,8 @@
 
 <script setup>
 import { ref } from "vue";
+
+const emit = defineEmits(["submit"]);
 
 const dialog = defineModel({ default: false });
 const tab = ref("Data");
@@ -51,6 +55,15 @@ function open(org) {
             logo: org.logo,
         });
     }, 0.1);
+}
+
+function submit() {
+    emit("submit");
+    close();
+}
+
+function close() {
+    dialog.value = false;
 }
 
 defineExpose({

@@ -18,7 +18,10 @@
         v-model="addDialog"
         @submit="loadOrgs"
     ></organization-add-dialog>
-    <organization-edit-dialog ref="editOrg"></organization-edit-dialog>
+    <organization-edit-dialog
+        @submit="console.log('RELOAD')"
+        ref="editOrg"
+    ></organization-edit-dialog>
 
     <v-data-table-server
         v-model:items-per-page="size"
