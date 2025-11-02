@@ -31,6 +31,7 @@
         :headers="filteredHeaders"
         :sort-by="sortBy"
         @update:options="updateOptions"
+        @click:row="redirect"
         class="elevation-4"
         multi-sort
         show-expand
@@ -74,11 +75,13 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 import { useDisplay } from "vuetify";
 import { useOrganizationStore } from "@/stores/organization.js";
 import { useAuthStore } from "@/stores/auth.js";
 import noImage from "@/assets/no-image.png";
 
+const router = useRouter();
 const display = useDisplay();
 const store = useOrganizationStore();
 const authStore = useAuthStore();
@@ -157,6 +160,10 @@ function updateOptions(options) {
 
 function loadOrgs() {
     store.fetchOrganizations(page, size.value, sortBy.value, filterData);
+}
+
+function redirect(event, clickedRow) {
+    router.push("/organizations/" + clickedRow.item.id);
 }
 </script>
 
