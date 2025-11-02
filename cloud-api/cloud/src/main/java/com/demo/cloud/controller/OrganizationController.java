@@ -8,8 +8,11 @@ import com.demo.cloud.dto.organization.UpdateOrganizationDto;
 import com.demo.cloud.filterParams.OrganizationFilter;
 import com.demo.cloud.mapper.OrganizationMapper;
 import com.demo.cloud.model.Organization;
+import com.demo.cloud.service.DriveService;
 import com.demo.cloud.service.ImageService;
 import com.demo.cloud.service.OrganizationService;
+import com.demo.cloud.service.UserService;
+import com.demo.cloud.service.VirtualMachineService;
 import com.demo.cloud.util.Pair;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -40,11 +43,17 @@ import java.util.List;
 public class OrganizationController {
     private final OrganizationService service;
     private final ImageService imgService;
+    private final UserService userService;
+    private final VirtualMachineService machineService;
+    private final DriveService driveService;
     private final OrganizationMapper mapper;
 
-    public OrganizationController(OrganizationService service, ImageService imgService, OrganizationMapper mapper) {
+    public OrganizationController(OrganizationService service, ImageService imgService, UserService userService, VirtualMachineService machineService, DriveService driveService, OrganizationMapper mapper) {
         this.service = service;
         this.imgService = imgService;
+        this.userService = userService;
+        this.machineService = machineService;
+        this.driveService = driveService;
         this.mapper = mapper;
     }
 
@@ -76,7 +85,7 @@ public class OrganizationController {
         deleteOldLogo(logo, uploadedType);
 
         Pair<byte[], String> read = imgService.read(uploaded);
-        OrganizationViewDto foundDto = mapper.toDto(found, new ImageViewDto(read.first(), read.second()));
+        OrganizationViewDto foundDto = mapper.toDto(found, read);
         return ResponseEntity.ok(foundDto);
     }
 
@@ -99,8 +108,7 @@ public class OrganizationController {
         List<OrganizationViewDto> orgsDto = new ArrayList<>(orgs.getNumberOfElements());
         for (Organization org : orgs.getContent()) {
             Pair<byte[], String> image = imgService.read(org.getLogo());
-            ImageViewDto imageDto = image == null ? null : new ImageViewDto(image.first(), image.second());
-            orgsDto.add(mapper.toDto(org, imageDto));
+            orgsDto.add(mapper.toDto(org, image));
         }
 
         return ResponseEntity.ok(new PaginatedResponse<>(
@@ -115,7 +123,12 @@ public class OrganizationController {
     public ResponseEntity<OrganizationViewDto> getById(@PathVariable Long id) throws IOException {
         Organization found = service.getById(id);
         Pair<byte[], String> image = imgService.read(found.getLogo());
-        OrganizationViewDto foundDto = mapper.toDto(found, new ImageViewDto(image.first(), image.second()));
+        long users = userService.count();
+        long machines = machineService.count();
+        long drivers = driveService.count();
+
+
+        OrganizationViewDto foundDto = mapper.toDto(found, image, users, machines, drivers);
         return ResponseEntity.ok(foundDto);
     }
 
@@ -125,7 +138,7 @@ public class OrganizationController {
         Organization changes = mapper.toModel(changesDto);
         Organization updated = service.update(id, changes);
         Pair<byte[], String> read = imgService.read(updated.getLogo());
-        OrganizationViewDto updatedDto = mapper.toDto(updated, new ImageViewDto(read.first(), read.second()));
+        OrganizationViewDto updatedDto = mapper.toDto(updated, read);
         return ResponseEntity.ok(updatedDto);
     }
 

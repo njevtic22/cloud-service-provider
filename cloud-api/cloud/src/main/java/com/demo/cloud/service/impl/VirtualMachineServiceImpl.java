@@ -119,6 +119,11 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     }
 
     @Override
+    public long count() {
+        return repository.count();
+    }
+
+    @Override
     @Transactional
     public void delete(Long id) {
         Objects.requireNonNull(id, "Id must not be null.");

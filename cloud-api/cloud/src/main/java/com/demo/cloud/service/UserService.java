@@ -10,4 +10,6 @@ public interface UserService extends EntityGetter<Long, User>, EntityDeleter<Lon
     User update(Long id, User changes, String roleName, Long organizationId);
 
     void changePassword(String oldPassword, String newPassword, String repeatedPassword);
+
+    long count();
 }

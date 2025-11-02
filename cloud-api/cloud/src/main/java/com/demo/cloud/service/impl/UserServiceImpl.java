@@ -154,6 +154,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public long count() {
+        return repository.count();
+    }
+
+    @Override
     @Transactional
     public void delete(Long id) {
         Objects.requireNonNull(id, "Id must not be null.");

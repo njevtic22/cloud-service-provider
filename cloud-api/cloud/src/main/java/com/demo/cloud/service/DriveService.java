@@ -8,4 +8,6 @@ public interface DriveService extends
         EntityDeleter<Long>
 {
     Drive add(Drive newDrive, Long orgId);
+
+    long count();
 }

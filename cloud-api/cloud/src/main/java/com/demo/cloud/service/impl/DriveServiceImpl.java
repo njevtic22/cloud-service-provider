@@ -56,6 +56,11 @@ public class DriveServiceImpl implements DriveService {
     }
 
     @Override
+    public long count() {
+        return repository.count();
+    }
+
+    @Override
     public Page<Drive> getAll(Pageable pageable, Map<String, String> filter) {
         return repository.findAll(spec.get(filter), pageable);
     }

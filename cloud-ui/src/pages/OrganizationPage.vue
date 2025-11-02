@@ -7,19 +7,28 @@
                         <v-card-title class="data-font-size">
                             {{ org.name }}
                         </v-card-title>
-                        <v-card-title class="data-font-size">
-                            Price: {{ org.name }}
-                        </v-card-title>
                         <v-card-text>
-                            <div class="data-font-size">
-                                <strong>Users:</strong> {{ org.name }}
-                            </div>
-                            <div class="data-font-size">
-                                <strong>Machines:</strong> {{ org.name }}
-                            </div>
-                            <div class="data-font-size">
-                                <strong>Drives:</strong> {{ org.name }}
-                            </div>
+                            <v-btn
+                                class="data-font-size redirect-button"
+                                variant="text"
+                            >
+                                <strong>Number of users:</strong>
+                                {{ org.users }}
+                            </v-btn>
+                            <v-btn
+                                class="data-font-size redirect-button"
+                                variant="text"
+                            >
+                                <strong>Number of machines:</strong>
+                                {{ org.machines }}
+                            </v-btn>
+                            <v-btn
+                                class="data-font-size redirect-button"
+                                variant="text"
+                            >
+                                <strong>Number of drives:</strong>
+                                {{ org.drivers }}
+                            </v-btn>
                         </v-card-text>
                     </div>
                 </v-card>
@@ -90,6 +99,12 @@ loadOrganization();
 </script>
 
 <style scoped>
+.redirect-button {
+    text-transform: none !important;
+    padding: 0%;
+    margin-bottom: 2%;
+}
+
 /* .profile-image */
 .logo {
     width: 50%;
