@@ -19,7 +19,7 @@
         @submit="loadOrgs"
     ></organization-add-dialog>
     <organization-edit-dialog
-        @submit="console.log('RELOAD')"
+        @submit="loadOrgs"
         ref="editOrg"
     ></organization-edit-dialog>
 

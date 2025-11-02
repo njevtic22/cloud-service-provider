@@ -82,6 +82,22 @@ export const useOrganizationStore = defineStore("organization", {
                 .then(successCallback)
                 .catch(errorCallback);
         },
+
+        deleteImage(
+            orgId,
+            successCallback,
+            errorCallback = this.showErrorSnack
+        ) {
+            axios
+                .delete(`${organizationsUrl}/${orgId}/image`)
+                .then(successCallback)
+                .catch(errorCallback);
+        },
+
+        update(changes, successCallback, errorCallback = this.showErrorSnack) {
+            const url = `${organizationsUrl}/${changes.id}`;
+            axios.put(url, changes).then(successCallback).catch(errorCallback);
+        },
     },
 });
 

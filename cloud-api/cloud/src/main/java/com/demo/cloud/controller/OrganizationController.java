@@ -80,6 +80,14 @@ public class OrganizationController {
         return ResponseEntity.ok(foundDto);
     }
 
+    @DeleteMapping("{id}/image")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
+    public ResponseEntity<Void> deleteImage(@PathVariable Long id) throws IOException {
+        String oldLogo = service.deleteLogo(id);
+        imgService.delete(oldLogo);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public ResponseEntity<PaginatedResponse<OrganizationViewDto>> getAll(

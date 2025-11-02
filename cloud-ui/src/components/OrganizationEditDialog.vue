@@ -1,5 +1,5 @@
 <template>
-    <the-dialog v-model="dialog">
+    <the-dialog v-model="dialog" @afterLeave="tab = 'Data'">
         <the-dialog-card
             icon="mdi-pencil"
             title="Edit organization"
@@ -23,6 +23,7 @@
                 <v-tabs-window-item value="Logo" eager>
                     <organization-edit-logo
                         ref="editLogo"
+                        @submit="submit"
                     ></organization-edit-logo>
                 </v-tabs-window-item>
             </v-tabs-window>

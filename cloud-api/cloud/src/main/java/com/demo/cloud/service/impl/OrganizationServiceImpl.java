@@ -61,6 +61,15 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
+    @Transactional
+    public String deleteLogo(Long id) {
+        Organization found = getById(id);
+        String oldLogo = found.getLogo();
+        updateLogo(id, null);
+        return oldLogo;
+    }
+
+    @Override
     public Organization update(Long id, Organization changes) {
         Objects.requireNonNull(changes, "Organization changes must not be null.");
 

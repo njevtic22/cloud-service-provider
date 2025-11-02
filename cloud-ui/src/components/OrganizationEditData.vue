@@ -39,9 +39,12 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, inject } from "vue";
+import { useOrganizationStore } from "@/stores/organization.js";
 
+const snackbar = inject("snackbar");
 const emit = defineEmits(["submit", "cancel"]);
+const store = useOrganizationStore();
 
 const form = ref(null);
 const required = (value) => Boolean(value) || "Required";
@@ -52,12 +55,13 @@ function init(data2) {
 }
 
 function submit() {
-    console.log("Submitted");
-    emit("submit");
+    store.update(data.value, () => {
+        emit("submit");
+        snackbar("Organization updated", 3 * 3000);
+    });
 }
 
 function cancel() {
-    console.log("Cancelled");
     emit("cancel");
 }
 

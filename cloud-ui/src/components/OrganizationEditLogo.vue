@@ -1,15 +1,104 @@
-<template>{{ Object.keys(logo) }}</template>
+<template>
+    <v-form ref="form">
+        <v-row class="pa-2 d-flex justify-center">
+            <v-col cols="12" sm="6">
+                <v-img :src="logoPreview"></v-img>
+            </v-col>
+        </v-row>
+        <v-row class="d-flex justify-center">
+            <v-col cols="12" sm="6">
+                <v-file-input
+                    v-model="logo"
+                    :rules="[rules.required, rules.imageType]"
+                    :loading="loading"
+                    height="7"
+                    color="primary"
+                    label="Upload logo"
+                    accept="image/jpeg, image/jpg, image/png"
+                ></v-file-input>
+            </v-col>
+        </v-row>
+        <v-row class="d-flex justify-center">
+            <v-btn
+                :disabled="!form?.isValid || loading"
+                @click="upload"
+                color="primary"
+            >
+                Upload
+            </v-btn>
+        </v-row>
+        <br />
+        <v-divider></v-divider>
+        <br />
+        <v-row class="d-flex justify-center">
+            <v-btn
+                :disabled="
+                    prevLogo.logo?.includes('no-image.png') || delLoading
+                "
+                :loading="delLoading"
+                @click="deleteLogo"
+                color="error"
+            >
+                Delete
+            </v-btn>
+        </v-row>
+    </v-form>
+</template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed, inject } from "vue";
+import { useOrganizationStore } from "@/stores/organization.js";
 
-const logo = ref({});
+const snackbar = inject("snackbar");
+const emit = defineEmits(["submit"]);
+const store = useOrganizationStore();
 
-function init(logo2) {
-    console.log(logo2);
+const form = ref(null);
+const loading = ref(false);
+const delLoading = ref(false);
+const logo = ref(null);
+const prevLogo = ref("");
 
-    logo.value = logo2;
-    console.log(logo.value);
+const rules = {
+    required: (image) => {
+        return Boolean(image);
+    },
+
+    imageType: (image) => {
+        const type = image.type;
+        return (
+            type === "image/png" ||
+            type === "image/jpg" ||
+            type === "image/jpeg" ||
+            "Allowed image types are: jpeg, jpg, png"
+        );
+    },
+};
+
+function upload() {
+    loading.value = true;
+    store.uploadImage(logo.value, prevLogo.value.orgId, () => {
+        loading.value = false;
+        emit("submit");
+        snackbar("Logo uploaded", 3000);
+    });
+}
+
+function deleteLogo() {
+    delLoading.value = true;
+    store.deleteImage(prevLogo.value.orgId, () => {
+        delLoading.value = false;
+        emit("submit");
+        snackbar("Logo deleted", 3000);
+    });
+}
+
+const logoPreview = computed(() => {
+    return logo.value ? URL.createObjectURL(logo.value) : prevLogo.value.logo;
+});
+
+function init(prevLogo2) {
+    prevLogo.value = prevLogo2;
 }
 
 defineExpose({

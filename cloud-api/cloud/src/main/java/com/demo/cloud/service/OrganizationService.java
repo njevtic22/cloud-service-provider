@@ -9,4 +9,6 @@ public interface OrganizationService extends
         EntityDeleter<Long>
 {
     void updateLogo(Long id, String logo);
+
+    String deleteLogo(Long id);
 }
