@@ -7,10 +7,12 @@
         </v-row>
         <v-row class="d-flex justify-center">
             <v-col cols="12" sm="6">
+                <!-- @click:clear does not fix opening file select dialoge and then pressing cancel -->
                 <v-file-input
                     v-model="logo"
                     :rules="[rules.required, rules.imageType]"
                     :loading="loading"
+                    @click:clear="form.reset()"
                     height="7"
                     color="primary"
                     label="Upload logo"
@@ -19,11 +21,7 @@
             </v-col>
         </v-row>
         <v-row class="d-flex justify-center">
-            <v-btn
-                :disabled="!form?.isValid || loading"
-                @click="upload"
-                color="primary"
-            >
+            <v-btn :disabled="isUploadDisabled" @click="upload" color="primary">
                 Upload
             </v-btn>
         </v-row>
@@ -95,6 +93,10 @@ function deleteLogo() {
 
 const logoPreview = computed(() => {
     return logo.value ? URL.createObjectURL(logo.value) : prevLogo.value.logo;
+});
+
+const isUploadDisabled = computed(() => {
+    return !form.value?.isValid || loading.value;
 });
 
 function init(prevLogo2) {

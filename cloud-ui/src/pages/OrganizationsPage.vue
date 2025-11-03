@@ -44,7 +44,7 @@
 
         <template #item.actions="{ item }">
             <v-btn
-                @click="editOrg.open({ ...item })"
+                @click="openEdit($event, item)"
                 icon="mdi-pencil"
                 variant="flat"
                 size="small"
@@ -160,6 +160,11 @@ function updateOptions(options) {
 
 function loadOrgs() {
     store.fetchOrganizations(page, size.value, sortBy.value, filterData);
+}
+
+function openEdit(event, orgToEdit) {
+    event.stopPropagation();
+    editOrg.value.open({ ...orgToEdit });
 }
 
 function redirect(event, clickedRow) {
