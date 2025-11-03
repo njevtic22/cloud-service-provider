@@ -1,4 +1,9 @@
 <template>
+    <organization-edit-dialog
+        @submit="loadOrganization"
+        ref="editOrg"
+    ></organization-edit-dialog>
+
     <v-card elevation="4">
         <v-row>
             <v-col cols="12" sm="6" md="4">
@@ -28,6 +33,13 @@
                             >
                                 <strong>Number of drives:</strong>
                                 {{ org.drivers }}
+                            </v-btn>
+                            <br />
+                            <v-btn
+                                color="primary"
+                                @click="editOrg.open({ ...org })"
+                            >
+                                Edit
                             </v-btn>
                         </v-card-text>
                     </div>
@@ -69,16 +81,15 @@
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 import { useOrganizationStore } from "@/stores/organization.js";
-import { useAuthStore } from "@/stores/auth.js";
 import noImage from "@/assets/no-image.png";
 
 const height = ref("300px");
 
 const route = useRoute();
 const store = useOrganizationStore();
-const authStore = useAuthStore();
 
 const org = ref({});
+const editOrg = ref(null);
 
 function loadOrganization() {
     const successCallback = (response) => {
