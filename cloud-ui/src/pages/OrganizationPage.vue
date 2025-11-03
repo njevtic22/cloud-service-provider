@@ -55,7 +55,7 @@
             </v-col>
         </v-row>
 
-        <v-card>
+        <v-card flat>
             <v-card-text>
                 <p class="description-font-size">
                     {{ org.description }}
@@ -69,16 +69,16 @@
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 import { useOrganizationStore } from "@/stores/organization.js";
+import { useAuthStore } from "@/stores/auth.js";
 import noImage from "@/assets/no-image.png";
 
 const height = ref("300px");
-const height2 = ref("300px");
 
 const route = useRoute();
 const store = useOrganizationStore();
+const authStore = useAuthStore();
 
 const org = ref({});
-const org2 = ref({});
 
 function loadOrganization() {
     const successCallback = (response) => {
@@ -87,13 +87,13 @@ function loadOrganization() {
             : noImage;
 
         org.value = { ...response.data, logo: logo };
-        org2.value = {
-            ...org.value,
-            logo: { n: "n" },
-            description: "Very Long Description",
-        };
     };
-    store.fetchOrganization(route.params.id, successCallback);
+
+    if (route.params.id) {
+        store.fetchOrganization(route.params.id, successCallback);
+    } else {
+        store.fetchAdminOrganization(successCallback);
+    }
 }
 loadOrganization();
 </script>

@@ -119,16 +119,26 @@ public class OrganizationController {
     }
 
     @GetMapping("{id}")
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<OrganizationViewDto> getById(@PathVariable Long id) throws IOException {
         Organization found = service.getById(id);
-        Pair<byte[], String> image = imgService.read(found.getLogo());
+        return readImageAndCount(found);
+    }
+
+    @GetMapping("admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<OrganizationViewDto> getByAdmin() throws IOException {
+        Organization found = service.getByAdmin();
+        return readImageAndCount(found);
+    }
+
+    private ResponseEntity<OrganizationViewDto> readImageAndCount(Organization org) throws IOException {
+        Pair<byte[], String> image = imgService.read(org.getLogo());
         long users = userService.count();
         long machines = machineService.count();
         long drivers = driveService.count();
 
-
-        OrganizationViewDto foundDto = mapper.toDto(found, image, users, machines, drivers);
+        OrganizationViewDto foundDto = mapper.toDto(org, image, users, machines, drivers);
         return ResponseEntity.ok(foundDto);
     }
 

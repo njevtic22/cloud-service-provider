@@ -3,10 +3,13 @@ package com.demo.cloud.service.impl;
 import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
 import com.demo.cloud.core.error.exceptions.ModelConstraintException;
 import com.demo.cloud.core.error.exceptions.MultipleAffectedRowsException;
+import com.demo.cloud.core.error.exceptions.RoleException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Organization;
+import com.demo.cloud.model.User;
 import com.demo.cloud.repository.OrganizationRepository;
 import com.demo.cloud.repository.specification.EntitySpecification;
+import com.demo.cloud.security.AuthenticationService;
 import com.demo.cloud.service.OrganizationService;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -20,10 +23,12 @@ import java.util.Objects;
 public class OrganizationServiceImpl implements OrganizationService {
     private final OrganizationRepository repository;
     private final EntitySpecification<Organization> spec;
+    private final AuthenticationService service;
 
-    public OrganizationServiceImpl(OrganizationRepository repository, EntitySpecification<Organization> spec) {
+    public OrganizationServiceImpl(OrganizationRepository repository, EntitySpecification<Organization> spec, AuthenticationService service) {
         this.repository = repository;
         this.spec = spec;
+        this.service = service;
     }
 
     @Override
@@ -42,6 +47,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     public Page<Organization> getAll(Pageable pageable, Map<String, String> filter) {
+        // TODO: add filter by admin
         return repository.findAll(spec.get(filter), pageable);
     }
 
@@ -49,6 +55,16 @@ public class OrganizationServiceImpl implements OrganizationService {
     public Organization getById(Long id) {
         return repository.findByIdAndArchivedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Organization", id));
+    }
+
+    @Override
+    public Organization getByAdmin() {
+        User admin = service.getAuthenticated();
+        if (!admin.isAdmin()) {
+            throw new RoleException("Admin");
+        }
+
+        return admin.getOrganization();
     }
 
     @Override

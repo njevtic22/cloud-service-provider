@@ -29,7 +29,7 @@ const routes = [
         name: "Organizations",
         component: () => import("@/pages/OrganizationsPage.vue"),
         meta: {
-            requiredRole: [Role.SUPER_ADMIN, Role.ADMIN],
+            requiredRole: [Role.SUPER_ADMIN],
         },
     },
     {
@@ -37,7 +37,15 @@ const routes = [
         name: "Organization",
         component: () => import("@/pages/OrganizationPage.vue"),
         meta: {
-            requiredRole: [Role.SUPER_ADMIN, Role.ADMIN],
+            requiredRole: [Role.SUPER_ADMIN],
+        },
+    },
+    {
+        path: "/organization",
+        name: "OrganizationAdmin",
+        component: () => import("@/pages/OrganizationPage.vue"),
+        meta: {
+            requiredRole: [Role.ADMIN],
         },
     },
     {

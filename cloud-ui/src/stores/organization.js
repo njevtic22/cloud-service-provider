@@ -66,6 +66,14 @@ export const useOrganizationStore = defineStore("organization", {
             axios.get(url).then(successCallback).catch(errorCallback);
         },
 
+        fetchAdminOrganization(
+            successCallback,
+            errorCallback = this.showErrorSnack
+        ) {
+            const url = `${organizationsUrl}/admin`;
+            axios.get(url).then(successCallback).catch(errorCallback);
+        },
+
         add(newOrg, successCallback, errorCallback = this.showErrorSnack) {
             axios
                 .post(organizationsUrl, newOrg)
