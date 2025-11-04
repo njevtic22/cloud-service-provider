@@ -47,7 +47,6 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     public Page<Organization> getAll(Pageable pageable, Map<String, String> filter) {
-        // TODO: add filter by admin
         return repository.findAll(spec.get(filter), pageable);
     }
 
@@ -113,8 +112,6 @@ public class OrganizationServiceImpl implements OrganizationService {
         if (!repository.existsByIdAndArchivedFalse(id)) {
             throw new EntityNotFoundException("Organization", id);
         }
-
-        // TODO: do not delete if there are active machines
 
         int rowsAffected = repository.archiveById(id);
         if (rowsAffected != 1) {
