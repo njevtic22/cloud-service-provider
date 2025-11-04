@@ -8,5 +8,9 @@ public interface OrganizationService extends
         EntityUpdater<Long, Organization>,
         EntityDeleter<Long>
 {
+    Organization getByAdmin();
+
     void updateLogo(Long id, String logo);
+
+    String deleteLogo(Long id);
 }

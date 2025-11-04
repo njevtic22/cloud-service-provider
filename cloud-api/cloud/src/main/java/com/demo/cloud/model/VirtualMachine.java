@@ -62,6 +62,14 @@ public class VirtualMachine {
         return Objects.hash(id, name);
     }
 
+    public void turnOn() {
+        active = true;
+    }
+
+    public void turnOff() {
+        active = false;
+    }
+
     public Long getId() {
         return id;
     }

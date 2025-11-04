@@ -1,6 +1,7 @@
 package com.demo.cloud.service.impl;
 
 import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
+import com.demo.cloud.core.error.exceptions.ModelConstraintException;
 import com.demo.cloud.core.error.exceptions.MultipleAffectedRowsException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Category;
@@ -8,6 +9,7 @@ import com.demo.cloud.model.Organization;
 import com.demo.cloud.model.User;
 import com.demo.cloud.model.VirtualMachine;
 import com.demo.cloud.repository.VirtualMachineRepository;
+import com.demo.cloud.repository.specification.EntitySpecification;
 import com.demo.cloud.security.AuthenticationService;
 import com.demo.cloud.service.CategoryService;
 import com.demo.cloud.service.OrganizationService;
@@ -20,25 +22,26 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.demo.cloud.repository.specification.MachineSpecification.getSpec;
-
 @Service
 public class VirtualMachineServiceImpl implements VirtualMachineService {
     private final VirtualMachineRepository repository;
     private final AuthenticationService authService;
     private final OrganizationService orgService;
     private final CategoryService catService;
+    private final EntitySpecification<VirtualMachine> spec;
 
     public VirtualMachineServiceImpl(
             VirtualMachineRepository repository,
             AuthenticationService authService,
             OrganizationService orgService,
-            CategoryService catService
+            CategoryService catService,
+            EntitySpecification<VirtualMachine> spec
     ) {
         this.repository = repository;
         this.authService = authService;
         this.orgService = orgService;
         this.catService = catService;
+        this.spec = spec;
     }
 
     @Override
@@ -51,7 +54,7 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
         }
 
         if (organizationId == null) {
-            throw new IllegalArgumentException("Organization id must not be null.");
+            throw new ModelConstraintException("Organization id must not be null.");
         }
 
         Organization org = orgService.getById(organizationId);
@@ -73,7 +76,7 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
         String orgId = authenticated.getOrganization() == null ? null : authenticated.getOrganization().getId().toString();
         filter.put("organizationId", orgId);
 
-        return repository.findAll(getSpec(filter, false), pageable);
+        return repository.findAll(spec.get(filter), pageable);
     }
 
     @Override
@@ -116,9 +119,16 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     }
 
     @Override
+    public long count() {
+        return repository.count();
+    }
+
+    @Override
     @Transactional
     public void delete(Long id) {
         Objects.requireNonNull(id, "Id must not be null.");
+
+        // TODO: Validate if admin is deleting machine which belongs to his organization
 
         if (!repository.existsByIdAndArchivedFalse(id)) {
             throw new EntityNotFoundException("Virtual machine", id);
@@ -134,7 +144,7 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
 
     private void validateName(String name) {
         if (repository.existsByName(name)) {
-            throw new UniquePropertyException("Name '" + name + "' is already taken");
+            throw new UniquePropertyException("Name", name);
         }
     }
 }

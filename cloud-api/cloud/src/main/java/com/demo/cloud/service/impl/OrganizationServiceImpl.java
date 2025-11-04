@@ -1,10 +1,15 @@
 package com.demo.cloud.service.impl;
 
 import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
+import com.demo.cloud.core.error.exceptions.ModelConstraintException;
 import com.demo.cloud.core.error.exceptions.MultipleAffectedRowsException;
+import com.demo.cloud.core.error.exceptions.RoleException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Organization;
+import com.demo.cloud.model.User;
 import com.demo.cloud.repository.OrganizationRepository;
+import com.demo.cloud.repository.specification.EntitySpecification;
+import com.demo.cloud.security.AuthenticationService;
 import com.demo.cloud.service.OrganizationService;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -14,14 +19,16 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.demo.cloud.repository.specification.OrganizationSpecification.getSpec;
-
 @Service
 public class OrganizationServiceImpl implements OrganizationService {
     private final OrganizationRepository repository;
+    private final EntitySpecification<Organization> spec;
+    private final AuthenticationService service;
 
-    public OrganizationServiceImpl(OrganizationRepository repository) {
+    public OrganizationServiceImpl(OrganizationRepository repository, EntitySpecification<Organization> spec, AuthenticationService service) {
         this.repository = repository;
+        this.spec = spec;
+        this.service = service;
     }
 
     @Override
@@ -40,7 +47,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     public Page<Organization> getAll(Pageable pageable, Map<String, String> filter) {
-        return repository.findAll(getSpec(filter, false), pageable);
+        return repository.findAll(spec.get(filter), pageable);
     }
 
     @Override
@@ -50,12 +57,31 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
+    public Organization getByAdmin() {
+        User admin = service.getAuthenticated();
+        if (!admin.isAdmin()) {
+            throw new RoleException("Admin");
+        }
+
+        return admin.getOrganization();
+    }
+
+    @Override
     @Transactional
     public void updateLogo(Long id, String logo) {
         int rowsAffected = repository.updateLogo(id, logo);
         if (rowsAffected != 1) {
             throw new MultipleAffectedRowsException("Organizations", "update logo");
         }
+    }
+
+    @Override
+    @Transactional
+    public String deleteLogo(Long id) {
+        Organization found = getById(id);
+        String oldLogo = found.getLogo();
+        updateLogo(id, null);
+        return oldLogo;
     }
 
     @Override
@@ -87,8 +113,6 @@ public class OrganizationServiceImpl implements OrganizationService {
             throw new EntityNotFoundException("Organization", id);
         }
 
-        // TODO: do not delete if there are active machines
-
         int rowsAffected = repository.archiveById(id);
         if (rowsAffected != 1) {
             throw new MultipleAffectedRowsException("Users", "delete (by id)");
@@ -97,13 +121,13 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private void validateName(String name) {
         if (repository.existsByName(name)) {
-            throw new UniquePropertyException("Name '" + name + "' is already taken");
+            throw new UniquePropertyException("Name", name);
         }
     }
 
     private void validateDescription(String description) {
         if (description.length() > 1000) {
-            throw new IllegalArgumentException("Description must be at most 1000 characters long");
+            throw new ModelConstraintException("Description must be at most 1000 characters long");
         }
     }
 }

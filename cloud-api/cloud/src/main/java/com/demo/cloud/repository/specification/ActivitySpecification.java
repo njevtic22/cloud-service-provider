@@ -1,45 +1,52 @@
 package com.demo.cloud.repository.specification;
 
+import com.demo.cloud.core.error.exceptions.FilterKeyException;
 import com.demo.cloud.model.Activity;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Map;
-import java.util.function.BiFunction;
+import static com.demo.cloud.util.DateTimeUtil.toDateTime;
 
-public class ActivitySpecification extends EntitySpecification {
-    public static Specification<Activity> getSpec(Map<String, String> filter) {
-        final String[] machineKeys = {"machine", "id"};
-        final String[] orgKeys = {"machine", "organization", "id"};
+@Component
+public class ActivitySpecification extends EntitySpecification<Activity> {
+    private final String[] machineKeys = {"machine", "id"};
+    private final String[] orgKeys = {"machine", "organization", "id"};
+    private final String[] turnedOnKey = {"turnedOn"};
+    private final String[] turnedOffKey = {"turnedOff"};
 
-        BiFunction<String, String, Specification<Activity>> specParser = (key, value) -> {
-            return switch (key) {
-                case "minTurnedOn" -> attrMin("turnedOn", parseDateTime(value));
-                case "maxTurnedOn" -> attrMax("turnedOn", parseDateTime(value));
+    @Override
+    public Specification<Activity> get(String key, String value) {
+        return switch (key) {
+            case "minTurnedOn", "minTurnedOff" -> attrMin(getKeys(key), toDateTime(value));
+            case "maxTurnedOn", "maxTurnedOff" -> attrMax(getKeys(key), toDateTime(value));
 
-                case "minTurnedOff" -> attrMin("turnedOff", parseDateTime(value));
-                case "maxTurnedOff" -> attrMax("turnedOff", parseDateTime(value));
+            case "minProfit" -> attrMin("profit", value);
+            case "maxProfit" -> attrMax("profit", value);
 
-                case "minProfit" -> attrMin("profit", value);
-                case "maxProfit" -> attrMax("profit", value);
+            case "ongoing" -> isOngoing("turnedOff", value);
+            case "machineId", "organizationId" -> attrEqual(getKeys(key), value);
 
-                case "machineId" -> attrEqual(machineKeys, value);
-                case "organizationId" -> attrEqual(orgKeys, value);
-                default -> throw new IllegalArgumentException("Invalid filter key " + key);
-            };
+            case "archived" -> null;
+            default -> throw new FilterKeyException(key);
         };
-
-        return getSpec(filter, specParser);
     }
 
-    private static LocalDate parseDate(String value) {
-        return Instant.ofEpochMilli(Long.parseLong(value)).atZone(ZoneId.systemDefault()).toLocalDate();
+    private Specification<Activity> isOngoing(String key, String ongoingStr) {
+        if (ongoingStr == null || ongoingStr.isBlank()) {
+            return null;
+        }
+
+        boolean ongoing = Boolean.parseBoolean(ongoingStr);
+        return ongoing ? attrNull(key) : attrNotNull(key);
     }
 
-    private static LocalDateTime parseDateTime(String value) {
-        return Instant.ofEpochMilli(Long.parseLong(value)).atZone(ZoneId.systemDefault()).toLocalDateTime();
+    private String[] getKeys(String key) {
+        return switch (key) {
+            case "minTurnedOn", "maxTurnedOn" -> turnedOnKey;
+            case "minTurnedOff", "maxTurnedOff" -> turnedOffKey;
+            case "machineId" -> machineKeys;
+            case "organizationId" -> orgKeys;
+            default -> throw new FilterKeyException(key);
+        };
     }
 }

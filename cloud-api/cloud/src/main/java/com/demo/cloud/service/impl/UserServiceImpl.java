@@ -2,12 +2,14 @@ package com.demo.cloud.service.impl;
 
 import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
 import com.demo.cloud.core.error.exceptions.InvalidPasswordException;
+import com.demo.cloud.core.error.exceptions.ModelConstraintException;
 import com.demo.cloud.core.error.exceptions.MultipleAffectedRowsException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Organization;
 import com.demo.cloud.model.Role;
 import com.demo.cloud.model.User;
 import com.demo.cloud.repository.UserRepository;
+import com.demo.cloud.repository.specification.EntitySpecification;
 import com.demo.cloud.security.AuthenticationService;
 import com.demo.cloud.service.OrganizationService;
 import com.demo.cloud.service.RoleService;
@@ -21,8 +23,6 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.demo.cloud.repository.specification.UserSpecification.getSpec;
-
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
@@ -30,19 +30,22 @@ public class UserServiceImpl implements UserService {
     private final OrganizationService orgService;
     private final AuthenticationService authService;
     private final PasswordEncoder encoder;
+    private final EntitySpecification<User> spec;
 
     public UserServiceImpl(
             UserRepository repository,
             RoleService roleService,
             OrganizationService orgService,
             AuthenticationService authService,
-            PasswordEncoder encoder
+            PasswordEncoder encoder,
+            EntitySpecification<User> spec
     ) {
         this.repository = repository;
         this.roleService = roleService;
         this.orgService = orgService;
         this.authService = authService;
         this.encoder = encoder;
+        this.spec = spec;
     }
 
     @Override
@@ -73,7 +76,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<User> getAll(Pageable pageable, Map<String, String> filter) {
-        return repository.findAll(getSpec(filter, false), pageable);
+        User requester = authService.getAuthenticated();
+        if (requester.isAdmin()) {
+            filter.put("organization", requester.getOrganization().getName());
+        }
+
+        return repository.findAll(spec.get(filter), pageable);
     }
 
     @Override
@@ -103,17 +111,17 @@ public class UserServiceImpl implements UserService {
         Role changedRole = roleService.getByName(roleName);
         if (existing.isSuperAdmin()) {
             if (organizationId != null) {
-                throw new IllegalArgumentException("Super admin can not belong to organization");
+                throw new ModelConstraintException("Super admin can not belong to organization");
             }
             if (!changedRole.isSuperAdmin()) {
-                throw new IllegalArgumentException("Super admin can not change role");
+                throw new ModelConstraintException("Super admin can not change role");
             }
         } else {
             if (organizationId == null) {
-                throw new IllegalArgumentException("Organization id must not be null");
+                throw new ModelConstraintException("Organization id must not be null");
             }
             if (changedRole.isSuperAdmin()) {
-                throw new IllegalArgumentException("Can not change role to super admin");
+                throw new ModelConstraintException("Can not change role to super admin");
             }
         }
 
@@ -146,6 +154,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public long count() {
+        return repository.count();
+    }
+
+    @Override
     @Transactional
     public void delete(Long id) {
         Objects.requireNonNull(id, "Id must not be null.");
@@ -162,13 +175,13 @@ public class UserServiceImpl implements UserService {
 
     private void validateEmail(String email) {
         if (repository.existsByEmail(email)) {
-            throw new UniquePropertyException("Email '" + email + "' is already taken.");
+            throw new UniquePropertyException("Email", email);
         }
     }
 
     private void validateUsername(String username) {
         if (repository.existsByUsername(username)) {
-            throw new UniquePropertyException("Username '" + username + "' is already taken.");
+            throw new UniquePropertyException("Username", username);
         }
     }
 

@@ -8,7 +8,6 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -55,6 +54,19 @@ public class TokenUtil {
                 .compact();
     }
 
+    public String generateToken(Long id) {
+        Date issuedAt = new Date();
+        return Jwts.builder()
+                .setIssuer(APP_NAME)
+                .setSubject(id.toString())
+                .setAudience(generateAudience())
+                .setIssuedAt(issuedAt)
+                .setExpiration(generateExpirationDate(issuedAt))
+                // .claim("key", value)     // moguce je postavljanje proizvoljnih podataka u telo JWT tokena
+                .signWith(SECRET_KEY)
+                .compact();
+    }
+
     private String generateAudience() {
 //		Moze se iskoristiti org.springframework.mobile.device.Device objekat za odredjivanje tipa uredjaja sa kojeg je zahtev stigao.
 
@@ -92,17 +104,27 @@ public class TokenUtil {
                 && (!(this.isTokenExpired(token)) || this.ignoreTokenExpiration(token)));
     }
 
-    public boolean validateToken(String token, UserDetails userDetails) {
-        final String username = getUsernameFromToken(token);
-        // final Date created = getIssuedAtDateFromToken(token);
+//    public boolean validateToken(String token, UserDetails userDetails) {
+//        final String username = getUsernameFromToken(token);
+//        // final Date created = getIssuedAtDateFromToken(token);
+//
+//        return username != null && username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+//        // && !isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate());
+//    }
 
-        return username != null && username.equals(userDetails.getUsername()) && !isTokenExpired(token);
-        // && !isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate());
+    public boolean validateToken(String token, Long userId) {
+        final Long id = getIdFromToken(token);
+        return id != null && id.equals(userId) && !isTokenExpired(token);
     }
 
     public String getUsernameFromToken(String token) {
         final Claims claims = this.getAllClaimsFromToken(token);
-        return claims.getSubject();
+        return claims.get("username", String.class);
+    }
+
+    public Long getIdFromToken(String token) {
+        final Claims claims = this.getAllClaimsFromToken(token);
+        return Long.valueOf(claims.getSubject());
     }
 
     public Date getIssuedAtDateFromToken(String token) {

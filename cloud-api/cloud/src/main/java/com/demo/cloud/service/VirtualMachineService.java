@@ -6,4 +6,6 @@ public interface VirtualMachineService extends EntityGetter<Long, VirtualMachine
     VirtualMachine add(String name, Long organizationId, Long categoryId);
 
     VirtualMachine update(Long id, String name, Long categoryId);
+
+    long count();
 }

@@ -1,0 +1,180 @@
+<template>
+    <div v-if="authStore.isSuperAdmin">
+        <div v-if="display.mdAndUp.value" class="text-right">
+            <v-btn @click="addDialog = true" color="primary" class="mb-2">
+                Add organization
+            </v-btn>
+        </div>
+        <hiding-button
+            v-else
+            @click="addDialog = true"
+            :frozen="addDialog"
+            icon="mdi-domain-plus"
+        >
+        </hiding-button>
+    </div>
+
+    <organization-add-dialog
+        v-model="addDialog"
+        @submit="loadOrgs"
+    ></organization-add-dialog>
+    <organization-edit-dialog
+        @submit="loadOrgs"
+        ref="editOrg"
+    ></organization-edit-dialog>
+
+    <v-data-table-server
+        v-model:items-per-page="size"
+        :items="modofiedOrgs"
+        :items-length="store.organizations.totalElements"
+        :items-per-page-options="sizeOptions"
+        :headers="filteredHeaders"
+        :sort-by="sortBy"
+        @update:options="updateOptions"
+        @click:row="redirect"
+        class="elevation-4"
+        multi-sort
+        show-expand
+    >
+        <template v-slot:item.logo="{ item }">
+            <div class="padded-2">
+                <img :src="item.logo" height="75" />
+            </div>
+        </template>
+
+        <template #item.actions="{ item }">
+            <v-btn
+                @click="openEdit($event, item)"
+                icon="mdi-pencil"
+                variant="flat"
+                size="small"
+            ></v-btn>
+        </template>
+
+        <template v-slot:expanded-row="{ columns, item }">
+            <tr class="details">
+                <td :colspan="columns.length" class="pa-4">
+                    {{ item.description }}
+                </td>
+            </tr>
+        </template>
+
+        <template v-slot:footer.prepend>
+            <v-expansion-panels static elevation="0" variant="accordion">
+                <v-expansion-panel title="Filter organizations">
+                    <v-expansion-panel-text>
+                        <organization-filter
+                            @filter="filter"
+                        ></organization-filter>
+                    </v-expansion-panel-text>
+                </v-expansion-panel>
+            </v-expansion-panels>
+        </template>
+    </v-data-table-server>
+</template>
+
+<script setup>
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import { useDisplay } from "vuetify";
+import { useOrganizationStore } from "@/stores/organization.js";
+import { useAuthStore } from "@/stores/auth.js";
+import noImage from "@/assets/no-image.png";
+
+const router = useRouter();
+const display = useDisplay();
+const store = useOrganizationStore();
+const authStore = useAuthStore();
+
+const addDialog = ref(false);
+const editOrg = ref(null);
+
+const modofiedOrgs = computed(() => {
+    return store.organizations.data.map((org) => {
+        let logo = org.logo
+            ? `data:image/${org.logo.type};base64,${org.logo.content}`
+            : noImage;
+        return { ...org, logo };
+    });
+});
+
+const headers = [
+    {
+        key: "data-table-expand",
+    },
+    // {
+    //     title: "ID",
+    //     key: "id",
+    // },
+    {
+        title: "Name",
+        key: "name",
+    },
+    // {
+    //     title: "Description",
+    //     key: "description",
+    // },
+    {
+        title: "Logo",
+        key: "logo",
+        align: "center",
+        sortable: false,
+    },
+    {
+        title: "Actions",
+        key: "actions",
+        sortable: false,
+        align: "end",
+        show: () => authStore.isSuperAdmin,
+    },
+];
+
+const filteredHeaders = computed(() => {
+    return headers.filter((h) => (h.show ? h.show() : true));
+});
+
+let page = 0;
+const size = ref(5);
+const sortBy = ref([]);
+let filterData = {};
+
+const sizeOptions = [
+    { value: 2, title: "2" },
+    { value: 5, title: "5" },
+    { value: 10, title: "10" },
+    { value: 2 ** 31 - 1, title: "$vuetify.dataFooter.itemsPerPageAll" },
+];
+
+function filter(newFilter) {
+    filterData = newFilter;
+    loadOrgs();
+}
+
+function updateOptions(options) {
+    page = options.page - 1;
+    size.value = options.itemsPerPage;
+    sortBy.value = options.sortBy;
+
+    loadOrgs();
+}
+
+function loadOrgs() {
+    store.fetchOrganizations(page, size.value, sortBy.value, filterData);
+}
+
+function openEdit(event, orgToEdit) {
+    event.stopPropagation();
+    editOrg.value.open({ ...orgToEdit });
+}
+
+function redirect(event, clickedRow) {
+    router.push("/organizations/" + clickedRow.item.id);
+}
+</script>
+
+<style scoped>
+.details {
+    box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.1),
+        inset 0 -4px 10px rgba(0, 0, 0, 0.1);
+}
+</style>

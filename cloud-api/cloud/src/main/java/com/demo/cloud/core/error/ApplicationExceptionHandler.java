@@ -3,6 +3,7 @@ package com.demo.cloud.core.error;
 import com.demo.cloud.core.error.exceptions.BlankStringException;
 import com.demo.cloud.core.error.exceptions.EntityNotFoundException;
 import com.demo.cloud.core.error.exceptions.InvalidPasswordException;
+import com.demo.cloud.core.error.exceptions.ModelConstraintException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +11,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -45,13 +48,23 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     @ExceptionHandler({
             UniquePropertyException.class,
             InvalidPasswordException.class,
-            BlankStringException.class
+            BlankStringException.class,
+            ModelConstraintException.class,
+            BadCredentialsException.class
     })
     public ResponseEntity<ApiError> handleBadRequest(RuntimeException ex) {
         logger.info(ex.getMessage(), ex);
 
         ApiError errorBody = new ApiError(ex.getMessage());
         return ResponseEntity.badRequest().body(errorBody);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    protected ResponseEntity<ApiError> handleUnauthorized(RuntimeException ex) {
+        logger.info(ex.getMessage(), ex);
+        
+        ApiError apiError = new ApiError(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
     }
 
     @ExceptionHandler(AuthorizationDeniedException.class)

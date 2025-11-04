@@ -8,12 +8,17 @@ import com.demo.cloud.dto.organization.UpdateOrganizationDto;
 import com.demo.cloud.filterParams.OrganizationFilter;
 import com.demo.cloud.mapper.OrganizationMapper;
 import com.demo.cloud.model.Organization;
+import com.demo.cloud.service.DriveService;
 import com.demo.cloud.service.ImageService;
 import com.demo.cloud.service.OrganizationService;
+import com.demo.cloud.service.UserService;
+import com.demo.cloud.service.VirtualMachineService;
 import com.demo.cloud.util.Pair;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,11 +43,17 @@ import java.util.List;
 public class OrganizationController {
     private final OrganizationService service;
     private final ImageService imgService;
+    private final UserService userService;
+    private final VirtualMachineService machineService;
+    private final DriveService driveService;
     private final OrganizationMapper mapper;
 
-    public OrganizationController(OrganizationService service, ImageService imgService, OrganizationMapper mapper) {
+    public OrganizationController(OrganizationService service, ImageService imgService, UserService userService, VirtualMachineService machineService, DriveService driveService, OrganizationMapper mapper) {
         this.service = service;
         this.imgService = imgService;
+        this.userService = userService;
+        this.machineService = machineService;
+        this.driveService = driveService;
         this.mapper = mapper;
     }
 
@@ -71,42 +82,63 @@ public class OrganizationController {
 
         service.updateLogo(found.getId(), uploaded);
 
-        // TODO: what if logo is null
-        String[] logoSplit = logo.split("\\.");
-        String logoType = logoSplit[logoSplit.length - 1];
-        if (!logoType.equals(uploadedType)) {
-            imgService.delete(logo);
-        }
+        deleteOldLogo(logo, uploadedType);
 
         Pair<byte[], String> read = imgService.read(uploaded);
-        OrganizationViewDto foundDto = mapper.toDto(found, new ImageViewDto(read.first(), read.second()));
+        OrganizationViewDto foundDto = mapper.toDto(found, read);
         return ResponseEntity.ok(foundDto);
+    }
+
+    @DeleteMapping("{id}/image")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
+    public ResponseEntity<Void> deleteImage(@PathVariable Long id) throws IOException {
+        String oldLogo = service.deleteLogo(id);
+        imgService.delete(oldLogo);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
-    public ResponseEntity<PaginatedResponse<OrganizationViewDto>> getAll(Pageable pageable, OrganizationFilter filter) throws IOException {
+    public ResponseEntity<PaginatedResponse<OrganizationViewDto>> getAll(
+            @PageableDefault(sort="id") Pageable pageable,
+            OrganizationFilter filter
+    ) throws IOException {
         Page<Organization> orgs = service.getAll(pageable, filter.getParams());
 
         List<OrganizationViewDto> orgsDto = new ArrayList<>(orgs.getNumberOfElements());
         for (Organization org : orgs.getContent()) {
             Pair<byte[], String> image = imgService.read(org.getLogo());
-            orgsDto.add(mapper.toDto(org, new ImageViewDto(image.first(), image.second())));
+            orgsDto.add(mapper.toDto(org, image));
         }
 
         return ResponseEntity.ok(new PaginatedResponse<>(
-                orgsDto,
                 orgs.getTotalElements(),
-                orgs.getTotalPages()
+                orgs.getTotalPages(),
+                orgsDto
         ));
     }
 
     @GetMapping("{id}")
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<OrganizationViewDto> getById(@PathVariable Long id) throws IOException {
         Organization found = service.getById(id);
-        Pair<byte[], String> image = imgService.read(found.getLogo());
-        OrganizationViewDto foundDto = mapper.toDto(found, new ImageViewDto(image.first(), image.second()));
+        return readImageAndCount(found);
+    }
+
+    @GetMapping("admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<OrganizationViewDto> getByAdmin() throws IOException {
+        Organization found = service.getByAdmin();
+        return readImageAndCount(found);
+    }
+
+    private ResponseEntity<OrganizationViewDto> readImageAndCount(Organization org) throws IOException {
+        Pair<byte[], String> image = imgService.read(org.getLogo());
+        long users = userService.count();
+        long machines = machineService.count();
+        long drivers = driveService.count();
+
+        OrganizationViewDto foundDto = mapper.toDto(org, image, users, machines, drivers);
         return ResponseEntity.ok(foundDto);
     }
 
@@ -116,7 +148,7 @@ public class OrganizationController {
         Organization changes = mapper.toModel(changesDto);
         Organization updated = service.update(id, changes);
         Pair<byte[], String> read = imgService.read(updated.getLogo());
-        OrganizationViewDto updatedDto = mapper.toDto(updated, new ImageViewDto(read.first(), read.second()));
+        OrganizationViewDto updatedDto = mapper.toDto(updated, read);
         return ResponseEntity.ok(updatedDto);
     }
 
@@ -125,5 +157,17 @@ public class OrganizationController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private void deleteOldLogo(String oldLogo, String newType) throws IOException {
+        if (oldLogo == null) {
+            return;
+        }
+
+        String[] logoSplit = oldLogo.split("\\.");
+        String logoType = logoSplit[logoSplit.length - 1];
+        if (!logoType.equals(newType)) {
+            imgService.delete(oldLogo);
+        }
     }
 }

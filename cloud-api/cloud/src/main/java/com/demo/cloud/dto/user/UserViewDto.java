@@ -7,6 +7,7 @@ public record UserViewDto(
         String email,
         String username,
         String role,
-        Long organization
+        Long organization,
+        String organizationName
 ) {
 }

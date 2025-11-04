@@ -10,8 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
 //    Service is not used in order to break circular dependency
@@ -32,10 +30,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Authentication auth = authManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        org.springframework.security.core.userdetails.User principal = getPrincipal(auth);
+//        org.springframework.security.core.userdetails.User principal = getPrincipal(auth);
+//        String role = new ArrayList<>(principal.getAuthorities()).get(0).getAuthority();
 
-        String role = new ArrayList<>(principal.getAuthorities()).get(0).getAuthority();
-        String token = tokenUtil.generateToken(username);
+        User authenticated = getUser(auth);
+        String role = authenticated.getRole().getName();
+
+        String token = tokenUtil.generateToken(authenticated.getId());
 
         return new Pair<>(token, role);
     }
