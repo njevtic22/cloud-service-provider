@@ -8,6 +8,7 @@
         :sort-by="sortBy"
         @update:options="updateOptions"
         class="elevation-4"
+        multi-sort
     >
         <template #item.active="{ item }">
             {{ item.active ? "Active" : "Inactive" }}
@@ -85,7 +86,7 @@ function updateOptions(options) {
 }
 
 function loadMachines() {
-    store.fetchMachines(page, size.value, []);
+    store.fetchMachines(page, size.value, sortBy.value);
 }
 </script>
 

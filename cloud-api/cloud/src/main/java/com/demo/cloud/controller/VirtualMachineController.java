@@ -2,6 +2,7 @@ package com.demo.cloud.controller;
 
 
 import com.demo.cloud.core.PaginatedResponse;
+import com.demo.cloud.core.aspect.annotation.MachinePageable;
 import com.demo.cloud.dto.machine.AddMachineDto;
 import com.demo.cloud.dto.machine.MachineViewDto;
 import com.demo.cloud.dto.machine.UpdateMachineDto;
@@ -48,7 +49,7 @@ public class VirtualMachineController {
     }
 
     @GetMapping
-    public ResponseEntity<PaginatedResponse<MachineViewDto>> getAll(Pageable pageable, MachineFilter filter) {
+    public ResponseEntity<PaginatedResponse<MachineViewDto>> getAll(@MachinePageable Pageable pageable, MachineFilter filter) {
         Page<VirtualMachine> machines = service.getAll(pageable, filter.getParams());
         return ResponseEntity.ok(mapper.toDto(machines));
     }
