@@ -40,7 +40,7 @@ public class PageableCloner {
         return joinPoint.proceed(args);
     }
 
-    private Object clone(Pageable original, Function<Sort.Order, Sort.Order> orderCloning) {
+    private Pageable clone(Pageable original, Function<Sort.Order, Sort.Order> orderCloning) {
         Sort clonedSort = clone(original.getSort(), orderCloning);
         return PageRequest.of(original.getPageNumber(), original.getPageSize(), clonedSort);
     }

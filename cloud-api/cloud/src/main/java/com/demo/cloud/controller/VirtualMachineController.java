@@ -13,6 +13,7 @@ import com.demo.cloud.service.VirtualMachineService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -49,7 +50,10 @@ public class VirtualMachineController {
     }
 
     @GetMapping
-    public ResponseEntity<PaginatedResponse<MachineViewDto>> getAll(@MachinePageable Pageable pageable, MachineFilter filter) {
+    public ResponseEntity<PaginatedResponse<MachineViewDto>> getAll(
+            @MachinePageable @PageableDefault(sort="id") Pageable pageable,
+            MachineFilter filter
+    ) {
         Page<VirtualMachine> machines = service.getAll(pageable, filter.getParams());
         return ResponseEntity.ok(mapper.toDto(machines));
     }

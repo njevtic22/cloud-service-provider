@@ -37,5 +37,6 @@ declare module 'vue' {
     UserEditDialog: typeof import('./src/components/UserEditDialog.vue')['default']
     UserEditForm: typeof import('./src/components/UserEditForm.vue')['default']
     UsersFilter: typeof import('./src/components/UsersFilter.vue')['default']
+    VirtualMachineFilter: typeof import('./src/components/VirtualMachineFilter.vue')['default']
   }
 }

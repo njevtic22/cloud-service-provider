@@ -13,6 +13,18 @@
         <template #item.active="{ item }">
             {{ item.active ? "Active" : "Inactive" }}
         </template>
+
+        <template #footer.prepend>
+            <v-expansion-panels static elevation="0" variant="accordion">
+                <v-expansion-panel title="Filter virtual machines">
+                    <v-expansion-panel-text>
+                        <virtual-machine-filter
+                            @filter="filter"
+                        ></virtual-machine-filter>
+                    </v-expansion-panel-text>
+                </v-expansion-panel>
+            </v-expansion-panels>
+        </template>
     </v-data-table-server>
 </template>
 
@@ -38,6 +50,11 @@ const headers = [
         key: "category",
     },
     {
+        title: "Organization",
+        key: "organization",
+        show: () => authStore.isSuperAdmin,
+    },
+    {
         title: "CPU",
         key: "cpu",
     },
@@ -48,11 +65,6 @@ const headers = [
     {
         title: "GPU",
         key: "gpu",
-    },
-    {
-        title: "Organization",
-        key: "organization",
-        show: () => authStore.isSuperAdmin,
     },
     {
         title: "Active",
@@ -68,6 +80,7 @@ const filteredHeaders = computed(() => {
 let page = 0;
 const size = ref(5);
 const sortBy = ref([]);
+let filterData = {};
 
 const sizeOptions = [
     { value: 5, title: "5" },
@@ -76,6 +89,11 @@ const sizeOptions = [
     { value: 100, title: "100" },
     { value: 2 ** 31 - 1, title: "$vuetify.dataFooter.itemsPerPageAll" },
 ];
+
+function filter(newFilter) {
+    filterData = newFilter;
+    loadMachines();
+}
 
 function updateOptions(options) {
     page = options.page - 1;
@@ -86,7 +104,7 @@ function updateOptions(options) {
 }
 
 function loadMachines() {
-    store.fetchMachines(page, size.value, sortBy.value);
+    store.fetchMachines(page, size.value, sortBy.value, filterData);
 }
 </script>
 

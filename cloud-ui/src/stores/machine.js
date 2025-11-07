@@ -19,7 +19,13 @@ export const useMachineStore = defineStore("machine", {
     },
 
     actions: {
-        fetchMachines(page, size, sort, errorCallback = this.showErrorSnack) {
+        fetchMachines(
+            page,
+            size,
+            sort,
+            filter,
+            errorCallback = this.showErrorSnack
+        ) {
             const overwriteCallback = (response) => {
                 this.machines = response.data;
             };
@@ -28,7 +34,7 @@ export const useMachineStore = defineStore("machine", {
                 page,
                 size,
                 sort,
-                {},
+                filter,
                 overwriteCallback,
                 errorCallback
             );
