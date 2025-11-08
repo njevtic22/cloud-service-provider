@@ -1,7 +1,6 @@
 package com.demo.cloud.controller;
 
 import com.demo.cloud.core.PaginatedResponse;
-import com.demo.cloud.dto.image.ImageViewDto;
 import com.demo.cloud.dto.organization.AddOrganizationDto;
 import com.demo.cloud.dto.organization.OrganizationViewDto;
 import com.demo.cloud.dto.organization.UpdateOrganizationDto;
@@ -17,7 +16,6 @@ import com.demo.cloud.util.Pair;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,6 +34,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -134,9 +133,13 @@ public class OrganizationController {
 
     private ResponseEntity<OrganizationViewDto> readImageAndCount(Organization org) throws IOException {
         Pair<byte[], String> image = imgService.read(org.getLogo());
-        long users = userService.count();
-        long machines = machineService.count();
-        long drivers = driveService.count();
+
+        HashMap<String, String> filter = new HashMap<>();
+        filter.put("organizationId", org.getId().toString());
+
+        long users = userService.count(filter);
+        long machines = machineService.count(filter);
+        long drivers = driveService.count(filter);
 
         OrganizationViewDto foundDto = mapper.toDto(org, image, users, machines, drivers);
         return ResponseEntity.ok(foundDto);

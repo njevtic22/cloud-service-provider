@@ -10,6 +10,8 @@ import java.util.Map;
 @Component
 public class UserSpecification extends EntitySpecification<User> {
     private final String[] roleKeys = {"role", "name"};
+    private final String[] orgKeys = {"organization", "id"};
+    private final String[] orgNameKeys = {"organization", "name"};
 
     public Specification<User> get2(Map<String, String> filter) {
         return Specification.<User>where(attrLike(roleKeys, filter.get("role")))
@@ -26,7 +28,8 @@ public class UserSpecification extends EntitySpecification<User> {
     public Specification<User> get(String key, String value) {
         return switch (key) {
             case "name", "surname", "email", "username" -> attrLike(key, value);
-            case "organization" -> attrLike(new String[]{"organization", "name"}, value);
+            case "organization" -> attrLike(orgNameKeys, value);
+            case "organizationId" -> attrEqual(orgKeys, value);
             case "role" -> attrLike(roleKeys, value);
             case "archived" -> attrEqual(key, Boolean.valueOf(value));
             default -> throw new FilterKeyException(key);

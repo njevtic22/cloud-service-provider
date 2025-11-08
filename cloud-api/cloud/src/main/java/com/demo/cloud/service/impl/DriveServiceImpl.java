@@ -56,8 +56,8 @@ public class DriveServiceImpl implements DriveService {
     }
 
     @Override
-    public long count() {
-        return repository.count();
+    public long count(Map<String, String> filter) {
+        return repository.count(spec.get(filter));
     }
 
     @Override
