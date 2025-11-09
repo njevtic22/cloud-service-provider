@@ -1,5 +1,5 @@
 <template>
-    <the-dialog v-model="dialog">
+    <the-dialog v-model="dialog" @afterLeave="clear">
         <the-dialog-card
             icon="mdi-server-plus"
             title="Add Virtual Machine"
@@ -7,22 +7,43 @@
             @submit="submit"
             @cancel="close"
         >
-            Form
+            <virtual-machine-add-form
+                v-model="machine"
+                ref="form"
+            ></virtual-machine-add-form>
         </the-dialog-card>
     </the-dialog>
 </template>
 
 <script setup>
+import { ref } from "vue";
+
 const emit = defineEmits(["submit"]);
 const dialog = defineModel();
+const form = ref(null);
 
-function submit() {
-    emit("submit", { name: "Machine" });
+const machine = ref({
+    name: "",
+    categoryId: "",
+    organizationId: "",
+});
+
+async function submit() {
+    emit("submit", machine.value);
     close();
+
+    // const { valid } = await form.value.validate();
+    // console.log(valid);
 }
 
 function close() {
+    clear();
     dialog.value = false;
+}
+
+function clear() {
+    // must be called after emmiting event
+    form.value.reset();
 }
 </script>
 
