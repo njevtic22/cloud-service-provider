@@ -7,6 +7,7 @@
         :headers="filteredHeaders"
         :sort-by="sortBy"
         @update:options="updateOptions"
+        @click:row="redirect"
         class="elevation-4"
         multi-sort
     >
@@ -30,9 +31,11 @@
 
 <script setup>
 import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
 import { useMachineStore } from "@/stores/machine.js";
 import { useAuthStore } from "@/stores/auth.js";
 
+const router = useRouter();
 const store = useMachineStore();
 const authStore = useAuthStore();
 
@@ -105,6 +108,10 @@ function updateOptions(options) {
 
 function loadMachines() {
     store.fetchMachines(page, size.value, sortBy.value, filterData);
+}
+
+function redirect(event, clickedRow) {
+    router.push("/virtual-machines/" + clickedRow.item.id);
 }
 </script>
 

@@ -10,8 +10,16 @@ import { Role } from "@/stores/auth.js";
 const routes = [
     {
         path: "/",
-        name: "Virtual Machines",
+        name: "VirtualMachines",
         component: () => import("@/pages/MachinesPage.vue"),
+        meta: {
+            requiredRole: [Role.SUPER_ADMIN, Role.ADMIN, Role.USER],
+        },
+    },
+    {
+        path: "/virtual-machines/:id",
+        name: "VirtualMachine",
+        component: () => import("@/pages/MachinePage.vue"),
         meta: {
             requiredRole: [Role.SUPER_ADMIN, Role.ADMIN, Role.USER],
         },
