@@ -1,4 +1,23 @@
 <template>
+    <div v-if="!authStore.isUser">
+        <div v-if="display.mdAndUp.value" class="text-right">
+            <v-btn @click="addDialog = true" color="primary" class="mb-2">
+                Add machine
+            </v-btn>
+        </div>
+        <hiding-button
+            v-else
+            @click="addDialog = true"
+            :frozen="addDialog"
+            icon="mdi-server-plus"
+        ></hiding-button>
+    </div>
+
+    <machine-add-dialog
+        v-model="addDialog"
+        @submit="console.log($event)"
+    ></machine-add-dialog>
+
     <v-data-table-server
         v-model:items-per-page="size"
         :items="store.machines.data"
@@ -32,12 +51,16 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
+import { useDisplay } from "vuetify";
 import { useMachineStore } from "@/stores/machine.js";
 import { useAuthStore } from "@/stores/auth.js";
 
 const router = useRouter();
+const display = useDisplay();
 const store = useMachineStore();
 const authStore = useAuthStore();
+
+const addDialog = ref(false);
 
 const headers = [
     // {
@@ -81,7 +104,7 @@ const filteredHeaders = computed(() => {
 });
 
 let page = 0;
-const size = ref(5);
+const size = ref(20);
 const sortBy = ref([]);
 let filterData = {};
 

@@ -11,6 +11,7 @@ declare module 'vue' {
     ConfirmationDialog: typeof import('./src/components/ConfirmationDialog.vue')['default']
     FetchingAutocomplete: typeof import('./src/components/FetchingAutocomplete.vue')['default']
     HidingButton: typeof import('./src/components/HidingButton.vue')['default']
+    MachineAddDialog: typeof import('./src/components/MachineAddDialog.vue')['default']
     OrganizationAddDialog: typeof import('./src/components/OrganizationAddDialog.vue')['default']
     OrganizationAddForm: typeof import('./src/components/OrganizationAddForm.vue')['default']
     OrganizationEditData: typeof import('./src/components/OrganizationEditData.vue')['default']
