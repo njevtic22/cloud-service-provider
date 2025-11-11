@@ -13,7 +13,10 @@
         ></hiding-button>
     </div>
 
-    <machine-add-dialog v-model="addDialog" @submit="test"></machine-add-dialog>
+    <machine-add-dialog
+        v-model="addDialog"
+        @submit="loadMachines"
+    ></machine-add-dialog>
 
     <v-data-table-server
         v-model:items-per-page="size"
@@ -58,10 +61,6 @@ const store = useMachineStore();
 const authStore = useAuthStore();
 
 const addDialog = ref(false);
-
-function test(event) {
-    setTimeout(() => console.log(event), 1000);
-}
 
 const headers = [
     // {

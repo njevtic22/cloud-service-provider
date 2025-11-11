@@ -1,14 +1,14 @@
 <template>
     <v-form ref="form">
         <v-row>
-            <v-col>
+            <v-col cols="12" sm="6">
                 <v-text-field
                     v-model="machine.name"
                     :rules="[required]"
                     label="Name"
                 ></v-text-field>
             </v-col>
-            <v-col>
+            <v-col cols="12" sm="6">
                 <fetching-autocomplete
                     v-model="machine.organizationId"
                     :items="orgStore.organizations"
@@ -47,7 +47,7 @@
         </v-row>
     </v-form>
     <v-row>
-        <v-col cols="12" sm="4">
+        <v-col cols="6" sm="4">
             <v-text-field
                 v-model="cpu"
                 variant="outlined"
@@ -55,7 +55,7 @@
                 readonly
             ></v-text-field>
         </v-col>
-        <v-col cols="12" sm="4">
+        <v-col cols="6" sm="4">
             <v-text-field
                 v-model="ram"
                 variant="outlined"

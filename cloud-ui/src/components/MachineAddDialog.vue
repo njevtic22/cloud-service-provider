@@ -17,11 +17,16 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, inject } from "vue";
+import { useMachineStore } from "@/stores/machine";
 
+const snackbar = inject("snackbar");
 const emit = defineEmits(["submit"]);
+
 const dialog = defineModel();
 const form = ref(null);
+
+const store = useMachineStore();
 
 const machine = ref({
     name: "",
@@ -35,8 +40,11 @@ async function submit() {
         return;
     }
 
-    emit("submit", { ...machine.value });
-    close();
+    store.add(machine.value, () => {
+        snackbar("Machine added", 3 * 1000);
+        emit("submit");
+        close();
+    });
 }
 
 function close() {
