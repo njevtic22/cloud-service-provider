@@ -24,12 +24,12 @@ const form = ref(null);
 
 const machine = ref({
     name: "",
-    categoryId: "",
-    organizationId: "",
+    categoryId: null,
+    organizationId: null,
 });
 
 async function submit() {
-    emit("submit", machine.value);
+    emit("submit", { ...machine.value });
     close();
 
     // const { valid } = await form.value.validate();

@@ -31,17 +31,24 @@
         </v-row>
         <v-row>
             <v-col>
-                <v-text-field
-                    v-model="machine.categoryId"
+                <fetching-autocomplete
+                    v-model="catComputed"
+                    :items="catStore.categories"
                     :rules="[required]"
+                    :fetch="catStore.fetchAll"
+                    :append="catStore.appendAll"
+                    :reset="() => catStore.$reset()"
+                    :return-object="true"
+                    compare-property="name"
                     label="Category"
-                ></v-text-field>
+                    item-title="name"
+                ></fetching-autocomplete>
             </v-col>
         </v-row>
         <v-row>
             <v-col cols="12" sm="4">
                 <v-text-field
-                    v-model="machine.cpu"
+                    v-model="cpu"
                     variant="outlined"
                     label="CPU Cores"
                     readonly
@@ -49,7 +56,7 @@
             </v-col>
             <v-col cols="12" sm="4">
                 <v-text-field
-                    v-model="machine.ram"
+                    v-model="ram"
                     variant="outlined"
                     label="RAM Capacity"
                     readonly
@@ -57,7 +64,7 @@
             </v-col>
             <v-col cols="12" sm="4">
                 <v-text-field
-                    v-model="machine.gpu"
+                    v-model="gpu"
                     variant="outlined"
                     label="GPU Cores"
                     readonly
@@ -70,23 +77,67 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useOrganizationStore } from "@/stores/organization";
+import { useCategoryStore } from "@/stores/category";
 
 const form = ref(null);
 const machine = defineModel();
 const orgStore = useOrganizationStore();
-
-const category = ref({
-    id: 0,
-    cpu: "",
-    ram: "",
-    gpu: "",
-});
-
-const org = ref({
-    name: "",
-});
+const catStore = useCategoryStore();
 
 const required = (value) => Boolean(value) || "Required";
+
+const category = ref(null);
+
+const catComputed = computed({
+    get() {
+        return category.value;
+    },
+
+    set(newCategory) {
+        category.value = newCategory;
+        machine.value.categoryId = category.value?.id;
+    },
+});
+
+const name = computed({
+    get() {
+        return category.value?.name;
+    },
+
+    set(newValue) {
+        //
+    },
+});
+
+const cpu = computed({
+    get() {
+        return category.value?.cpu;
+    },
+
+    set(newValue) {
+        //
+    },
+});
+
+const ram = computed({
+    get() {
+        return category.value?.ram;
+    },
+
+    set(newValue) {
+        //
+    },
+});
+
+const gpu = computed({
+    get() {
+        return category.value?.gpu;
+    },
+
+    set(newValue) {
+        //
+    },
+});
 
 defineExpose({
     isValid: computed(() => form.value.isValid),
