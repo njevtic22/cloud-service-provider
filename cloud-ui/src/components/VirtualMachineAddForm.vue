@@ -1,14 +1,14 @@
 <template>
     <v-form ref="form">
         <v-row>
-            <v-col cols="12" sm="6">
+            <v-col cols="12" :sm="nameSize">
                 <v-text-field
                     v-model="machine.name"
                     :rules="[required]"
                     label="Name"
                 ></v-text-field>
             </v-col>
-            <v-col cols="12" sm="6">
+            <v-col v-if="authStore.isSuperAdmin" cols="12" sm="6">
                 <fetching-autocomplete
                     v-model="machine.organizationId"
                     :items="orgStore.organizations"
@@ -22,11 +22,6 @@
                     item-value="id"
                     ref="orgRef"
                 ></fetching-autocomplete>
-                <!-- <v-text-field
-                    v-model="machine.organizationId"
-                    :rules="[required]"
-                    label="Organization"
-                ></v-text-field> -->
             </v-col>
         </v-row>
         <v-row>
@@ -78,11 +73,15 @@
 import { computed, ref } from "vue";
 import { useOrganizationStore } from "@/stores/organization";
 import { useCategoryStore } from "@/stores/category";
+import { useAuthStore } from "@/stores/auth";
 
 const form = ref(null);
 const machine = defineModel();
+
 const orgStore = useOrganizationStore();
 const catStore = useCategoryStore();
+const authStore = useAuthStore();
+const nameSize = computed(() => (authStore.isSuperAdmin ? "6" : "12"));
 
 const required = (value) => Boolean(value) || "Required";
 
