@@ -4,6 +4,7 @@
             icon="mdi-server-plus"
             title="Add Virtual Machine"
             submit-text="Add"
+            :submit-disabled="!form?.isValid"
             @submit="submit"
             @cancel="close"
         >
@@ -29,11 +30,13 @@ const machine = ref({
 });
 
 async function submit() {
+    const { valid } = await form.value.validate();
+    if (!valid) {
+        return;
+    }
+
     emit("submit", { ...machine.value });
     close();
-
-    // const { valid } = await form.value.validate();
-    // console.log(valid);
 }
 
 function close() {

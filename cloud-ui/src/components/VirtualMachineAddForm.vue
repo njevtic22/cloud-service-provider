@@ -45,33 +45,33 @@
                 ></fetching-autocomplete>
             </v-col>
         </v-row>
-        <v-row>
-            <v-col cols="12" sm="4">
-                <v-text-field
-                    v-model="cpu"
-                    variant="outlined"
-                    label="CPU Cores"
-                    readonly
-                ></v-text-field>
-            </v-col>
-            <v-col cols="12" sm="4">
-                <v-text-field
-                    v-model="ram"
-                    variant="outlined"
-                    label="RAM Capacity"
-                    readonly
-                ></v-text-field>
-            </v-col>
-            <v-col cols="12" sm="4">
-                <v-text-field
-                    v-model="gpu"
-                    variant="outlined"
-                    label="GPU Cores"
-                    readonly
-                ></v-text-field>
-            </v-col>
-        </v-row>
     </v-form>
+    <v-row>
+        <v-col cols="12" sm="4">
+            <v-text-field
+                v-model="cpu"
+                variant="outlined"
+                label="CPU Cores"
+                readonly
+            ></v-text-field>
+        </v-col>
+        <v-col cols="12" sm="4">
+            <v-text-field
+                v-model="ram"
+                variant="outlined"
+                label="RAM Capacity"
+                readonly
+            ></v-text-field>
+        </v-col>
+        <v-col cols="12" sm="4">
+            <v-text-field
+                v-model="gpu"
+                variant="outlined"
+                label="GPU Cores"
+                readonly
+            ></v-text-field>
+        </v-col>
+    </v-row>
 </template>
 
 <script setup>
@@ -99,45 +99,13 @@ const catComputed = computed({
     },
 });
 
-const name = computed({
-    get() {
-        return category.value?.name;
-    },
+const cpu = getCatProp("cpu");
+const ram = getCatProp("ram");
+const gpu = getCatProp("gpu");
 
-    set(newValue) {
-        //
-    },
-});
-
-const cpu = computed({
-    get() {
-        return category.value?.cpu;
-    },
-
-    set(newValue) {
-        //
-    },
-});
-
-const ram = computed({
-    get() {
-        return category.value?.ram;
-    },
-
-    set(newValue) {
-        //
-    },
-});
-
-const gpu = computed({
-    get() {
-        return category.value?.gpu;
-    },
-
-    set(newValue) {
-        //
-    },
-});
+function getCatProp(property) {
+    return computed(() => category.value?.[property]);
+}
 
 defineExpose({
     isValid: computed(() => form.value.isValid),
