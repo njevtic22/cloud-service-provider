@@ -34,6 +34,28 @@
             {{ item.active ? "Active" : "Inactive" }}
         </template>
 
+        <template #item.actions="{ item }">
+            <v-btn
+                @click="
+                    $event.stopPropagation();
+                    console.log('Editing: ' + item.id);
+                "
+                icon="mdi-pencil"
+                variant="flat"
+                size="small"
+            ></v-btn>
+            <v-btn
+                @click="
+                    $event.stopPropagation();
+                    console.log('Deleting: ' + item.id);
+                "
+                icon="mdi-delete"
+                variant="flat"
+                size="small"
+                class="text-red"
+            ></v-btn>
+        </template>
+
         <template #footer.prepend>
             <v-expansion-panels static elevation="0" variant="accordion">
                 <v-expansion-panel title="Filter virtual machines">
@@ -72,13 +94,13 @@ const headers = [
         key: "name",
     },
     {
-        title: "Category",
-        key: "category",
-    },
-    {
         title: "Organization",
         key: "organization",
         show: () => authStore.isSuperAdmin,
+    },
+    {
+        title: "Category",
+        key: "category",
     },
     {
         title: "CPU",
@@ -95,7 +117,13 @@ const headers = [
     {
         title: "Active",
         key: "active",
+    },
+    {
+        title: "Actions",
+        key: "actions",
+        sortable: false,
         align: "end",
+        show: () => authStore.isSuperAdmin,
     },
 ];
 
