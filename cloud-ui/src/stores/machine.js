@@ -52,6 +52,11 @@ export const useMachineStore = defineStore("machine", {
                 .catch(errorCallback);
         },
 
+        delete(id, successCallback, errorCallback = this.showErrorSnack) {
+            const deleteUrl = `${machinesUrl}/${id}`;
+            axios.delete(deleteUrl).then(successCallback).catch(errorCallback);
+        },
+
         // Not needed when pinia has $reset function
         // clear() {
         //     machines.value = getDefaultState();

@@ -8,7 +8,7 @@
         <hiding-button
             v-else
             @click="addDialog = true"
-            :frozen="addDialog"
+            :frozen="addDialog || deleteDialog"
             icon="mdi-server-plus"
         ></hiding-button>
     </div>
@@ -17,6 +17,7 @@
         v-model="addDialog"
         @submit="loadMachines"
     ></machine-add-dialog>
+    <confirmation-dialog ref="confirm"></confirmation-dialog>
 
     <v-data-table-server
         v-model:items-per-page="size"
@@ -36,19 +37,7 @@
 
         <template #item.actions="{ item }">
             <v-btn
-                @click="
-                    $event.stopPropagation();
-                    console.log('Editing: ' + item.id);
-                "
-                icon="mdi-pencil"
-                variant="flat"
-                size="small"
-            ></v-btn>
-            <v-btn
-                @click="
-                    $event.stopPropagation();
-                    console.log('Deleting: ' + item.id);
-                "
+                @click="openConfirmDialog($event, item)"
                 icon="mdi-delete"
                 variant="flat"
                 size="small"
@@ -71,7 +60,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, inject, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useDisplay } from "vuetify";
 import { useMachineStore } from "@/stores/machine.js";
@@ -79,10 +68,13 @@ import { useAuthStore } from "@/stores/auth.js";
 
 const router = useRouter();
 const display = useDisplay();
+
+const snackbar = inject("snackbar");
 const store = useMachineStore();
 const authStore = useAuthStore();
 
 const addDialog = ref(false);
+const confirm = ref(null);
 
 const headers = [
     // {
@@ -163,6 +155,29 @@ function loadMachines() {
 
 function redirect(event, clickedRow) {
     router.push("/virtual-machines/" + clickedRow.item.id);
+}
+
+const deleteDialog = ref(false);
+async function openConfirmDialog(event, machineToDelete) {
+    deleteDialog.value = true;
+    event.stopPropagation();
+
+    const confirmed = await confirm.value.open(
+        "Are you sure you want to permanently delete virtual machine with name: " +
+            machineToDelete.name +
+            "?",
+        "Delete Virtual Machine"
+    );
+    deleteDialog.value = false;
+
+    if (!confirmed) {
+        return;
+    }
+
+    store.delete(machineToDelete.id, () => {
+        snackbar("Machine deleted", 3000);
+        loadMachines();
+    });
 }
 </script>
 
