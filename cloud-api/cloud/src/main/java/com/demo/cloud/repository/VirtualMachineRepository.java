@@ -20,4 +20,7 @@ public interface VirtualMachineRepository extends JpaRepository<VirtualMachine, 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("update VirtualMachine vm set vm.archived = true where vm.id = :id")
     int archiveById(Long id);
+
+    @Query("select vm.active from VirtualMachine vm where vm.id = :id")
+    boolean isActive(Long id);
 }

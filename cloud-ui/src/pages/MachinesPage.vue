@@ -37,6 +37,7 @@
 
         <template #item.actions="{ item }">
             <v-btn
+                v-if="!item.active"
                 @click="openConfirmDialog($event, item)"
                 icon="mdi-delete"
                 variant="flat"

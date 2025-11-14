@@ -134,12 +134,16 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
             throw new EntityNotFoundException("Virtual machine", id);
         }
 
-        // TODO: do not delete if machine is active
+        if (repository.isActive(id)) {
+            throw new ModelConstraintException("Can not delete virtual machine with id='" + id + "' because it is still active");
+        }
 
         int rowsAffected = repository.archiveById(id);
         if (rowsAffected != 1) {
             throw new MultipleAffectedRowsException("Virtual machines", "delete (by id)");
         }
+
+        // TODO: Detach drives
     }
 
     private void validateName(String name) {
