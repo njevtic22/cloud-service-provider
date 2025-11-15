@@ -61,11 +61,12 @@
 </template>
 
 <script setup>
-import { computed, inject, ref } from "vue";
+import { inject, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useDisplay } from "vuetify";
 import { useMachineStore } from "@/stores/machine.js";
 import { useAuthStore } from "@/stores/auth.js";
+import { filterShowHeaders } from "@/util/table-util";
 
 const router = useRouter();
 const display = useDisplay();
@@ -120,9 +121,7 @@ const headers = [
     },
 ];
 
-const filteredHeaders = computed(() => {
-    return headers.filter((h) => (h.show ? h.show() : true));
-});
+const filteredHeaders = filterShowHeaders(headers);
 
 let page = 0;
 const size = ref(20);
