@@ -116,7 +116,7 @@ const headers = [
         key: "actions",
         sortable: false,
         align: "end",
-        show: () => authStore.isSuperAdmin,
+        show: () => !authStore.isUser,
     },
 ];
 
