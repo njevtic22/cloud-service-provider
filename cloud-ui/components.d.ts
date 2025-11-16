@@ -9,6 +9,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ConfirmationDialog: typeof import('./src/components/ConfirmationDialog.vue')['default']
+    DrivesTable: typeof import('./src/components/DrivesTable.vue')['default']
     FetchingAutocomplete: typeof import('./src/components/FetchingAutocomplete.vue')['default']
     HidingButton: typeof import('./src/components/HidingButton.vue')['default']
     MachineAddDialog: typeof import('./src/components/MachineAddDialog.vue')['default']

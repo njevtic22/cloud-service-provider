@@ -11,6 +11,7 @@ import com.demo.cloud.service.DriveService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -49,7 +50,10 @@ public class DriveController {
 
 
     @GetMapping
-    public ResponseEntity<PaginatedResponse<DriveViewDto>> getAll(Pageable pageable, DriveFilter filter) {
+    public ResponseEntity<PaginatedResponse<DriveViewDto>> getAll(
+            @PageableDefault(sort="id") Pageable pageable,
+            DriveFilter filter
+    ) {
         Page<Drive> drives = service.getAll(pageable, filter.getParams());
         return ResponseEntity.ok(mapper.toDto(drives));
     }
