@@ -115,6 +115,11 @@ public class DriveServiceImpl implements DriveService {
         }
     }
 
+    @Override
+    public void detachAll(Long machineId) {
+        repository.detachAll(machineId);
+    }
+
     private void validateName(String name) {
         if (repository.existsByName(name)) {
             throw new UniquePropertyException("Name", name);

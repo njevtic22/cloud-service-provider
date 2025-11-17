@@ -12,4 +12,6 @@ public interface DriveService extends
     Drive add(Drive newDrive, Long orgId);
 
     long count(Map<String, String> filter);
+
+    void detachAll(Long machineId);
 }
