@@ -30,6 +30,7 @@
         @click:row="redirect"
         class="elevation-4"
         multi-sort
+        hover
     >
         <template #item.active="{ item }">
             {{ item.active ? "Active" : "Inactive" }}

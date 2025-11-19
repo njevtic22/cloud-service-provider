@@ -9,6 +9,7 @@
         @update:options="updateOptions"
         class="elevation-4"
         multi-sort
+        striped
     ></v-data-table-server>
 </template>
 

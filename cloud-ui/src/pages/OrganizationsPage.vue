@@ -35,6 +35,7 @@
         class="elevation-4"
         multi-sort
         show-expand
+        hover
     >
         <template v-slot:item.logo="{ item }">
             <div class="padded-2">
