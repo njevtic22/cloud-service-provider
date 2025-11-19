@@ -1,11 +1,21 @@
 <template>
     <h1>Machine Page: {{ route.params.id }}</h1>
     {{ machine }}
-    <drives-table
-        v-if="machine"
-        :constant-filter="{ machineId: machine.id }"
-        class="drives-table"
-    ></drives-table>
+
+    <div class="d-flex justify-space-between">
+        <div class="drives-table">
+            <h3>Connected drives</h3>
+            <drives-table
+                v-if="machine"
+                :constant-filter="{ machineId: machine.id }"
+            ></drives-table>
+        </div>
+
+        <div class="drives-table">
+            <h3>Activities</h3>
+            <activities-table></activities-table>
+        </div>
+    </div>
 </template>
 
 <script setup>
@@ -25,8 +35,6 @@ loadMachine();
 
 <style scoped>
 .drives-table {
-    margin: auto;
-    width: 100%;
-    max-width: 75%;
+    max-width: 48%;
 }
 </style>

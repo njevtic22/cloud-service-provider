@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ActivitiesTable: typeof import('./src/components/ActivitiesTable.vue')['default']
     ConfirmationDialog: typeof import('./src/components/ConfirmationDialog.vue')['default']
     DrivesTable: typeof import('./src/components/DrivesTable.vue')['default']
     FetchingAutocomplete: typeof import('./src/components/FetchingAutocomplete.vue')['default']
