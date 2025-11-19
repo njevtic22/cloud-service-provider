@@ -13,10 +13,10 @@
         ></hiding-button>
     </div>
 
-    <machine-add-dialog
+    <virtual-machine-add-dialog
         v-model="addDialog"
         @submit="loadMachines"
-    ></machine-add-dialog>
+    ></virtual-machine-add-dialog>
     <confirmation-dialog ref="confirm"></confirmation-dialog>
 
     <v-data-table-server
