@@ -47,7 +47,7 @@ public class FakerUtil {
 
     public static LocalDateTime[][] generateTurnedOnAndOff(VirtualMachine machine, int activities) {
         int activityLength = 10;
-        int activityPause = 1;
+        int activityPause = 2;
 
         LocalDateTime now = LocalDate.now().atStartOfDay().plusHours(8);
         LocalDateTime end = now.minusMonths(1);
@@ -59,14 +59,14 @@ public class FakerUtil {
             LocalDateTime turnedOff = turnedOn.plusDays(activityLength);
             dates.add(new LocalDateTime[]{turnedOn, turnedOff});
 
-            turnedOn = turnedOff.plusDays(activityPause + 1);
+            turnedOn = turnedOff.plusDays(activityPause);
         }
 
         return dates.toArray(new LocalDateTime[activities][2]);
     }
 
     public static LocalDateTime generateTurnedOn(Faker faker) {
-        return LocalDate.now().atStartOfDay().minusDays(28 + faker.number().numberBetween(5, 26 + 1));
+        return LocalDate.now().atStartOfDay().plusHours(8).minusMonths(1).plusDays(faker.number().numberBetween(2, 28 + 1));
     }
 
     private static Integer[] capacity = {256, 512, 1024, 2048, 5120};
