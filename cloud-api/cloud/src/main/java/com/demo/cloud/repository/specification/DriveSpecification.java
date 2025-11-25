@@ -7,8 +7,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DriveSpecification extends EntitySpecification<Drive> {
-    private final String[] orgKeys = {"organization", "name"};
-    private final String[] machineKeys = {"machine", "name"};
+    private final String[] orgKeys = {"organization", "id"};
+    private final String[] orgNameKeys = {"organization", "name"};
+    private final String[] machineKeys = {"machine", "id"};
+    private final String[] machineNameKeys = {"machine", "name"};
     private final String[] nameKey = {"name"};
     private final String[] typeKey = {"type"};
 
@@ -16,6 +18,7 @@ public class DriveSpecification extends EntitySpecification<Drive> {
     public Specification<Drive> get(String key, String value) {
         return switch (key) {
             case "name", "type", "organization", "machine" -> attrLike(getKeys(key), value);
+            case "organizationId", "machineId" -> attrEqual(getKeys(key), value);
 
             case "minCapacity" -> attrMin("capacity", value);
             case "maxCapacity" -> attrMax("capacity", value);
@@ -39,8 +42,10 @@ public class DriveSpecification extends EntitySpecification<Drive> {
         return switch (key) {
             case "name" -> nameKey;
             case "type" -> typeKey;
-            case "organization" -> orgKeys;
-            case "machine" -> machineKeys;
+            case "organizationId" -> orgKeys;
+            case "organization" -> orgNameKeys;
+            case "machineId" -> machineKeys;
+            case "machine" -> machineNameKeys;
             default -> throw new FilterKeyException(key);
         };
     }

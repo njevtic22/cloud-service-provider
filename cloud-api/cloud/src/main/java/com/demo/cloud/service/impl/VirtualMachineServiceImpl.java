@@ -12,6 +12,7 @@ import com.demo.cloud.repository.VirtualMachineRepository;
 import com.demo.cloud.repository.specification.EntitySpecification;
 import com.demo.cloud.security.AuthenticationService;
 import com.demo.cloud.service.CategoryService;
+import com.demo.cloud.service.DriveService;
 import com.demo.cloud.service.OrganizationService;
 import com.demo.cloud.service.VirtualMachineService;
 import jakarta.transaction.Transactional;
@@ -28,6 +29,7 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     private final AuthenticationService authService;
     private final OrganizationService orgService;
     private final CategoryService catService;
+    private final DriveService driveService;
     private final EntitySpecification<VirtualMachine> spec;
 
     public VirtualMachineServiceImpl(
@@ -35,12 +37,14 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
             AuthenticationService authService,
             OrganizationService orgService,
             CategoryService catService,
+            DriveService driveService,
             EntitySpecification<VirtualMachine> spec
     ) {
         this.repository = repository;
         this.authService = authService;
         this.orgService = orgService;
         this.catService = catService;
+        this.driveService = driveService;
         this.spec = spec;
     }
 
@@ -119,8 +123,8 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     }
 
     @Override
-    public long count() {
-        return repository.count();
+    public long count(Map<String, String> filter) {
+        return repository.count(spec.get(filter));
     }
 
     @Override
@@ -128,13 +132,20 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     public void delete(Long id) {
         Objects.requireNonNull(id, "Id must not be null.");
 
-        // TODO: Validate if admin is deleting machine which belongs to his organization
+        User authenticated = authService.getAuthenticated();
+        if (authenticated.isAdmin() && !repository.isInOrganization(id, authenticated.getOrganization().getId())) {
+            throw new ModelConstraintException("Admin can not delete machine which does not belong to his organization");
+        }
 
         if (!repository.existsByIdAndArchivedFalse(id)) {
             throw new EntityNotFoundException("Virtual machine", id);
         }
 
-        // TODO: do not delete if machine is active
+        if (repository.isActive(id)) {
+            throw new ModelConstraintException("Can not delete virtual machine with id='" + id + "' because it is still active");
+        }
+
+        driveService.detachAll(id);
 
         int rowsAffected = repository.archiveById(id);
         if (rowsAffected != 1) {

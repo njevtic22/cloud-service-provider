@@ -17,3 +17,11 @@
     padding: 3%;
 }
 
+
+tbody tr:nth-of-type(odd) {
+    background-color: whitesmoke
+}
+
+tbody tr:nth-of-type(odd) button {
+    background-color: whitesmoke
+}

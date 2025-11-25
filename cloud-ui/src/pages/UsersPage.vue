@@ -71,11 +71,12 @@
 </template>
 
 <script setup>
-import { ref, computed, inject } from "vue";
+import { ref, inject } from "vue";
 import { useDisplay } from "vuetify";
 import { useUserStore } from "@/stores/user.js";
 import { useAuthStore } from "@/stores/auth.js";
 import { useProfileStore } from "@/stores/profile.js";
+import { filterShowHeaders } from "@/util/table-util";
 
 const display = useDisplay();
 const snackbar = inject("snackbar");
@@ -117,7 +118,7 @@ const headers = [
     {
         title: "Organization",
         key: "organizationName",
-        show: authstore.isSuperAdmin,
+        show: () => authstore.isSuperAdmin,
     },
     {
         title: "Actions",
@@ -127,9 +128,7 @@ const headers = [
     },
 ];
 
-const filteredHeaders = computed(() => {
-    return headers.filter((h) => (h.show == undefined ? true : h.show));
-});
+const filteredHeaders = filterShowHeaders(headers);
 
 const page = ref(0);
 const size = ref(20);

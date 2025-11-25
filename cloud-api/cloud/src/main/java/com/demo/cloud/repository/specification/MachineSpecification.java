@@ -10,12 +10,15 @@ public class MachineSpecification extends EntitySpecification<VirtualMachine> {
     private final String[] cpuKeys = {"category", "cpu"};
     private final String[] ramKeys = {"category", "ram"};
     private final String[] gpuKeys = {"category", "gpu"};
+    private final String[] catKeys = {"category", "name"};
     private final String[] orgKeys = {"organization", "id"};
+    private final String[] orgNameKeys = {"organization", "name"};
 
     @Override
     public Specification<VirtualMachine> get(String key, String value) {
         return switch (key) {
-            case "name", "organization", "category" -> attrLike(key, value);
+            case "name"-> attrLike(key, value);
+            case "organization", "category" -> attrLike(getKeys(key), value);
 
             case "minCpu", "minRam", "minGpu" -> attrMin(getKeys(key), value);
             case "maxCpu", "maxRam", "maxGpu" -> attrMax(getKeys(key), value);
@@ -28,6 +31,8 @@ public class MachineSpecification extends EntitySpecification<VirtualMachine> {
 
     private String[] getKeys(String key) {
         return switch (key) {
+            case "organization" -> orgNameKeys;
+            case "category" -> catKeys;
             case "minCpu", "maxCpu" -> cpuKeys;
             case "minRam", "maxRam" -> ramKeys;
             case "minGpu", "maxGpu" -> gpuKeys;

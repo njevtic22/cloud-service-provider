@@ -2,6 +2,8 @@ package com.demo.cloud.service;
 
 import com.demo.cloud.model.Drive;
 
+import java.util.Map;
+
 public interface DriveService extends
         EntityGetter<Long, Drive>,
         EntityUpdater<Long, Drive>,
@@ -9,5 +11,7 @@ public interface DriveService extends
 {
     Drive add(Drive newDrive, Long orgId);
 
-    long count();
+    long count(Map<String, String> filter);
+
+    void detachAll(Long machineId);
 }

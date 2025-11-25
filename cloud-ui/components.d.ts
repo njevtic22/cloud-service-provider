@@ -8,7 +8,9 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ActivitiesTable: typeof import('./src/components/ActivitiesTable.vue')['default']
     ConfirmationDialog: typeof import('./src/components/ConfirmationDialog.vue')['default']
+    DrivesTable: typeof import('./src/components/DrivesTable.vue')['default']
     FetchingAutocomplete: typeof import('./src/components/FetchingAutocomplete.vue')['default']
     HidingButton: typeof import('./src/components/HidingButton.vue')['default']
     OrganizationAddDialog: typeof import('./src/components/OrganizationAddDialog.vue')['default']
@@ -37,5 +39,8 @@ declare module 'vue' {
     UserEditDialog: typeof import('./src/components/UserEditDialog.vue')['default']
     UserEditForm: typeof import('./src/components/UserEditForm.vue')['default']
     UsersFilter: typeof import('./src/components/UsersFilter.vue')['default']
+    VirtualMachineAddDialog: typeof import('./src/components/VirtualMachineAddDialog.vue')['default']
+    VirtualMachineAddForm: typeof import('./src/components/VirtualMachineAddForm.vue')['default']
+    VirtualMachineFilter: typeof import('./src/components/VirtualMachineFilter.vue')['default']
   }
 }

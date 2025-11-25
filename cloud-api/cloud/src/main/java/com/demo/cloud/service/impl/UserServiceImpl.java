@@ -154,8 +154,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public long count() {
-        return repository.count();
+    public long count(Map<String, String> filter) {
+        return repository.count(spec.get(filter));
     }
 
     @Override

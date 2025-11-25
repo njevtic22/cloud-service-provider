@@ -35,6 +35,7 @@
         class="elevation-4"
         multi-sort
         show-expand
+        hover
     >
         <template v-slot:item.logo="{ item }">
             <div class="padded-2">
@@ -80,6 +81,7 @@ import { useDisplay } from "vuetify";
 import { useOrganizationStore } from "@/stores/organization.js";
 import { useAuthStore } from "@/stores/auth.js";
 import noImage from "@/assets/no-image.png";
+import { filterShowHeaders } from "@/util/table-util";
 
 const router = useRouter();
 const display = useDisplay();
@@ -129,9 +131,7 @@ const headers = [
     },
 ];
 
-const filteredHeaders = computed(() => {
-    return headers.filter((h) => (h.show ? h.show() : true));
-});
+const filteredHeaders = filterShowHeaders(headers);
 
 let page = 0;
 const size = ref(5);

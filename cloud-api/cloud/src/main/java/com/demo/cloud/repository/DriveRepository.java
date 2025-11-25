@@ -20,4 +20,9 @@ public interface DriveRepository extends JpaRepository<Drive, Long>, JpaSpecific
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("update Drive d set d.archived = true where d.id = :id")
     int archiveById(Long id);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("update Drive d set d.machine = null where d.machine.id = :machineId")
+    int detachAll(Long machineId);
+
 }

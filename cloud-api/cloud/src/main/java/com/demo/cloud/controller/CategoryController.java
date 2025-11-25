@@ -48,7 +48,7 @@ public class CategoryController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public ResponseEntity<PaginatedResponse<CategoryViewDto>> getAll(Pageable pageable, CategoryFilter filter) {
         Page<Category> cats = service.getAll(pageable, filter.getParams());
         return ResponseEntity.ok(mapper.toDto(cats));

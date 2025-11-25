@@ -2,6 +2,8 @@ package com.demo.cloud.service;
 
 import com.demo.cloud.model.User;
 
+import java.util.Map;
+
 public interface UserService extends EntityGetter<Long, User>, EntityDeleter<Long> {
     User add(User newUser, String repeatedPassword, String roleName, Long organizationId);
 
@@ -11,5 +13,5 @@ public interface UserService extends EntityGetter<Long, User>, EntityDeleter<Lon
 
     void changePassword(String oldPassword, String newPassword, String repeatedPassword);
 
-    long count();
+    long count(Map<String, String> filter);
 }

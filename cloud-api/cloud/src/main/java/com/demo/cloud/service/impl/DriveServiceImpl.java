@@ -56,8 +56,8 @@ public class DriveServiceImpl implements DriveService {
     }
 
     @Override
-    public long count() {
-        return repository.count();
+    public long count(Map<String, String> filter) {
+        return repository.count(spec.get(filter));
     }
 
     @Override
@@ -113,6 +113,11 @@ public class DriveServiceImpl implements DriveService {
         if (rowsAffected != 1) {
             throw new MultipleAffectedRowsException("Drives", "delete (by id)");
         }
+    }
+
+    @Override
+    public void detachAll(Long machineId) {
+        repository.detachAll(machineId);
     }
 
     private void validateName(String name) {

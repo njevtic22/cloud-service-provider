@@ -57,7 +57,7 @@ function init(data2) {
 function submit() {
     store.update(data.value, () => {
         emit("submit");
-        snackbar("Organization updated", 3 * 3000);
+        snackbar("Organization updated", 3 * 1000);
     });
 }
 
