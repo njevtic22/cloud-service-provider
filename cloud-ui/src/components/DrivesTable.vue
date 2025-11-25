@@ -23,6 +23,10 @@ const props = defineProps({
         type: Object,
         required: false,
     },
+    initialSize: {
+        type: Number,
+        default: 20,
+    },
     showOrganization: {
         type: Boolean,
         default: false,
@@ -69,7 +73,7 @@ const headers = [
 const filteredHeaders = filterShowHeaders(headers);
 
 let page = 0;
-const size = ref(20);
+const size = ref(props.initialSize);
 const sortBy = ref([]);
 let filterData = {};
 

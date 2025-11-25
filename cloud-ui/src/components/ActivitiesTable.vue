@@ -35,6 +35,10 @@ const props = defineProps({
         type: Number,
         default: 20,
     },
+    initialSort: {
+        type: Array,
+        default: [{ key: "id", order: "asc" }],
+    },
 });
 
 const store = useActivitiesStore();
@@ -61,7 +65,7 @@ const headers = [
 
 let page = 0;
 const size = ref(props.initialSize);
-const sortBy = ref([]);
+const sortBy = ref(props.initialSort);
 let filterData = {};
 
 const sizeOptions = [
