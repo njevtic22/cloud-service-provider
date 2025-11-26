@@ -1,4 +1,6 @@
 <template>
+    <confirmation-dialog ref="confirm"></confirmation-dialog>
+
     <v-card v-if="machine" elevation="4" class="machine-data" :width="width">
         <v-card-title class="d-flex justify-center mb-2">
             {{ machine.name }}
@@ -45,6 +47,21 @@
                     ></the-switch>
                 </v-col>
             </V-row>
+
+            <div v-if="!machine.active">
+                <br />
+                <v-divider></v-divider>
+                <br />
+                <v-row class="d-flex justify-center">
+                    <v-btn
+                        @click="openConfirmDialog"
+                        prepend-icon="mdi-delete"
+                        color="error"
+                    >
+                        Delete
+                    </v-btn>
+                </v-row>
+            </div>
         </v-card-text>
     </v-card>
 
@@ -70,16 +87,21 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import { useRoute } from "vue-router";
+import { ref, computed, inject } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useDisplay } from "vuetify";
 import { useMachineStore } from "@/stores/machine.js";
 
 const route = useRoute();
+const router = useRouter();
+
+const snackbar = inject("snackbar");
+
 const store = useMachineStore();
 const machine = ref(null);
 
 const actRef = ref(null);
+const confirm = ref(null);
 
 function loadMachine() {
     store.fetch(route.params.id, (response) => (machine.value = response.data));
@@ -90,6 +112,24 @@ function toggle() {
     store.toggle(machine.value.id, (response) => {
         machine.value = response.data;
         actRef.value.loadActivities();
+    });
+}
+
+async function openConfirmDialog() {
+    const confirmed = await confirm.value.open(
+        "Are you sure you want to permanently delete virtual machine with name: " +
+            machine.value.name +
+            "?",
+        "Delete Virtual Machine"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    store.delete(machine.value.id, () => {
+        router.push("/");
+        snackbar("Machine deleted", 3000);
     });
 }
 
