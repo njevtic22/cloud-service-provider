@@ -63,6 +63,7 @@
                 :initial-size="5"
                 :initial-sort="[{ key: 'turnedOff', order: 'desc' }]"
                 :constant-filter="{ 'machine-id': machine.id }"
+                ref="actRef"
             ></activities-table>
         </v-col>
     </v-row>
@@ -78,16 +79,18 @@ const route = useRoute();
 const store = useMachineStore();
 const machine = ref(null);
 
+const actRef = ref(null);
+
 function loadMachine() {
     store.fetch(route.params.id, (response) => (machine.value = response.data));
 }
 loadMachine();
 
 function toggle() {
-    store.toggle(
-        machine.value.id,
-        (response) => (machine.value = response.data)
-    );
+    store.toggle(machine.value.id, (response) => {
+        machine.value = response.data;
+        actRef.value.loadActivities();
+    });
 }
 
 const display = useDisplay();

@@ -88,6 +88,10 @@ function loadActivities() {
     filterData = { ...filterData, ...props.constantFilter };
     store.fetchAll(page, size.value, sortBy.value, filterData);
 }
+
+defineExpose({
+    loadActivities,
+});
 </script>
 
 <style scoped></style>

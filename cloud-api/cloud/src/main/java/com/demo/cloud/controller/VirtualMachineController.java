@@ -9,6 +9,7 @@ import com.demo.cloud.dto.machine.UpdateMachineDto;
 import com.demo.cloud.filterParams.MachineFilter;
 import com.demo.cloud.mapper.VirtualMachineMapper;
 import com.demo.cloud.model.VirtualMachine;
+import com.demo.cloud.service.ActivityService;
 import com.demo.cloud.service.VirtualMachineService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -32,10 +33,12 @@ import java.net.URI;
 @RequestMapping("api/virtual-machines")
 public class VirtualMachineController {
     private final VirtualMachineService service;
+    private final ActivityService actService;
     private final VirtualMachineMapper mapper;
 
-    public VirtualMachineController(VirtualMachineService service, VirtualMachineMapper mapper) {
+    public VirtualMachineController(VirtualMachineService service, ActivityService actService, VirtualMachineMapper mapper) {
         this.service = service;
+        this.actService = actService;
         this.mapper = mapper;
     }
 
@@ -75,10 +78,13 @@ public class VirtualMachineController {
 
     @PutMapping("{id}/toggle")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
-    public ResponseEntity<MachineViewDto> update(@PathVariable Long id) {
-        VirtualMachine toggled = service.toggle(id);
-        MachineViewDto updatedDto = mapper.toDto(toggled);
-        return ResponseEntity.ok(updatedDto);
+    public ResponseEntity<MachineViewDto> toggle(@PathVariable Long id) {
+        if (service.isActive(id)) {
+            actService.end(id);
+        } else {
+            actService.add(id);
+        }
+        return getById(id);
     }
 
     @DeleteMapping("{id}")
