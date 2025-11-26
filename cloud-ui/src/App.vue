@@ -20,8 +20,11 @@
 
 <script setup>
 import { ref, provide, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { getActivePinia } from "pinia";
 import axios from "axios";
+
+const router = useRouter();
 
 const sidebarOpened = ref(true);
 const theSnack = ref(null);
@@ -52,6 +55,10 @@ function showErrorSnack(error) {
     }
 
     theSnack.value.show(errorMessage, -1, "red-darken-1", "");
+
+    if (error.response.status === 404) {
+        router.push("/not-found");
+    }
 }
 
 axios.defaults.headers.common["Authorization"] = localStorage.getItem("token")
