@@ -6,35 +6,45 @@
 
         <v-card-text>
             <v-row>
-                <v-col> Organization </v-col>
+                <v-col class="text-right"> Organization </v-col>
                 <v-col>
                     {{ machine.organization }}
                 </v-col>
             </v-row>
             <v-row>
-                <v-col> Category </v-col>
+                <v-col class="text-right"> Category </v-col>
                 <v-col>
                     {{ machine.category }}
                 </v-col>
             </v-row>
             <v-row>
-                <v-col> CPU cores </v-col>
+                <v-col class="text-right"> CPU cores </v-col>
                 <v-col>
                     {{ machine.cpu }}
                 </v-col>
             </v-row>
             <v-row>
-                <v-col> RAM capacity </v-col>
+                <v-col class="text-right"> RAM capacity </v-col>
                 <v-col>
                     {{ machine.ram }}
                 </v-col>
             </v-row>
             <v-row>
-                <v-col> GPU cores </v-col>
+                <v-col class="text-right"> GPU cores </v-col>
                 <v-col>
                     {{ machine.gpu }}
                 </v-col>
             </v-row>
+            <V-row>
+                <v-col class="d-flex justify-center">
+                    <the-switch
+                        v-model="machine.active"
+                        :label="machine.active ? 'Turned on' : 'Turned off'"
+                        @click="toggle"
+                        inset
+                    ></the-switch>
+                </v-col>
+            </V-row>
         </v-card-text>
     </v-card>
 
@@ -72,6 +82,13 @@ function loadMachine() {
     store.fetch(route.params.id, (response) => (machine.value = response.data));
 }
 loadMachine();
+
+function toggle() {
+    store.toggle(
+        machine.value.id,
+        (response) => (machine.value = response.data)
+    );
+}
 
 const display = useDisplay();
 const width = computed(() => {

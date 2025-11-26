@@ -9,5 +9,7 @@ public interface VirtualMachineService extends EntityGetter<Long, VirtualMachine
 
     VirtualMachine update(Long id, String name, Long categoryId);
 
+    VirtualMachine toggle(Long id);
+
     long count(Map<String, String> filter);
 }

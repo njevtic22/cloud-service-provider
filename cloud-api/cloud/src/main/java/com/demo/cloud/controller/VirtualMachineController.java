@@ -73,6 +73,14 @@ public class VirtualMachineController {
         return ResponseEntity.ok(updatedDto);
     }
 
+    @PutMapping("{id}/toggle")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
+    public ResponseEntity<MachineViewDto> update(@PathVariable Long id) {
+        VirtualMachine toggled = service.toggle(id);
+        MachineViewDto updatedDto = mapper.toDto(toggled);
+        return ResponseEntity.ok(updatedDto);
+    }
+
     @DeleteMapping("{id}")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

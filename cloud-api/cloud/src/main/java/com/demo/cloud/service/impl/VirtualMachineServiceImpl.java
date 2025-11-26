@@ -123,6 +123,27 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     }
 
     @Override
+    @Transactional
+    public VirtualMachine toggle(Long id) {
+        boolean exists = repository.existsByIdAndArchivedFalse(id);
+        if (!exists) {
+            throw new EntityNotFoundException("Virtual machine", id);
+        }
+
+        if (repository.isActive(id)) {
+//            TODO: close activity
+        } else {
+//            TODO: start activity
+        }
+
+        int rowsAffected = repository.toggleById(id);
+        if (rowsAffected != 1) {
+            throw new MultipleAffectedRowsException("Virtual machines", "toggle (by id)");
+        }
+        return getById(id);
+    }
+
+    @Override
     public long count(Map<String, String> filter) {
         return repository.count(spec.get(filter));
     }

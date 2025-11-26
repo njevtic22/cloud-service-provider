@@ -34,6 +34,7 @@ declare module 'vue' {
     TheLogoutButton: typeof import('./src/components/TheLogoutButton.vue')['default']
     TheSidebar: typeof import('./src/components/TheSidebar.vue')['default']
     TheSnackbar: typeof import('./src/components/TheSnackbar.vue')['default']
+    TheSwitch: typeof import('./src/components/TheSwitch.vue')['default']
     UserAddDialog: typeof import('./src/components/UserAddDialog.vue')['default']
     UserAddForm: typeof import('./src/components/UserAddForm.vue')['default']
     UserEditDialog: typeof import('./src/components/UserEditDialog.vue')['default']
