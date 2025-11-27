@@ -1,6 +1,7 @@
 package com.demo.cloud.service;
 
 import com.demo.cloud.model.Drive;
+import com.demo.cloud.model.DriveType;
 
 import java.util.Map;
 
@@ -14,4 +15,6 @@ public interface DriveService extends
     long count(Map<String, String> filter);
 
     void detachAll(Long machineId);
+
+    float calcProfit(Long machineId, DriveType type);
 }

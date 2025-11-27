@@ -5,6 +5,7 @@ import com.demo.cloud.core.error.exceptions.ModelConstraintException;
 import com.demo.cloud.core.error.exceptions.MultipleAffectedRowsException;
 import com.demo.cloud.core.error.exceptions.UniquePropertyException;
 import com.demo.cloud.model.Drive;
+import com.demo.cloud.model.DriveType;
 import com.demo.cloud.model.Organization;
 import com.demo.cloud.model.User;
 import com.demo.cloud.repository.DriveRepository;
@@ -118,6 +119,11 @@ public class DriveServiceImpl implements DriveService {
     @Override
     public void detachAll(Long machineId) {
         repository.detachAll(machineId);
+    }
+
+    @Override
+    public float calcProfit(Long machineId, DriveType type) {
+        return repository.sumCapacity(machineId, type) * type.getMultiplier();
     }
 
     private void validateName(String name) {

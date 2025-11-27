@@ -18,6 +18,10 @@
         <template #item.turnedOff="{ item }">
             {{ item.turnedOff ? formatLocale(item.turnedOff, "sr-RS") : "/" }}
         </template>
+
+        <template #item.profit="{ item }">
+            {{ item.profit.toFixed(2) }}
+        </template>
     </v-data-table-server>
 </template>
 
