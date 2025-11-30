@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -80,12 +81,14 @@ public class ActivityServiceImpl implements ActivityService {
                 .orElseThrow(() -> new EntityNotFoundException("No activity found for machine with id '" + found.getId() + "' and no turned off date"));
 
         // TODO: add tmpProfit
-        float profit = calcProfit(found, found.getCategory());
+        LocalDateTime turnedOff = LocalDateTime.now();
+        long elapsedSeconds = elapsedSeconds(ongoing.getTurnedOn(), turnedOff);
+        float profit = calcProfit(found, found.getCategory(), elapsedSeconds);
 
         Activity toEnd = new Activity(
                 ongoing.getId(),
                 ongoing.getTurnedOn(),
-                LocalDateTime.now(),
+                turnedOff,
                 profit,
                 found
         );
@@ -94,14 +97,18 @@ public class ActivityServiceImpl implements ActivityService {
         return ended;
     }
 
-    private float calcProfit(VirtualMachine vm, Category cat) {
+    private long elapsedSeconds(LocalDateTime start, LocalDateTime end) {
+        return Duration.between(start, end).toSeconds();
+    }
+
+    private float calcProfit(VirtualMachine vm, Category cat, long elapsedSeconds) {
         int cpu = cat.getCpu();
         int ram = cat.getRam();
         int gpu = cat.getGpu();
 
-        int cpuCost = 25;
-        int ramCost = 15;
-        int gpuCost = 1;
+        int cpuCost = 25_000_000;
+        int ramCost = 15_000_000;
+        int gpuCost = 1_000_000;
 
         float machineProfit = cpuCost * cpu + ramCost * ram + gpuCost * gpu;
 
@@ -109,7 +116,10 @@ public class ActivityServiceImpl implements ActivityService {
         float ssdProfit = driveService.calcProfit(vm.getId(), DriveType.SSD);
         float driveProfit = hddProfit + ssdProfit;
 
-        return round(machineProfit + driveProfit, 2);
+        long secondsInMonth = 30 * 24 * 60 * 60;
+        float profitPerSecond = (machineProfit + driveProfit) / secondsInMonth;
+        float totalProfit = profitPerSecond * elapsedSeconds;
+        return round(totalProfit, 2);
     }
 
     // or Math.round(f, 10 ^ decimal) / 10 ^ decimal
