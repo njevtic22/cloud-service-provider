@@ -97,6 +97,11 @@ public class ActivityServiceImpl implements ActivityService {
         return ended;
     }
 
+    @Override
+    public long calcProfit(Long machineId) {
+        return repository.calcProfit(machineId);
+    }
+
     private long elapsedSeconds(LocalDateTime start, LocalDateTime end) {
         return Duration.between(start, end).toSeconds();
     }

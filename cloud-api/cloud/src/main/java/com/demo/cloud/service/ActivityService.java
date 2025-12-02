@@ -6,4 +6,6 @@ public interface ActivityService extends EntityGetter<Long, Activity> {
     Activity add(Long machineId);
 
     Activity end(Long machineId);
+
+    long calcProfit(Long machineId);
 }

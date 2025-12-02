@@ -75,7 +75,10 @@
         </v-col>
 
         <v-col cols="12" sm="6">
-            <h3>Activities</h3>
+            <div class="d-flex justify-space-between">
+                <h3>Activities</h3>
+                <h3>Total Profit: {{ totalProfit.toFixed(2) }}</h3>
+            </div>
             <activities-table
                 :initial-size="5"
                 :initial-sort="[{ key: 'turnedOff', order: 'desc' }]"
@@ -99,6 +102,7 @@ const snackbar = inject("snackbar");
 
 const store = useMachineStore();
 const machine = ref(null);
+const totalProfit = ref(0);
 
 const actRef = ref(null);
 const confirm = ref(null);
@@ -107,6 +111,14 @@ function loadMachine() {
     store.fetch(route.params.id, (response) => (machine.value = response.data));
 }
 loadMachine();
+
+function loadProfit() {
+    store.fetchProfit(
+        route.params.id,
+        (response) => (totalProfit.value = response.data)
+    );
+}
+loadProfit();
 
 function toggle() {
     store.toggle(machine.value.id, (response) => {

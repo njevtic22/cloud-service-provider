@@ -68,6 +68,12 @@ public class VirtualMachineController {
         return ResponseEntity.ok(foundDto);
     }
 
+    @GetMapping("{id}/profit")
+    public ResponseEntity<Long> calcProfit(@PathVariable Long id) {
+        long profit = actService.calcProfit(id);
+        return ResponseEntity.ok(profit);
+    }
+
     @PutMapping("{id}")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public ResponseEntity<MachineViewDto> update(@PathVariable Long id, @Valid @RequestBody UpdateMachineDto changesDto) {

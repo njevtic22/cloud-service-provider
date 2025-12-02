@@ -62,6 +62,11 @@ export const useMachineStore = defineStore("machine", {
             axios.put(toggleUrl).then(successCallback).catch(errorCallback);
         },
 
+        fetchProfit(id, successCallback, errorCallback = this.showErrorSnack) {
+            const profitUrl = `${machinesUrl}/${id}/profit`;
+            axios.get(profitUrl).then(successCallback).catch(errorCallback);
+        },
+
         // Not needed when pinia has $reset function
         // clear() {
         //     machines.value = getDefaultState();
