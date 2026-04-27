@@ -39,7 +39,7 @@ public class FakerUtil {
 
         ArrayList<String> images = new ArrayList<>();
         for (File image : imagesDir.listFiles()) {
-            images.add(image.getAbsolutePath());
+            images.add(image.getPath());
         }
 
         return images.iterator();
