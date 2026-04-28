@@ -102,6 +102,11 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
 
     @Override
     public VirtualMachine update(Long id, String name, Long categoryId) {
+        User authenticated = authService.getAuthenticated();
+        if (authenticated.isAdmin() && !repository.isInOrganization(id, authenticated.getOrganization().getId())) {
+            throw new ModelConstraintException("Admin can not update machine which does not belong to his organization");
+        }
+
         VirtualMachine existing = getById(id);
 
         if (existing.isActive()) {

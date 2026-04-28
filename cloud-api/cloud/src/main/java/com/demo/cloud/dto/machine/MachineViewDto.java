@@ -6,7 +6,7 @@ public record MachineViewDto(
         boolean active,
 //        Long organizationId,
         String organization,
-//        Long categoryId,
+        Long categoryId,
         String category,
         int cpu,
         int ram,
