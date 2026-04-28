@@ -81,6 +81,15 @@ function handleIntersection(isIntersecting) {
 const debouncedEmit = debounce((search) => {
     emit("update:search-input", search);
 
+    // Prevents reseting dropdown scroll reset
+    // when value is already selected
+    // Added to avoid bug noted when value is
+    // pre selected before opening editing dialog
+    // and then opening select input causes dropdown reset
+    if (selected.value) {
+        return;
+    }
+
     resetDropdownScroll();
 }, 500);
 

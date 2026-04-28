@@ -1,5 +1,9 @@
 <template>
     <confirmation-dialog ref="confirm"></confirmation-dialog>
+    <virtual-machine-edit-dialog
+        @submit="loadMachine"
+        ref="editRef"
+    ></virtual-machine-edit-dialog>
 
     <v-card v-if="machine" elevation="4" class="machine-data" :width="width">
         <v-card-title class="d-flex justify-center mb-2">
@@ -54,6 +58,16 @@
                 <br />
                 <v-row class="d-flex justify-center">
                     <v-btn
+                        @click="editRef.open({ ...machine })"
+                        prepend-icon="mdi-pencil"
+                        color="primary"
+                        class="mb-2"
+                    >
+                        Edit
+                    </v-btn>
+                </v-row>
+                <v-row class="d-flex justify-center mt-2">
+                    <v-btn
                         @click="openConfirmDialog"
                         prepend-icon="mdi-delete"
                         color="error"
@@ -105,6 +119,7 @@ const machine = ref(null);
 const totalProfit = ref(0);
 
 const actRef = ref(null);
+const editRef = ref(null);
 const confirm = ref(null);
 
 function loadMachine() {
@@ -115,7 +130,7 @@ loadMachine();
 function loadProfit() {
     store.fetchProfit(
         route.params.id,
-        (response) => (totalProfit.value = response.data)
+        (response) => (totalProfit.value = response.data),
     );
 }
 loadProfit();
@@ -132,7 +147,7 @@ async function openConfirmDialog() {
         "Are you sure you want to permanently delete virtual machine with name: " +
             machine.value.name +
             "?",
-        "Delete Virtual Machine"
+        "Delete Virtual Machine",
     );
 
     if (!confirmed) {
