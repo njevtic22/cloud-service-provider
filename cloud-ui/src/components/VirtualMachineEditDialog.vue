@@ -17,9 +17,12 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, inject } from "vue";
+import { useMachineStore } from "@/stores/machine";
 
 const emit = defineEmits(["submit"]);
+const snackbar = inject("snackbar");
+const store = useMachineStore();
 
 const dialog = defineModel({ default: false });
 const form = ref(null);
@@ -50,9 +53,11 @@ async function submit() {
         categoryId: machine.value.categoryId,
     };
 
-    console.log(changes);
-    emit("submit");
-    close();
+    store.update(changes, () => {
+        snackbar("Machine updated", 3 * 1000);
+        emit("submit");
+        close();
+    });
 }
 
 function close() {

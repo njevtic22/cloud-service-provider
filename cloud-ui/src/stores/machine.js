@@ -24,7 +24,7 @@ export const useMachineStore = defineStore("machine", {
             size,
             sort,
             filter,
-            errorCallback = this.showErrorSnack
+            errorCallback = this.showErrorSnack,
         ) {
             const overwriteCallback = (response) => {
                 this.machines = response.data;
@@ -36,7 +36,7 @@ export const useMachineStore = defineStore("machine", {
                 sort,
                 filter,
                 overwriteCallback,
-                errorCallback
+                errorCallback,
             );
         },
 
@@ -50,6 +50,11 @@ export const useMachineStore = defineStore("machine", {
                 .post(machinesUrl, newMachine)
                 .then(successCallback)
                 .catch(errorCallback);
+        },
+
+        update(changes, successCallback, errorCallback = this.showErrorSnack) {
+            const url = `${machinesUrl}/${changes.id}`;
+            axios.put(url, changes).then(successCallback).catch(errorCallback);
         },
 
         delete(id, successCallback, errorCallback = this.showErrorSnack) {
@@ -80,7 +85,7 @@ function requestMachines(
     sort,
     filter,
     successCallback,
-    errorCallback
+    errorCallback,
 ) {
     const sortStr = formSort(sort, "&");
     const filterStr = formFilter(filter, "&");
