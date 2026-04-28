@@ -50,6 +50,7 @@ async function submit() {
 
     const changes = {
         id: machine.value.id,
+        name: machine.value.name,
         categoryId: machine.value.categoryId,
     };
 

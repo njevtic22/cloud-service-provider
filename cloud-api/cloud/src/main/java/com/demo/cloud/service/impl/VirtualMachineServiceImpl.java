@@ -104,7 +104,9 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     public VirtualMachine update(Long id, String name, Long categoryId) {
         VirtualMachine existing = getById(id);
 
-        // TODO: Prevent update if machine is active
+        if (existing.isActive()) {
+            throw new ModelConstraintException("Can not update virtual machine with id='" + id + "' because it is still active");
+        }
 
         if (!existing.getName().equals(name)) {
             validateName(name);
