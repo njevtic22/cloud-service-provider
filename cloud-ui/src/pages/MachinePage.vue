@@ -4,6 +4,10 @@
         @submit="loadMachine"
         ref="editRef"
     ></virtual-machine-edit-dialog>
+    <drives-attach-dialog
+        v-model="drivesDialog"
+        :organization="machine?.organization"
+    ></drives-attach-dialog>
 
     <v-card v-if="machine" elevation="4" class="machine-data" :width="width">
         <v-card-title class="d-flex justify-center mb-2">
@@ -56,6 +60,16 @@
                 <br />
                 <v-divider></v-divider>
                 <br />
+                <v-row class="d-flex justify-center">
+                    <v-btn
+                        @click="drivesDialog = true"
+                        prepend-icon="mdi-harddisk-plus"
+                        color="primary"
+                        class="mb-2"
+                    >
+                        Attach drives
+                    </v-btn>
+                </v-row>
                 <v-row class="d-flex justify-center">
                     <v-btn
                         @click="editRef.open({ ...machine })"
@@ -121,6 +135,7 @@ const totalProfit = ref(0);
 const actRef = ref(null);
 const editRef = ref(null);
 const confirm = ref(null);
+const drivesDialog = ref(false);
 
 function loadMachine() {
     store.fetch(route.params.id, (response) => (machine.value = response.data));

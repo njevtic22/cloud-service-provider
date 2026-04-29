@@ -12,6 +12,11 @@ export const useDrivesStore = defineStore("drive", {
             totalPages: 0,
             data: [],
         },
+        detachedDrives: {
+            totalElements: 0,
+            totalPages: 0,
+            data: [],
+        },
     }),
 
     actions: {
@@ -26,7 +31,30 @@ export const useDrivesStore = defineStore("drive", {
                 sort,
                 filter,
                 overwriteCallback,
-                errorCallback
+                errorCallback,
+            );
+        },
+
+        fetchAllDetached(
+            page,
+            size,
+            sort,
+            filter,
+            errorCallback = this.showErroSnack,
+        ) {
+            const overwriteCallback = (response) => {
+                this.detachedDrives = response.data;
+            };
+
+            filter.attached = 'false';
+
+            requestAll(
+                page,
+                size,
+                sort,
+                filter,
+                overwriteCallback,
+                errorCallback,
             );
         },
     },
