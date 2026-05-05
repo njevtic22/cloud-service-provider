@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface DriveRepository extends JpaRepository<Drive, Long>, JpaSpecificationExecutor<Drive> {
@@ -32,4 +33,20 @@ public interface DriveRepository extends JpaRepository<Drive, Long>, JpaSpecific
 
     @Query("select coalesce(sum(d.capacity), 0) from Drive d where d.archived = false and d.machine.id = :machineId and d.type = :type")
     float sumCapacity(Long machineId, DriveType type);
+
+    @Query("""
+        select d.id
+        from Drive d
+        where d.organization.id = :organizationId
+        and d.archived = :archived
+        and (
+            case
+               when :attached = true then
+                   case when d.machine is not null then true else false end
+               else
+                   case when d.machine is null then true else false end
+            end
+            ) = true
+    """)
+    List<Long> findAllIds(Long organizationId, boolean attached, boolean archived);
 }

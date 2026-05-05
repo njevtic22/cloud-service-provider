@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -64,6 +65,11 @@ public class DriveServiceImpl implements DriveService {
     @Override
     public Page<Drive> getAll(Pageable pageable, Map<String, String> filter) {
         return repository.findAll(spec.get(filter), pageable);
+    }
+
+    @Override
+    public List<Long> getAllIds(Long orgId, boolean attached) {
+        return repository.findAllIds(orgId, attached, false);
     }
 
     @Override

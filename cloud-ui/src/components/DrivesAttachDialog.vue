@@ -19,17 +19,24 @@
                 multi-sort
                 striped
             ></v-data-table-server>
+            <v-btn
+                @click="console.log(selectedStatus)"
+                color="primary"
+                variant="elevated"
+            >
+                check
+            </v-btn>
         </the-dialog-card>
     </the-dialog>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useDrivesStore } from "@/stores/drive.js";
 
 const props = defineProps({
-    organization: {
-        type: String,
+    organizationId: {
+        type: Number,
         required: false,
         default: null,
     },
@@ -66,6 +73,8 @@ let page = 0;
 const size = ref(10);
 const sortBy = ref([]);
 
+const selectedStatus = ref({});
+
 function updateOptions(options) {
     page = options.page - 1;
     size.value = options.itemsPerPage;
@@ -75,13 +84,33 @@ function updateOptions(options) {
 }
 
 function loadDrives() {
-    if (!props.organization) {
+    if (!props.organizationId) {
         return;
     }
 
-    const filter = { organization: props.organization };
+    const filter = { organizationId: props.organizationId };
     store.fetchAllDetached(page, size.value, sortBy.value, filter);
 }
+
+function loadStatuses() {
+    if (!props.organizationId) {
+        return;
+    }
+
+    const filter = { organizationId: props.organizationId, attached: "false" };
+    const fillStatuses = (response) => {
+        for (const id of response.data) {
+            selectedStatus.value[id] = false;
+        }
+    };
+    store.fethcAllIds(filter, fillStatuses);
+}
+onMounted(() => {
+    // TODO: Detect when dialog is opened
+    setTimeout(() => {
+        loadStatuses();
+    }, 1000);
+});
 
 function cancel() {
     dialog.value = false;

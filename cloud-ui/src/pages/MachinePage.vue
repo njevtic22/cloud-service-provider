@@ -6,7 +6,7 @@
     ></virtual-machine-edit-dialog>
     <drives-attach-dialog
         v-model="drivesDialog"
-        :organization="machine?.organization"
+        :organization-id="machine?.organizationId"
     ></drives-attach-dialog>
 
     <v-card v-if="machine" elevation="4" class="machine-data" :width="width">

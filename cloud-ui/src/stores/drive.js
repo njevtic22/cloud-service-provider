@@ -46,7 +46,7 @@ export const useDrivesStore = defineStore("drive", {
                 this.detachedDrives = response.data;
             };
 
-            filter.attached = 'false';
+            filter.attached = "false";
 
             requestAll(
                 page,
@@ -56,6 +56,16 @@ export const useDrivesStore = defineStore("drive", {
                 overwriteCallback,
                 errorCallback,
             );
+        },
+
+        fethcAllIds(
+            filter,
+            successCallback,
+            errorCallback = this.showErrorSnack,
+        ) {
+            const filterStr = formFilter(filter, "&");
+            const url = `${drivesUrl}/ids?${filterStr}`;
+            axios.get(url).then(successCallback).catch(errorCallback);
         },
     },
 });

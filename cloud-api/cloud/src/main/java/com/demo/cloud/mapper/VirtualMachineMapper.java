@@ -12,6 +12,7 @@ public class VirtualMachineMapper extends PageMapper<VirtualMachine, MachineView
                 machine.getId(),
                 machine.getName(),
                 machine.isActive(),
+                machine.getOrganization().getId(),
                 machine.getOrganization().getName(),
                 machine.getCategory().getId(),
                 machine.getCategory().getName(),

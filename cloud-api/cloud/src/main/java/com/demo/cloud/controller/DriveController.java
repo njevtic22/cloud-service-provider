@@ -21,10 +21,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/drives")
@@ -56,6 +58,13 @@ public class DriveController {
     ) {
         Page<Drive> drives = service.getAll(pageable, filter.getParams());
         return ResponseEntity.ok(mapper.toDto(drives));
+    }
+
+    @GetMapping("ids")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
+    public ResponseEntity<List<Long>> getIds(@RequestParam("organizationId") Long orgId, @RequestParam("attached") boolean attached) {
+        List<Long> ids = service.getAllIds(orgId, attached);
+        return ResponseEntity.ok(ids);
     }
 
     @GetMapping("{id}")

@@ -4,7 +4,7 @@ public record MachineViewDto(
         Long id,
         String name,
         boolean active,
-//        Long organizationId,
+        Long organizationId,
         String organization,
         Long categoryId,
         String category,
