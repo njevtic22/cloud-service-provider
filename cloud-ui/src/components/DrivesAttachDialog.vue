@@ -7,48 +7,25 @@
             @submit="submit"
             @cancel="cancel"
         >
-            <v-data-table-server
+            <the-selectable-data-table-server
                 v-model:items-per-page="size"
-                :items="selectableDrives"
+                v-model="driveIdsToAttach"
+                :items="store.detachedDrives.data"
                 :items-length="store.detachedDrives.totalElements"
                 :items-per-page-options="sizeOptions"
                 :headers="headers"
                 :sort-by="sortBy"
+                :item-ids="driveIds"
                 @update:options="updateOptions"
                 class="elevation-4"
-                show-select
                 multi-sort
-                striped
-            >
-                <!-- header checkbox slot -->
-                <template #header.data-table-select>
-                    <v-checkbox-btn
-                        v-model="selectedAll"
-                        :indeterminate="
-                            currentAllState === SELECTED_ALL_STATE.MIXED
-                        "
-                        @update:model-value="
-                            (isSelected) => toggleAll(isSelected)
-                        "
-                    />
-                </template>
-
-                <!-- row checkbox slot -->
-                <template #item.data-table-select="{ item }">
-                    <v-checkbox-btn
-                        v-model="selectedStatus[item.id]"
-                        @update:model-value="
-                            (isSelected) => toggleSelection(item, isSelected)
-                        "
-                    />
-                </template>
-            </v-data-table-server>
+            ></the-selectable-data-table-server>
         </the-dialog-card>
     </the-dialog>
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, watch } from "vue";
 import { useDrivesStore } from "@/stores/drive.js";
 
 const props = defineProps({
@@ -90,54 +67,8 @@ let page = 0;
 const size = ref(10);
 const sortBy = ref([]);
 
-const selectedAll = ref(false);
-const SELECTED_ALL_STATE = Object.freeze({
-    ALL: "ALL",
-    MIXED: "MIXED",
-    NONE: "NONE",
-});
-const currentAllState = computed(() => {
-    let hasSelected = false;
-    let hasDeselected = false;
-
-    for (const id in selectedStatus.value) {
-        const isSelected = selectedStatus.value[id];
-
-        if (isSelected) {
-            hasSelected = true;
-        } else {
-            hasDeselected = true;
-        }
-
-        if (hasSelected && hasDeselected) {
-            return SELECTED_ALL_STATE.MIXED;
-        }
-    }
-
-    return hasSelected ? SELECTED_ALL_STATE.ALL : SELECTED_ALL_STATE.NONE;
-});
-
-const selectedStatus = ref({});
-const selectableDrives = computed(() => {
-    return store.detachedDrives.data.map((drive) => {
-        return {
-            ...drive,
-            selected: Boolean(selectedStatus.value[drive.id]),
-        };
-    });
-});
-
-function toggleAll(isSelected) {
-    selectedAll.value = isSelected;
-    for (const id of Object.keys(selectedStatus.value)) {
-        selectedStatus.value[id] = isSelected;
-    }
-}
-
-function toggleSelection(drive, isSelected) {
-    selectedStatus.value[drive.id] = isSelected;
-    selectedAll.value = currentAllState === SELECTED_ALL_STATE.ALL;
-}
+const driveIds = ref([]);
+const driveIdsToAttach = ref([]);
 
 function updateOptions(options) {
     page = options.page - 1;
@@ -156,27 +87,20 @@ function loadDrives() {
     store.fetchAllDetached(page, size.value, sortBy.value, filter);
 }
 
-function loadStatuses() {
+function loadDriveIds() {
     if (!props.organizationId) {
         return;
     }
 
     const filter = { organizationId: props.organizationId, attached: "false" };
-    const fillStatuses = (response) => {
-        for (const id of response.data) {
-            selectedStatus.value[id] = false;
-        }
-    };
-    store.fethcAllIds(filter, fillStatuses);
+    store.fethcAllIds(filter, (response) => (driveIds.value = response.data));
 }
 
 watch(
     () => dialog.value,
     (isOpened) => {
         if (isOpened) {
-            loadStatuses();
-        } else {
-            selectedStatus.value = {};
+            loadDriveIds();
         }
     },
 );
@@ -186,10 +110,8 @@ function cancel() {
 }
 
 function submit() {
-    const idsToAttach = Object.keys(selectedStatus.value)
-        .filter((id) => selectedStatus.value[id])
-        .map((id) => Number(id));
-    console.log(idsToAttach);
+    const toAttach = [...driveIdsToAttach.value];
+    console.log(toAttach);
     dialog.value = false;
 }
 </script>
