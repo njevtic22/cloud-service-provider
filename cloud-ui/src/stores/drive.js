@@ -20,7 +20,7 @@ export const useDrivesStore = defineStore("drive", {
     }),
 
     actions: {
-        fetchAll(page, size, sort, filter, errorCallback = this.showErroSnack) {
+        fetchAll(page, size, sort, filter, errorCallback = this.showErrorSnack) {
             const overwriteCallback = (response) => {
                 this.drives = response.data;
             };
@@ -40,7 +40,7 @@ export const useDrivesStore = defineStore("drive", {
             size,
             sort,
             filter,
-            errorCallback = this.showErroSnack,
+            errorCallback = this.showErrorSnack,
         ) {
             const overwriteCallback = (response) => {
                 this.detachedDrives = response.data;

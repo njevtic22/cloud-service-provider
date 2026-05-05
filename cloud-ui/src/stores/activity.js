@@ -15,7 +15,7 @@ export const useActivitiesStore = defineStore("activity", {
     }),
 
     actions: {
-        fetchAll(page, size, sort, filter, errorCallback = this.showErroSnack) {
+        fetchAll(page, size, sort, filter, errorCallback = this.showErrorSnack) {
             const overwriteCallback = (response) => {
                 this.activities = response.data;
             };

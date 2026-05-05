@@ -15,7 +15,7 @@ export const useCategoryStore = defineStore("category", {
     }),
 
     actions: {
-        fetchAll(page, size, sort, filter, errorCallback = this.showErroSnack) {
+        fetchAll(page, size, sort, filter, errorCallback = this.showErrorSnack) {
             const overwriteCallback = (response) => {
                 this.categories = response.data;
             };
@@ -34,7 +34,7 @@ export const useCategoryStore = defineStore("category", {
             size,
             sort,
             filter,
-            errorCallback = this.showErroSnack
+            errorCallback = this.showErrorSnack
         ) {
             const appendCallback = (response) => {
                 this.categories.data.push(...response.data.data);
