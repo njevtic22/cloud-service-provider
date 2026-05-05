@@ -9,29 +9,32 @@
         >
             <v-data-table-server
                 v-model:items-per-page="size"
-                :items="store.detachedDrives.data"
+                :items="selectableDrives"
                 :items-length="store.detachedDrives.totalElements"
                 :items-per-page-options="sizeOptions"
                 :headers="headers"
                 :sort-by="sortBy"
                 @update:options="updateOptions"
                 class="elevation-4"
+                show-select
                 multi-sort
                 striped
-            ></v-data-table-server>
-            <v-btn
-                @click="console.log(selectedStatus)"
-                color="primary"
-                variant="elevated"
             >
-                check
-            </v-btn>
+                <!-- row checkbox slot -->
+                <template #item.data-table-select="{ item }">
+                    <v-checkbox-btn
+                        @update:model-value="
+                            (isSelected) => toggleSelection(item, isSelected)
+                        "
+                    />
+                </template>
+            </v-data-table-server>
         </the-dialog-card>
     </the-dialog>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, watch } from "vue";
 import { useDrivesStore } from "@/stores/drive.js";
 
 const props = defineProps({
@@ -74,6 +77,18 @@ const size = ref(10);
 const sortBy = ref([]);
 
 const selectedStatus = ref({});
+const selectableDrives = computed(() => {
+    return store.detachedDrives.data.map((drive) => {
+        return {
+            ...drive,
+            selected: Boolean(selectedStatus.value[drive.id]),
+        };
+    });
+});
+
+function toggleSelection(drive, isSelected) {
+    selectedStatus.value[drive.id] = isSelected;
+}
 
 function updateOptions(options) {
     page = options.page - 1;
@@ -105,19 +120,27 @@ function loadStatuses() {
     };
     store.fethcAllIds(filter, fillStatuses);
 }
-onMounted(() => {
-    // TODO: Detect when dialog is opened
-    setTimeout(() => {
-        loadStatuses();
-    }, 1000);
-});
+
+watch(
+    () => dialog.value,
+    (isOpened) => {
+        if (isOpened) {
+            loadStatuses();
+        } else {
+            selectedStatus.value = {};
+        }
+    },
+);
 
 function cancel() {
     dialog.value = false;
 }
 
 function submit() {
-    console.log("Manage drives submit clicked");
+    const idsToAttach = Object.keys(selectedStatus.value)
+        .filter((id) => selectedStatus.value[id])
+        .map((id) => Number(id));
+    console.log(idsToAttach);
     dialog.value = false;
 }
 </script>
