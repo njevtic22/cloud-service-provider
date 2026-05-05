@@ -20,9 +20,23 @@
                 multi-sort
                 striped
             >
+                <!-- header checkbox slot -->
+                <template #header.data-table-select>
+                    <v-checkbox-btn
+                        v-model="selectedAll"
+                        :indeterminate="
+                            currentAllState === SELECTED_ALL_STATE.MIXED
+                        "
+                        @update:model-value="
+                            (isSelected) => toggleAll(isSelected)
+                        "
+                    />
+                </template>
+
                 <!-- row checkbox slot -->
                 <template #item.data-table-select="{ item }">
                     <v-checkbox-btn
+                        v-model="selectedStatus[item.id]"
                         @update:model-value="
                             (isSelected) => toggleSelection(item, isSelected)
                         "
@@ -76,6 +90,33 @@ let page = 0;
 const size = ref(10);
 const sortBy = ref([]);
 
+const selectedAll = ref(false);
+const SELECTED_ALL_STATE = Object.freeze({
+    ALL: "ALL",
+    MIXED: "MIXED",
+    NONE: "NONE",
+});
+const currentAllState = computed(() => {
+    let hasSelected = false;
+    let hasDeselected = false;
+
+    for (const id in selectedStatus.value) {
+        const isSelected = selectedStatus.value[id];
+
+        if (isSelected) {
+            hasSelected = true;
+        } else {
+            hasDeselected = true;
+        }
+
+        if (hasSelected && hasDeselected) {
+            return SELECTED_ALL_STATE.MIXED;
+        }
+    }
+
+    return hasSelected ? SELECTED_ALL_STATE.ALL : SELECTED_ALL_STATE.NONE;
+});
+
 const selectedStatus = ref({});
 const selectableDrives = computed(() => {
     return store.detachedDrives.data.map((drive) => {
@@ -86,8 +127,16 @@ const selectableDrives = computed(() => {
     });
 });
 
+function toggleAll(isSelected) {
+    selectedAll.value = isSelected;
+    for (const id of Object.keys(selectedStatus.value)) {
+        selectedStatus.value[id] = isSelected;
+    }
+}
+
 function toggleSelection(drive, isSelected) {
     selectedStatus.value[drive.id] = isSelected;
+    selectedAll.value = currentAllState === SELECTED_ALL_STATE.ALL;
 }
 
 function updateOptions(options) {
